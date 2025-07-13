@@ -205,7 +205,7 @@ const Sidebar = () => {
 
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
-          <div className="text-purple-600">Loading...</div>
+          <div className="text-purple-600">Translating...</div>
         </div>
       )}
     </div>
