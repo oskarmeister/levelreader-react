@@ -7,7 +7,21 @@ const LibraryView = () => {
   const { state, setState } = useContext(AppContext);
   const navigate = useNavigate();
 
-  const renderLessonCards = () => {
+  const categories = ["news", "hobbies", "food", "movies", "books", "travel"];
+
+  const getLessonsForCategory = (category) => {
+    return Object.entries(state.lessons).filter(([key]) => {
+      const lessonCategories = state.lessonCategories?.[key] || [];
+      return lessonCategories.includes(category);
+    });
+  };
+
+  const getRecentlyStudiedLessons = () => {
+    return state.recentlyAccessedLessons?.slice(0, 10) || [];
+  };
+
+  const renderLessonCards = (lessons = null) => {
+    const lessonsToRender = lessons || Object.entries(state.lessons);
     return Object.entries(state.lessons).map(([key, text]) => {
       // Calculate stats
       const rawWords = text.match(/\p{L}+/gu) || [];
