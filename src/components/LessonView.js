@@ -8,24 +8,63 @@ const LessonView = () => {
   const navigate = useNavigate();
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-
-  const WORDS_PER_PAGE = 300; // Adjust this to control page size
+  const [wordsPerPage, setWordsPerPage] = useState(300);
 
   useEffect(() => {
     const text = state.lessons[key];
     if (text) {
       setState((prev) => ({ ...prev, currentText: text }));
-      paginateText(text);
+      calculateWordsPerPage();
     }
   }, [key, state.wordMetadata, state.deletedWords]);
 
-  const paginateText = (text) => {
+  useEffect(() => {
+    const handleResize = () => {
+      calculateWordsPerPage();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const calculateWordsPerPage = () => {
+    // Calculate available height for text content
+    const navHeight = 64; // Navigation bar height
+    const headerHeight = 120; // Lesson header section
+    const legendHeight = 120; // Word legend section
+    const paginationHeight = 80; // Pagination controls
+    const padding = 160; // Various paddings and margins
+
+    const availableHeight =
+      window.innerHeight -
+      navHeight -
+      headerHeight -
+      legendHeight -
+      paginationHeight -
+      padding;
+
+    // Estimate words that can fit based on line height and font size
+    const lineHeight = 29.25; // From CSS: line-height for text-lg
+    const wordsPerLine = 12; // Average words per line for readable text
+    const linesPerPage = Math.floor(availableHeight / lineHeight);
+    const calculatedWordsPerPage = Math.max(100, linesPerPage * wordsPerLine); // Minimum 100 words
+
+    setWordsPerPage(calculatedWordsPerPage);
+
+    // Re-paginate text with new word count
+    const text = state.lessons[key];
+    if (text) {
+      paginateText(text, calculatedWordsPerPage);
+    }
+  };
+
+  const paginateText = (text, customWordsPerPage = wordsPerPage) => {
     const words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
     const pagesList = [];
 
     // Split words into pages
-    for (let i = 0; i < words.length; i += WORDS_PER_PAGE) {
-      const pageWords = words.slice(i, i + WORDS_PER_PAGE);
+    for (let i = 0; i < words.length; i += customWordsPerPage) {
+      const pageWords = words.slice(i, i + customWordsPerPage);
       const renderedPage = pageWords.map((token, index) => {
         const globalIndex = i + index; // Use global index for unique keys
 
@@ -117,7 +156,14 @@ const LessonView = () => {
         </div>
 
         <div className="p-8">
-          <div className="prose prose-lg max-w-none leading-relaxed text-lg min-h-[500px]">
+          <div
+            className="prose prose-lg max-w-none leading-relaxed text-lg"
+            style={{
+              minHeight: `${Math.max(400, window.innerHeight - 480)}px`,
+              maxHeight: `${Math.max(400, window.innerHeight - 480)}px`,
+              overflow: "hidden",
+            }}
+          >
             {pages[currentPage] || []}
           </div>
 
