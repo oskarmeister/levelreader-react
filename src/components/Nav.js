@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AppContext from "../context/AppContext";
 
@@ -6,6 +6,8 @@ const Nav = () => {
   const { state } = useContext(AppContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("Spanish");
 
   const tabs = [
     { id: "tab-library", label: "Library", path: "/library" },
