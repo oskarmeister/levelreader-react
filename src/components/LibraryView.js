@@ -1,14 +1,42 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import { StorageManager } from "../storageManager";
+import ConfirmationModal from "./ConfirmationModal";
 
 const LibraryView = () => {
   const { state, setState } = useContext(AppContext);
   const navigate = useNavigate();
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState({
+    isOpen: false,
+    lessonKey: null,
+  });
 
-  const renderLessonCards = () => {
-    return Object.entries(state.lessons).map(([key, text]) => {
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdown(null);
+    if (openDropdown) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [openDropdown]);
+
+  const categories = ["news", "hobbies", "food", "movies", "books", "travel"];
+
+  const getLessonsForCategory = (category) => {
+    return Object.entries(state.lessons).filter(([key]) => {
+      const lessonCategories = state.lessonCategories?.[key] || [];
+      return lessonCategories.includes(category);
+    });
+  };
+
+  const getRecentlyStudiedLessons = () => {
+    return state.recentlyAccessedLessons?.slice(0, 10) || [];
+  };
+
+  const renderLessonCards = (lessons = null) => {
+    const lessonsToRender = lessons || Object.entries(state.lessons);
+    return lessonsToRender.map(([key, text]) => {
       // Calculate stats
       const rawWords = text.match(/\p{L}+/gu) || [];
       const words = Array.from(new Set(rawWords));
@@ -38,12 +66,41 @@ const LibraryView = () => {
         >
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800">{key}</h3>
-            <button
-              className="edit-lesson absolute top-2 right-2 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-gray-600 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              ⋮
-            </button>
+            <div className="absolute top-2 right-2">
+              <button
+                className="edit-lesson bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-gray-600 transition-colors relative"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenDropdown(openDropdown === key ? null : key);
+                }}
+              >
+                ⋮
+              </button>
+              {openDropdown === key && (
+                <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-32">
+                  <button
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 rounded-t-lg flex items-center gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenDropdown(null);
+                      navigate(`/edit/${key}`);
+                    }}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
+                    className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-b-lg flex items-center gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenDropdown(null);
+                      deleteLesson(key);
+                    }}
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
           <div className="p-4">
             <span className="unknown-percent inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mb-3">
@@ -61,16 +118,93 @@ const LibraryView = () => {
     });
   };
 
-  const deleteLesson = async (key) => {
-    if (window.confirm("Delete this lesson?")) {
-      const newLessons = { ...state.lessons };
-      delete newLessons[key];
-      setState((prev) => ({ ...prev, lessons: newLessons }));
-      await StorageManager.save(state);
-    }
+  const deleteLesson = (key) => {
+    setConfirmDelete({ isOpen: true, lessonKey: key });
   };
 
-  // Add edit logic similarly
+  const handleConfirmDelete = async () => {
+    const key = confirmDelete.lessonKey;
+    const newLessons = { ...state.lessons };
+    const newCategories = { ...state.lessonCategories };
+    const newRecentLessons = (state.recentlyAccessedLessons || []).filter(
+      (lesson) => lesson !== key,
+    );
+
+    delete newLessons[key];
+    delete newCategories[key];
+
+    const newState = {
+      ...state,
+      lessons: newLessons,
+      lessonCategories: newCategories,
+      recentlyAccessedLessons: newRecentLessons,
+    };
+
+    setState(newState);
+    await StorageManager.save(newState);
+    setConfirmDelete({ isOpen: false, lessonKey: null });
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmDelete({ isOpen: false, lessonKey: null });
+  };
+
+  const renderCategorySection = (category, color, gradient) => {
+    const categoryLessons = getLessonsForCategory(category);
+
+    if (categoryLessons.length === 0) return null;
+
+    return (
+      <div
+        key={category}
+        className="bg-white rounded-xl shadow-lg mb-8 overflow-hidden"
+        style={{
+          boxShadow:
+            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        }}
+      >
+        <div
+          className={`bg-gradient-to-r ${gradient} px-6 py-3 border-b border-gray-100`}
+          style={{
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#374151",
+            borderLeft: `4px solid ${color}`,
+          }}
+        >
+          {category.charAt(0).toUpperCase() + category.slice(1)}
+        </div>
+        <div className="p-6">
+          <div
+            className="flex gap-4 overflow-x-auto pb-2"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#D1D5DB #F3F4F6",
+            }}
+          >
+            {renderLessonCards(categoryLessons)}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const getCategoryStyle = (category) => {
+    const styles = {
+      news: { color: "#DC2626", gradient: "from-red-50 to-rose-50" },
+      hobbies: { color: "#7C3AED", gradient: "from-purple-50 to-violet-50" },
+      food: { color: "#EA580C", gradient: "from-orange-50 to-amber-50" },
+      movies: { color: "#7C2D12", gradient: "from-amber-50 to-yellow-50" },
+      books: { color: "#059669", gradient: "from-emerald-50 to-teal-50" },
+      travel: { color: "#2563EB", gradient: "from-blue-50 to-cyan-50" },
+    };
+    return (
+      styles[category] || {
+        color: "#6B7280",
+        gradient: "from-gray-50 to-slate-50",
+      }
+    );
+  };
 
   return (
     <div
@@ -108,10 +242,33 @@ const LibraryView = () => {
               scrollbarColor: "#D1D5DB #F3F4F6",
             }}
           >
-            {renderLessonCards()}
+            {getRecentlyStudiedLessons().length > 0
+              ? renderLessonCards(
+                  getRecentlyStudiedLessons()
+                    .map((key) => [key, state.lessons[key]])
+                    .filter(([key, text]) => text),
+                )
+              : renderLessonCards(Object.entries(state.lessons).slice(0, 5))}
           </div>
         </div>
       </div>
+
+      {/* Recently accessed categories at the top */}
+      {state.recentlyAccessedCategories?.slice(0, 3).map((category) => {
+        const style = getCategoryStyle(category);
+        return renderCategorySection(category, style.color, style.gradient);
+      })}
+
+      {/* Themed category sections */}
+      {categories
+        .filter(
+          (category) =>
+            !state.recentlyAccessedCategories?.slice(0, 3).includes(category),
+        )
+        .map((category) => {
+          const style = getCategoryStyle(category);
+          return renderCategorySection(category, style.color, style.gradient);
+        })}
 
       {/* History section */}
       <div
@@ -130,7 +287,7 @@ const LibraryView = () => {
             borderLeft: "4px solid #6B7280",
           }}
         >
-          History
+          All Lessons
         </div>
         <div className="p-6">
           <div
@@ -144,6 +301,14 @@ const LibraryView = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={confirmDelete.isOpen}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        title="Delete Lesson"
+        message={`Are you sure you want to delete "${confirmDelete.lessonKey}"? This action cannot be undone.`}
+      />
     </div>
   );
 };

@@ -8,6 +8,9 @@ const ImportView = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  const categories = ["news", "hobbies", "food", "movies", "books", "travel"];
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -35,11 +38,16 @@ const ImportView = () => {
   const handleSave = async () => {
     if (title && text) {
       if (state.lessons[title]) return alert("Title already exists.");
-      setState((prev) => ({
-        ...prev,
-        lessons: { ...prev.lessons, [title]: text },
-      }));
-      await StorageManager.save(state);
+      const newState = {
+        ...state,
+        lessons: { ...state.lessons, [title]: text },
+        lessonCategories: {
+          ...state.lessonCategories,
+          [title]: selectedCategories,
+        },
+      };
+      setState(newState);
+      await StorageManager.save(newState);
       navigate("/library");
     } else {
       alert("Title and text required.");
@@ -99,6 +107,33 @@ const ImportView = () => {
                 className="w-full h-48 p-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-lg resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                 placeholder="Enter or paste lesson content here..."
               />
+            </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Categories (optional)
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategories((prev) =>
+                        prev.includes(category)
+                          ? prev.filter((c) => c !== category)
+                          : [...prev, category],
+                      );
+                    }}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      selectedCategories.includes(category)
+                        ? "bg-green-100 text-green-800 border-2 border-green-300"
+                        : "bg-gray-100 text-gray-700 border-2 border-gray-200 hover:bg-gray-200"
+                    }`}
+                  >
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

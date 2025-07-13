@@ -3,11 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AppContext from "../context/AppContext";
 
 const Nav = () => {
-  const { state } = useContext(AppContext);
+  const { state, setState } = useContext(AppContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("Spanish");
 
   const tabs = [
     { id: "tab-library", label: "Library", path: "/library" },
@@ -18,22 +17,19 @@ const Nav = () => {
 
   const languages = [
     { name: "Spanish", flag: "🇪🇸" },
-    { name: "French", flag: "🇫🇷" },
-    { name: "German", flag: "🇩🇪" },
-    { name: "Italian", flag: "🇮🇹" },
-    { name: "Portuguese", flag: "🇵🇹" },
+    { name: "Swedish", flag: "🇸🇪" },
     { name: "Chinese", flag: "🇨🇳" },
-    { name: "Japanese", flag: "🇯🇵" },
-    { name: "Korean", flag: "🇰🇷" },
-    { name: "Russian", flag: "🇷🇺" },
-    { name: "Arabic", flag: "🇸🇦" },
+    { name: "English", flag: "🇺🇸" },
+    { name: "German", flag: "🇩🇪" },
+    { name: "French", flag: "🇫🇷" },
   ];
 
   const currentLanguage =
-    languages.find((lang) => lang.name === selectedLanguage) || languages[0];
+    languages.find((lang) => lang.name === state.selectedLanguage) ||
+    languages[0];
 
   const handleLanguageSelect = (language) => {
-    setSelectedLanguage(language.name);
+    setState((prev) => ({ ...prev, selectedLanguage: language.name }));
     setShowLanguageDropdown(false);
   };
 
@@ -121,7 +117,7 @@ const Nav = () => {
                   <button
                     key={language.name}
                     className={`w-full flex items-center px-4 py-2 text-left hover:bg-gray-50 transition-colors ${
-                      selectedLanguage === language.name
+                      state.selectedLanguage === language.name
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-700"
                     }`}
@@ -129,7 +125,7 @@ const Nav = () => {
                   >
                     <span className="text-lg mr-3">{language.flag}</span>
                     <span className="font-medium">{language.name}</span>
-                    {selectedLanguage === language.name && (
+                    {state.selectedLanguage === language.name && (
                       <span className="ml-auto text-blue-600">✓</span>
                     )}
                   </button>
