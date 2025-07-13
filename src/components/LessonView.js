@@ -295,7 +295,7 @@ const LessonView = () => {
             className += "ring-2 ring-blue-500 ring-offset-1 ";
           }
 
-          if (metadata?.fam === "known") {
+          if (metadata?.fam === "known" || !metadata) {
             className += "text-gray-800"; // unmarked, normal text color
           } else if (metadata?.fam === "3") {
             className += "text-green-600 bg-green-50";
@@ -400,7 +400,7 @@ const LessonView = () => {
           className += "ring-2 ring-blue-500 ring-offset-1 ";
         }
 
-        if (metadata?.fam === "known") {
+        if (metadata?.fam === "known" || !metadata) {
           className += "text-gray-800";
         } else if (metadata?.fam === "3") {
           className += "text-green-600 bg-green-50";
