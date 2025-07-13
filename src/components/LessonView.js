@@ -144,6 +144,9 @@ const LessonView = () => {
     allWords,
     selectedWordIndex,
     state.selectedWord,
+    viewMode,
+    sentences.length,
+    currentSentence,
   ]);
 
   const parseSentences = (text) => {
