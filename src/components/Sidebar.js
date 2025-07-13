@@ -14,11 +14,6 @@ const Sidebar = () => {
   const [autoTranslation, setAutoTranslation] = useState("");
   const [translationError, setTranslationError] = useState("");
 
-  // Only show sidebar in lesson view
-  if (!location.pathname.startsWith("/lesson/")) {
-    return null;
-  }
-
   useEffect(() => {
     const translateWord = async () => {
       if (word && !state.wordMetadata[word]?.translation) {
