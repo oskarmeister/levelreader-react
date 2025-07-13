@@ -28,26 +28,35 @@ const LessonView = () => {
   }, []);
 
   const calculateWordsPerPage = () => {
-    // Calculate available height for text content
-    const navHeight = 64; // Navigation bar height
-    const headerHeight = 120; // Lesson header section
-    const legendHeight = 120; // Word legend section
+    // Calculate available height for text content more accurately
+    const navHeight = 64; // Navigation bar height (pt-16)
+    const backButtonHeight = 48; // Back button with margin
+    const headerSectionHeight = 100; // Lesson header card section
+    const cardPadding = 64; // Card internal padding (p-8 = 32px top + 32px bottom)
+    const legendHeight = 140; // Word legend section with margin
     const paginationHeight = 80; // Pagination controls
-    const padding = 160; // Various paddings and margins
+    const containerPadding = 32; // Container padding
+    const margin = 48; // Additional safe margin
 
-    const availableHeight =
-      window.innerHeight -
-      navHeight -
-      headerHeight -
-      legendHeight -
-      paginationHeight -
-      padding;
+    const totalFixedHeight =
+      navHeight +
+      backButtonHeight +
+      headerSectionHeight +
+      cardPadding +
+      legendHeight +
+      paginationHeight +
+      containerPadding +
+      margin;
+    const availableHeight = Math.max(
+      300,
+      window.innerHeight - totalFixedHeight,
+    );
 
     // Estimate words that can fit based on line height and font size
-    const lineHeight = 29.25; // From CSS: line-height for text-lg
-    const wordsPerLine = 12; // Average words per line for readable text
+    const lineHeight = 29.25; // From CSS: line-height for text-lg (1.625 * 18px)
+    const wordsPerLine = 10; // Conservative estimate of words per line
     const linesPerPage = Math.floor(availableHeight / lineHeight);
-    const calculatedWordsPerPage = Math.max(100, linesPerPage * wordsPerLine); // Minimum 100 words
+    const calculatedWordsPerPage = Math.max(150, linesPerPage * wordsPerLine); // Minimum 150 words
 
     setWordsPerPage(calculatedWordsPerPage);
 
