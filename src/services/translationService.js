@@ -15,7 +15,7 @@ const TranslationService = {
           body: JSON.stringify({
             q: text,
             target: targetLang,
-            source: sourceLang,
+            ...(sourceLang && { source: sourceLang }),
             format: "text",
           }),
         },
