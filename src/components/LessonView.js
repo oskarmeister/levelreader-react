@@ -9,6 +9,8 @@ const LessonView = () => {
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [wordsPerPage, setWordsPerPage] = useState(300);
+  const [allWords, setAllWords] = useState([]);
+  const [selectedWordIndex, setSelectedWordIndex] = useState(-1);
 
   useEffect(() => {
     const text = state.lessons[key];
