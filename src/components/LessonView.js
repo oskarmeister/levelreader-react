@@ -117,7 +117,7 @@ const LessonView = () => {
         </div>
 
         <div className="p-8">
-          <div className="prose prose-lg max-w-none leading-relaxed text-lg min-h-[400px]">
+          <div className="prose prose-lg max-w-none leading-relaxed text-lg min-h-[500px]">
             {pages[currentPage] || []}
           </div>
 
