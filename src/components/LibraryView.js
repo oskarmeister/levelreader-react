@@ -53,12 +53,41 @@ const LibraryView = () => {
         >
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800">{key}</h3>
-            <button
-              className="edit-lesson absolute top-2 right-2 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-gray-600 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              ⋮
-            </button>
+            <div className="absolute top-2 right-2">
+              <button
+                className="edit-lesson bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-gray-600 transition-colors relative"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenDropdown(openDropdown === key ? null : key);
+                }}
+              >
+                ⋮
+              </button>
+              {openDropdown === key && (
+                <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-32">
+                  <button
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 rounded-t-lg flex items-center gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenDropdown(null);
+                      navigate(`/edit/${key}`);
+                    }}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
+                    className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-b-lg flex items-center gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenDropdown(null);
+                      deleteLesson(key);
+                    }}
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
           <div className="p-4">
             <span className="unknown-percent inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mb-3">
