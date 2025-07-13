@@ -38,11 +38,16 @@ const ImportView = () => {
   const handleSave = async () => {
     if (title && text) {
       if (state.lessons[title]) return alert("Title already exists.");
-      setState((prev) => ({
-        ...prev,
-        lessons: { ...prev.lessons, [title]: text },
-      }));
-      await StorageManager.save(state);
+      const newState = {
+        ...state,
+        lessons: { ...state.lessons, [title]: text },
+        lessonCategories: {
+          ...state.lessonCategories,
+          [title]: selectedCategories,
+        },
+      };
+      setState(newState);
+      await StorageManager.save(newState);
       navigate("/library");
     } else {
       alert("Title and text required.");
