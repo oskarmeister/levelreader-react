@@ -39,16 +39,34 @@ const ApiManager = {
 
     const data = await ApiManager.fetchData("/user_data", "GET", null, state);
     if (data) {
-      setState((prev) => ({
-        ...prev,
-        lessons: data.lessons || {},
-        wordMetadata: data.word_metadata || {},
-        translationCache: data.translation_cache || {},
-        deletedWords: data.deleted_words || [],
-        lessonCategories: data.lesson_categories || {},
-        recentlyAccessedLessons: data.recently_accessed_lessons || [],
-        recentlyAccessedCategories: data.recently_accessed_categories || [],
-      }));
+      setState((prev) => {
+        const selectedLanguage =
+          data.selected_language || prev.selectedLanguage;
+        const languageData = data.language_data || prev.languageData;
+        const currentData = languageData[selectedLanguage] || {};
+
+        return {
+          ...prev,
+          selectedLanguage,
+          languageData,
+          // Sync current language data to legacy properties
+          lessons: currentData.lessons || data.lessons || {},
+          wordMetadata: currentData.wordMetadata || data.word_metadata || {},
+          translationCache:
+            currentData.translationCache || data.translation_cache || {},
+          deletedWords: currentData.deletedWords || data.deleted_words || [],
+          lessonCategories:
+            currentData.lessonCategories || data.lesson_categories || {},
+          recentlyAccessedLessons:
+            currentData.recentlyAccessedLessons ||
+            data.recently_accessed_lessons ||
+            [],
+          recentlyAccessedCategories:
+            currentData.recentlyAccessedCategories ||
+            data.recently_accessed_categories ||
+            [],
+        };
+      });
     }
   },
 
