@@ -97,7 +97,31 @@ function App() {
 
   useEffect(() => {
     if (state.token) {
-      ApiManager.loadUserData(state, setState);
+      // Check if it's dev mode and load dev data from localStorage
+      if (state.token.startsWith("dev_token_")) {
+        const devData = localStorage.getItem("dev_data");
+        if (devData) {
+          const parsedData = JSON.parse(devData);
+          setState((prev) => ({
+            ...prev,
+            lessons: parsedData.lessons || prev.lessons,
+            wordMetadata: parsedData.wordMetadata || prev.wordMetadata,
+            translationCache:
+              parsedData.translationCache || prev.translationCache,
+            deletedWords: parsedData.deletedWords || prev.deletedWords,
+            lessonCategories:
+              parsedData.lessonCategories || prev.lessonCategories,
+            recentlyAccessedLessons:
+              parsedData.recentlyAccessedLessons ||
+              prev.recentlyAccessedLessons,
+            recentlyAccessedCategories:
+              parsedData.recentlyAccessedCategories ||
+              prev.recentlyAccessedCategories,
+          }));
+        }
+      } else {
+        ApiManager.loadUserData(state, setState);
+      }
     }
   }, [state.token]);
 
