@@ -8,6 +8,10 @@ const LibraryView = () => {
   const { state, setState } = useContext(AppContext);
   const navigate = useNavigate();
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState({
+    isOpen: false,
+    lessonKey: null,
+  });
 
   useEffect(() => {
     const handleClickOutside = () => setOpenDropdown(null);
