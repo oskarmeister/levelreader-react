@@ -349,10 +349,38 @@ const LessonView = () => {
           className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-100"
           style={{ borderLeft: "4px solid #8B5CF6" }}
         >
-          <h1 className="text-3xl font-bold text-gray-800">{key}</h1>
-          <p className="text-gray-600 mt-2">
-            Click on words to view and save translations
-          </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">{key}</h1>
+              <p className="text-gray-600 mt-2">
+                {viewMode === "words"
+                  ? "Click on words to view and save translations"
+                  : "Read sentences one at a time with translation"}
+              </p>
+            </div>
+            <div className="flex bg-white rounded-lg p-1 shadow-sm">
+              <button
+                onClick={() => setViewMode("words")}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  viewMode === "words"
+                    ? "bg-purple-600 text-white"
+                    : "text-gray-600 hover:text-purple-600"
+                }`}
+              >
+                Words
+              </button>
+              <button
+                onClick={() => setViewMode("sentences")}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  viewMode === "sentences"
+                    ? "bg-purple-600 text-white"
+                    : "text-gray-600 hover:text-purple-600"
+                }`}
+              >
+                Sentences
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="p-8">
