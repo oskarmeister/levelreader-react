@@ -53,6 +53,72 @@ const LessonView = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Page navigation with Shift + Arrow keys
+      if (e.shiftKey && e.key === "ArrowRight" && pages.length > 1) {
+        e.preventDefault();
+        setCurrentPage(Math.min(pages.length - 1, currentPage + 1));
+        return;
+      }
+      if (e.shiftKey && e.key === "ArrowLeft" && pages.length > 1) {
+        e.preventDefault();
+        setCurrentPage(Math.max(0, currentPage - 1));
+        return;
+      }
+
+      // Word navigation with Arrow keys (no shift)
+      if (!e.shiftKey && e.key === "ArrowRight" && allWords.length > 0) {
+        e.preventDefault();
+        const nextIndex = Math.min(allWords.length - 1, selectedWordIndex + 1);
+        setSelectedWordIndex(nextIndex);
+        handleWordSelect(allWords[nextIndex]);
+        return;
+      }
+      if (!e.shiftKey && e.key === "ArrowLeft" && allWords.length > 0) {
+        e.preventDefault();
+        const prevIndex = Math.max(0, selectedWordIndex - 1);
+        setSelectedWordIndex(prevIndex);
+        handleWordSelect(allWords[prevIndex]);
+        return;
+      }
+
+      // Familiarity level shortcuts
+      if (state.selectedWord) {
+        let famLevel = null;
+        switch (e.key) {
+          case "1":
+            famLevel = "1";
+            break;
+          case "2":
+            famLevel = "2";
+            break;
+          case "3":
+            famLevel = "3";
+            break;
+          case "k":
+          case "K":
+            famLevel = "known";
+            break;
+        }
+
+        if (famLevel) {
+          e.preventDefault();
+          handleFamiliarityChange(state.selectedWord, famLevel);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    currentPage,
+    pages.length,
+    allWords,
+    selectedWordIndex,
+    state.selectedWord,
+  ]);
+
   const calculateWordsPerPage = () => {
     // Calculate available height for text content more accurately
     const navHeight = 64; // Navigation bar height (pt-16)
