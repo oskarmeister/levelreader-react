@@ -759,6 +759,12 @@ const LessonView = () => {
                     1, 2, 3, K
                   </span>
                 </div>
+                <div className="flex justify-between">
+                  <span>Delete word:</span>
+                  <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+                    X
+                  </span>
+                </div>
               </>
             ) : (
               <>
