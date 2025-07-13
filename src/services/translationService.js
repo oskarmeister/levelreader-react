@@ -3,7 +3,7 @@ const TRANSLATE_API_URL =
   "https://translation.googleapis.com/language/translate/v2";
 
 const TranslationService = {
-  async translateText(text, targetLang = "en", sourceLang = "auto") {
+  async translateText(text, targetLang = "en", sourceLang = null) {
     try {
       const response = await fetch(
         `${TRANSLATE_API_URL}?key=${GOOGLE_TRANSLATE_API_KEY}`,
