@@ -127,6 +127,37 @@ const LessonView = () => {
     state.selectedWord,
   ]);
 
+  const parseSentences = (text) => {
+    // Split text into sentences using multiple sentence delimiters
+    const sentenceRegex = /[.!?]+\s*/g;
+    const sentenceList = text
+      .split(sentenceRegex)
+      .filter((sentence) => sentence.trim().length > 0);
+    setSentences(sentenceList);
+    setCurrentSentence(0);
+    setSentenceTranslation("");
+  };
+
+  const translateSentence = async (sentence) => {
+    setTranslatingsentence(true);
+    setSentenceTranslation("");
+
+    try {
+      const sourceLang = getLanguageCode(state.selectedLanguage);
+      const result = await TranslationService.translateText(
+        sentence,
+        "en",
+        sourceLang,
+      );
+      setSentenceTranslation(result.translatedText);
+    } catch (error) {
+      setSentenceTranslation("Translation failed. Please try again.");
+      console.error("Translation error:", error);
+    } finally {
+      setTranslatingsentence(false);
+    }
+  };
+
   const calculateWordsPerPage = () => {
     // Calculate available height for text content more accurately
     const navHeight = 64; // Navigation bar height (pt-16)
