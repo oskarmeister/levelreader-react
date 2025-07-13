@@ -11,6 +11,11 @@ const LessonView = () => {
   const [wordsPerPage, setWordsPerPage] = useState(300);
   const [allWords, setAllWords] = useState([]);
   const [selectedWordIndex, setSelectedWordIndex] = useState(-1);
+  const [viewMode, setViewMode] = useState("words"); // "words" or "sentences"
+  const [sentences, setSentences] = useState([]);
+  const [currentSentence, setCurrentSentence] = useState(0);
+  const [sentenceTranslation, setSentenceTranslation] = useState("");
+  const [translatingsentence, setTranslatingsentence] = useState(false);
 
   useEffect(() => {
     const text = state.lessons[key];
