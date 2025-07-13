@@ -8,6 +8,9 @@ const ImportView = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  const categories = ["news", "hobbies", "food", "movies", "books", "travel"];
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
