@@ -354,6 +354,23 @@ const LessonView = () => {
     // Save would be handled by the storage manager
   };
 
+  const handleDeleteWord = (word) => {
+    setState((prev) => {
+      const newDeletedWords = [...prev.deletedWords, word];
+      const newWordMetadata = { ...prev.wordMetadata };
+      // Remove word metadata when deleted
+      delete newWordMetadata[word];
+
+      return {
+        ...prev,
+        deletedWords: newDeletedWords,
+        wordMetadata: newWordMetadata,
+        selectedWord: "", // Clear selection
+        sidebarOpen: false, // Close sidebar
+      };
+    });
+  };
+
   const getSentenceWords = (sentence) => {
     if (!sentence) return [];
     const words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
@@ -754,7 +771,7 @@ const LessonView = () => {
                 <div className="flex justify-between">
                   <span>Navigate sentences:</span>
                   <span className="font-mono bg-gray-100 px-2 py-1 rounded">
-                    Shift + ← →
+                    Shift + ← ��
                   </span>
                 </div>
                 <div className="flex justify-between">
