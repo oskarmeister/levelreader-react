@@ -30,8 +30,10 @@ const LessonView = () => {
           "cursor-pointer transition-colors hover:bg-gray-200 px-1 rounded ";
 
         if (metadata?.fam === "known") {
+          className += "text-gray-800"; // unmarked, normal text color
+        } else if (metadata?.fam === "3") {
           className += "text-green-600 bg-green-50";
-        } else if (metadata?.fam === "3" || metadata?.fam === "2") {
+        } else if (metadata?.fam === "2") {
           className += "text-yellow-600 bg-yellow-50";
         } else if (metadata?.fam === "1") {
           className += "text-orange-600 bg-orange-50";
