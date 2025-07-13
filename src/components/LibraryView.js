@@ -66,30 +66,72 @@ const LibraryView = () => {
       className="container mx-auto overflow-visible"
       style={{ margin: "0 auto 200px", padding: "16px 16px 0" }}
     >
-      <h2 className="text-2xl font-bold mb-4 overflow-visible">
+      <h2 className="text-2xl font-bold mb-6 overflow-visible">
         📖 My Lessons
       </h2>
 
-      <div style={{ position: "relative", marginTop: "20px", height: "30px" }}>
-        Recently studied
-      </div>
-
+      {/* Recently studied section */}
       <div
-        className="flex gap-4 overflow-x-auto pb-4 overflow-visible"
-        style={{ marginBottom: "3px" }}
+        className="bg-white rounded-xl shadow-lg mb-8 overflow-hidden"
+        style={{
+          boxShadow:
+            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        }}
       >
-        {renderLessonCards()}
+        <div
+          className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-3 border-b border-gray-100"
+          style={{
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#374151",
+            borderLeft: "4px solid #3B82F6",
+          }}
+        >
+          Recently studied
+        </div>
+        <div className="p-6">
+          <div
+            className="flex gap-4 overflow-x-auto pb-2"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#D1D5DB #F3F4F6",
+            }}
+          >
+            {renderLessonCards()}
+          </div>
+        </div>
       </div>
 
-      <div style={{ position: "relative", marginTop: "20px", height: "30px" }}>
-        History
-      </div>
-
+      {/* History section */}
       <div
-        className="flex gap-4 overflow-x-auto pb-4 overflow-visible"
-        style={{ marginBottom: "3px" }}
+        className="bg-white rounded-xl shadow-lg mb-8 overflow-hidden"
+        style={{
+          boxShadow:
+            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        }}
       >
-        {renderLessonCards()}
+        <div
+          className="bg-gradient-to-r from-gray-50 to-slate-50 px-6 py-3 border-b border-gray-100"
+          style={{
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#374151",
+            borderLeft: "4px solid #6B7280",
+          }}
+        >
+          History
+        </div>
+        <div className="p-6">
+          <div
+            className="flex gap-4 overflow-x-auto pb-2"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#D1D5DB #F3F4F6",
+            }}
+          >
+            {renderLessonCards()}
+          </div>
+        </div>
       </div>
     </div>
   );
