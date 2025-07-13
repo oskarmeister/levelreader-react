@@ -17,22 +17,19 @@ const Nav = () => {
 
   const languages = [
     { name: "Spanish", flag: "🇪🇸" },
-    { name: "French", flag: "🇫🇷" },
-    { name: "German", flag: "🇩🇪" },
-    { name: "Italian", flag: "🇮🇹" },
-    { name: "Portuguese", flag: "🇵🇹" },
+    { name: "Swedish", flag: "🇸🇪" },
     { name: "Chinese", flag: "🇨🇳" },
-    { name: "Japanese", flag: "🇯🇵" },
-    { name: "Korean", flag: "🇰🇷" },
-    { name: "Russian", flag: "🇷🇺" },
-    { name: "Arabic", flag: "🇸🇦" },
+    { name: "English", flag: "🇺🇸" },
+    { name: "German", flag: "🇩🇪" },
+    { name: "French", flag: "🇫🇷" },
   ];
 
   const currentLanguage =
-    languages.find((lang) => lang.name === selectedLanguage) || languages[0];
+    languages.find((lang) => lang.name === state.selectedLanguage) ||
+    languages[0];
 
   const handleLanguageSelect = (language) => {
-    setSelectedLanguage(language.name);
+    setState((prev) => ({ ...prev, selectedLanguage: language.name }));
     setShowLanguageDropdown(false);
   };
 
