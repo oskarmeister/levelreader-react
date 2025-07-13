@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
+import TranslationService from "../services/translationService";
+import { getLanguageCode } from "../utils/languageUtils";
 
 const LessonView = () => {
   const { state, setState } = useContext(AppContext);
