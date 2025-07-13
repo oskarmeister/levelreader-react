@@ -301,6 +301,14 @@ const LibraryView = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={confirmDelete.isOpen}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        title="Delete Lesson"
+        message={`Are you sure you want to delete "${confirmDelete.lessonKey}"? This action cannot be undone.`}
+      />
     </div>
   );
 };
