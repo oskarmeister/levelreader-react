@@ -6,55 +6,69 @@ const LessonView = () => {
   const { state, setState } = useContext(AppContext);
   const { key } = useParams();
   const navigate = useNavigate();
-  const [renderedText, setRenderedText] = useState([]);
+  const [pages, setPages] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const WORDS_PER_PAGE = 100; // Adjust this to control page size
 
   useEffect(() => {
     const text = state.lessons[key];
     if (text) {
       setState((prev) => ({ ...prev, currentText: text }));
-      renderText(text);
+      paginateText(text);
     }
   }, [key, state.wordMetadata, state.deletedWords]);
 
-  const renderText = (text) => {
+  const paginateText = (text) => {
     const words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
-    const rendered = words.map((token, index) => {
-      if (/\p{L}+/u.test(token)) {
-        const word = token.toLowerCase();
-        const metadata = state.wordMetadata[word];
-        const isDeleted = state.deletedWords.includes(word);
+    const pagesList = [];
 
-        if (isDeleted) return null;
+    // Split words into pages
+    for (let i = 0; i < words.length; i += WORDS_PER_PAGE) {
+      const pageWords = words.slice(i, i + WORDS_PER_PAGE);
+      const renderedPage = pageWords.map((token, index) => {
+        const globalIndex = i + index; // Use global index for unique keys
 
-        let className =
-          "cursor-pointer transition-colors hover:bg-gray-200 px-1 rounded ";
+        if (/\p{L}+/u.test(token)) {
+          const word = token.toLowerCase();
+          const metadata = state.wordMetadata[word];
+          const isDeleted = state.deletedWords.includes(word);
 
-        if (metadata?.fam === "known") {
-          className += "text-gray-800"; // unmarked, normal text color
-        } else if (metadata?.fam === "3") {
-          className += "text-green-600 bg-green-50";
-        } else if (metadata?.fam === "2") {
-          className += "text-yellow-600 bg-yellow-50";
-        } else if (metadata?.fam === "1") {
-          className += "text-orange-600 bg-orange-50";
-        } else {
-          className += "text-red-600 bg-red-50 font-medium";
+          if (isDeleted) return null;
+
+          let className =
+            "cursor-pointer transition-colors hover:bg-gray-200 px-1 rounded ";
+
+          if (metadata?.fam === "known") {
+            className += "text-gray-800"; // unmarked, normal text color
+          } else if (metadata?.fam === "3") {
+            className += "text-green-600 bg-green-50";
+          } else if (metadata?.fam === "2") {
+            className += "text-yellow-600 bg-yellow-50";
+          } else if (metadata?.fam === "1") {
+            className += "text-orange-600 bg-orange-50";
+          } else {
+            className += "text-red-600 bg-red-50 font-medium";
+          }
+
+          return (
+            <span
+              key={globalIndex}
+              className={className}
+              onClick={() => handleWordClick(word)}
+            >
+              {token}
+            </span>
+          );
         }
+        return <span key={globalIndex}>{token}</span>;
+      });
 
-        return (
-          <span
-            key={index}
-            className={className}
-            onClick={() => handleWordClick(word)}
-          >
-            {token}
-          </span>
-        );
-      }
-      return <span key={index}>{token}</span>;
-    });
+      pagesList.push(renderedPage);
+    }
 
-    setRenderedText(rendered);
+    setPages(pagesList);
+    setCurrentPage(0); // Reset to first page when text changes
   };
 
   const handleWordClick = (word) => {
@@ -103,9 +117,52 @@ const LessonView = () => {
         </div>
 
         <div className="p-8">
-          <div className="prose prose-lg max-w-none leading-relaxed text-lg">
-            {renderedText}
+          <div className="prose prose-lg max-w-none leading-relaxed text-lg min-h-[400px]">
+            {pages[currentPage] || []}
           </div>
+
+          {pages.length > 1 && (
+            <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
+              <button
+                onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+                disabled={currentPage === 0}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                ← Previous
+              </button>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">
+                  Page {currentPage + 1} of {pages.length}
+                </span>
+                <div className="flex gap-1">
+                  {pages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentPage(index)}
+                      className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
+                        index === currentPage
+                          ? "bg-purple-600 text-white"
+                          : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() =>
+                  setCurrentPage(Math.min(pages.length - 1, currentPage + 1))
+                }
+                disabled={currentPage === pages.length - 1}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
