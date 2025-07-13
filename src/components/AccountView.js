@@ -167,9 +167,15 @@ const AccountView = () => {
           />
           <button
             onClick={handleLogin}
-            className="w-full bg-primary text-white py-2 rounded hover:bg-blue-600"
+            className="w-full bg-primary text-white py-2 rounded hover:bg-blue-600 mb-3"
           >
             Login
+          </button>
+          <button
+            onClick={handleDevMode}
+            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 mb-3"
+          >
+            🚀 Use Dev Mode (No Login Required)
           </button>
           <p className="text-center mt-2">
             Don't have an account?{" "}
