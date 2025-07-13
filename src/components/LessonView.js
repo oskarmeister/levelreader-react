@@ -367,7 +367,7 @@ const LessonView = () => {
                     : "text-gray-600 hover:text-purple-600"
                 }`}
               >
-                Words
+                Page
               </button>
               <button
                 onClick={() => setViewMode("sentences")}
@@ -377,7 +377,7 @@ const LessonView = () => {
                     : "text-gray-600 hover:text-purple-600"
                 }`}
               >
-                Sentences
+                Sentence
               </button>
             </div>
           </div>
