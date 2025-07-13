@@ -494,23 +494,90 @@ const LessonView = () => {
                   </button>
 
                   <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600 mr-2">
+                      {currentSentence + 1} / {sentences.length}
+                    </span>
                     <div className="flex gap-1">
-                      {sentences.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            setCurrentSentence(index);
-                            setSentenceTranslation("");
-                          }}
-                          className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
-                            index === currentSentence
-                              ? "bg-purple-600 text-white"
-                              : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                          }`}
-                        >
-                          {index + 1}
-                        </button>
-                      ))}
+                      {sentences.length <= 10 ? (
+                        // Show all buttons if 10 or fewer sentences
+                        sentences.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setCurrentSentence(index);
+                              setSentenceTranslation("");
+                            }}
+                            className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
+                              index === currentSentence
+                                ? "bg-purple-600 text-white"
+                                : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                            }`}
+                          >
+                            {index + 1}
+                          </button>
+                        ))
+                      ) : (
+                        // Show limited buttons with ellipsis for many sentences
+                        <>
+                          {currentSentence > 2 && (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setCurrentSentence(0);
+                                  setSentenceTranslation("");
+                                }}
+                                className="w-8 h-8 rounded-full text-sm font-medium bg-gray-200 text-gray-600 hover:bg-gray-300"
+                              >
+                                1
+                              </button>
+                              <span className="text-gray-400">...</span>
+                            </>
+                          )}
+
+                          {Array.from({ length: 5 }, (_, i) => {
+                            const index =
+                              Math.max(
+                                0,
+                                Math.min(
+                                  sentences.length - 5,
+                                  currentSentence - 2,
+                                ),
+                              ) + i;
+                            if (index >= sentences.length) return null;
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => {
+                                  setCurrentSentence(index);
+                                  setSentenceTranslation("");
+                                }}
+                                className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
+                                  index === currentSentence
+                                    ? "bg-purple-600 text-white"
+                                    : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                                }`}
+                              >
+                                {index + 1}
+                              </button>
+                            );
+                          })}
+
+                          {currentSentence < sentences.length - 3 && (
+                            <>
+                              <span className="text-gray-400">...</span>
+                              <button
+                                onClick={() => {
+                                  setCurrentSentence(sentences.length - 1);
+                                  setSentenceTranslation("");
+                                }}
+                                className="w-8 h-8 rounded-full text-sm font-medium bg-gray-200 text-gray-600 hover:bg-gray-300"
+                              >
+                                {sentences.length}
+                              </button>
+                            </>
+                          )}
+                        </>
+                      )}
                     </div>
                   </div>
 
