@@ -65,30 +65,6 @@ const AccountView = () => {
       ...prev,
       token: devToken,
       username: devUsername,
-      lessons: {
-        "The Little Prince":
-          "In the desert, I have learned to listen. All I needed was a little breeze to hear the voices of those I love. The stars whisper secrets to those who know how to listen. Each grain of sand holds a story waiting to be told.",
-        "Morning Coffee":
-          "The aroma of freshly ground coffee beans filled the small kitchen, carrying with it the promise of a new day. Steam rose from the ceramic mug like tiny clouds ascending to heaven, curling upward in graceful spirals that danced in the morning light streaming through the window.",
-        "Ocean Waves":
-          "The waves crashed against the rocky shore with rhythmic persistence. Seagulls danced in the salty breeze while children built sandcastles that would soon be claimed by the tide. The ocean holds infinite mysteries beneath its surface.",
-        "City Lights":
-          "Neon signs flickered against the night sky, painting the wet streets in colorful reflections. Taxi cabs honked their way through the bustling traffic while people hurried home from late dinners and evening shows.",
-        "Garden Stories":
-          "Tomatoes ripened slowly in the summer heat while bees collected nectar from the lavender bushes. The old gardener smiled as he watered each plant with care, knowing that patience yields the sweetest harvest.",
-        "Train Journey":
-          "The locomotive whistle echoed through the valley as passengers settled into their seats with books and warm tea. Mountains passed by the window like ancient guardians watching over the winding tracks below.",
-      },
-      lessonCategories: {
-        "The Little Prince": ["books"],
-        "Morning Coffee": ["food"],
-        "Ocean Waves": ["travel"],
-        "City Lights": ["travel"],
-        "Garden Stories": ["hobbies"],
-        "Train Journey": ["travel"],
-      },
-      recentlyAccessedLessons: [],
-      recentlyAccessedCategories: [],
     }));
 
     localStorage.setItem("token", devToken);
