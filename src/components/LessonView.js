@@ -376,7 +376,7 @@ const LessonView = () => {
 
         // Add selected word styling
         if (isSelected) {
-          className += "text-3xl font-bold ring-2 ring-blue-500 ring-offset-1 ";
+          className += "ring-2 ring-blue-500 ring-offset-1 ";
         }
 
         if (metadata?.fam === "known") {
