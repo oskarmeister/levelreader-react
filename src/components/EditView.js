@@ -22,10 +22,22 @@ const EditView = () => {
   const handleSave = async () => {
     if (text.trim()) {
       const newLessons = { ...state.lessons };
-      delete newLessons[key]; // Remove old if title changed
+      const newCategories = { ...state.lessonCategories };
+
+      delete newLessons[key];
+      delete newCategories[key];
+
       newLessons[title] = text.trim();
-      setState((prev) => ({ ...prev, lessons: newLessons }));
-      await StorageManager.save(state);
+      newCategories[title] = selectedCategories;
+
+      const newState = {
+        ...state,
+        lessons: newLessons,
+        lessonCategories: newCategories,
+      };
+
+      setState(newState);
+      await StorageManager.save(newState);
       navigate("/library");
     } else {
       alert("Text required");
