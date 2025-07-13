@@ -22,12 +22,12 @@ const LibraryView = () => {
       const progress = total ? (known / total) * 100 : 0;
 
       return (
-        <div key={key} className="lesson-card bg-secondary text-white p-4 rounded-lg cursor-pointer relative opacity-0 transition-all duration-300 hover:scale-105 hover:shadow-md" onClick={() => navigate(`/lesson/${key}`)}>
+        <div key={key} className="lesson-card bg-secondary text-white p-4 rounded-lg cursor-pointer relative opacity-100 transition-all duration-300 hover:scale-105 origin-top-left hover:shadow-md w-64 min-h-32" onClick={() => navigate(`/lesson/${key}`)}>
           <h3 className="text-lg font-bold">{key}</h3>
           <button className="edit-lesson absolute top-2 right-2 bg-gray-600 px-2 py-1 rounded-full text-white">⋮</button>
           {/* Card menu would be added here with state for show/hide */}
-          <span className="unknown-percent absolute bottom-8 right-2 bg-white bg-opacity-20 px-2 py-1 rounded text-sm">{pct}% unknown</span>
-          <div className="progress-bar bg-gray-300 h-2 rounded mt-2">
+          <span className="unknown-percent absolute bottom-8 right-4 bg-white bg-opacity-20 px-2 py-1 rounded text-sm">{pct}% unknown</span>
+          <div className="progress-bar bg-gray-300 h-2 rounded absolute bottom-4 left-0 right-0 mx-4">
             <div className="progress bg-primary h-full rounded" style={{ width: `${progress}%` }}></div>
           </div>
         </div>
@@ -47,9 +47,9 @@ const LibraryView = () => {
   // Add edit logic similarly
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">📖 My Lessons</h2>
-      <div className="flex gap-4 overflow-x-auto pb-4">
+    <div className="container mx-auto p-4 overflow-visible">
+      <h2 className="text-2xl font-bold mb-4 overflow-visible">📖 My Lessons</h2>
+      <div className="flex gap-4 overflow-x-auto pb-4 overflow-visible">
         {renderLessonCards()}
       </div>
     </div>
