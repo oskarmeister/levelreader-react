@@ -741,15 +741,21 @@ const LessonView = () => {
             ) : (
               <>
                 <div className="flex justify-between">
-                  <span>Navigate sentences:</span>
+                  <span>Navigate words:</span>
                   <span className="font-mono bg-gray-100 px-2 py-1 rounded">
                     ← →
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Translate sentence:</span>
+                  <span>Navigate sentences:</span>
                   <span className="font-mono bg-gray-100 px-2 py-1 rounded">
-                    Click button
+                    Shift + ← →
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Set familiarity:</span>
+                  <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+                    1, 2, 3, K
                   </span>
                 </div>
               </>
