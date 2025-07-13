@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import { StorageManager } from "../storageManager";
+import ConfirmationModal from "./ConfirmationModal";
 
 const LibraryView = () => {
   const { state, setState } = useContext(AppContext);
