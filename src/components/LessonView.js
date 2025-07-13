@@ -166,10 +166,10 @@ const LessonView = () => {
         }
       }
 
-      // Delete word with 'x' key
+      // Unmark word with 'x' key
       if (state.selectedWord && (e.key === "x" || e.key === "X")) {
         e.preventDefault();
-        handleDeleteWord(state.selectedWord);
+        handleUnmarkWord(state.selectedWord);
       }
     };
 
@@ -354,16 +354,14 @@ const LessonView = () => {
     // Save would be handled by the storage manager
   };
 
-  const handleDeleteWord = (word) => {
+  const handleUnmarkWord = (word) => {
     setState((prev) => {
-      const newDeletedWords = [...prev.deletedWords, word];
       const newWordMetadata = { ...prev.wordMetadata };
-      // Remove word metadata when deleted
+      // Remove word metadata to unmark it
       delete newWordMetadata[word];
 
       return {
         ...prev,
-        deletedWords: newDeletedWords,
         wordMetadata: newWordMetadata,
         selectedWord: "", // Clear selection
         sidebarOpen: false, // Close sidebar
@@ -760,7 +758,7 @@ const LessonView = () => {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Delete word:</span>
+                  <span>Unmark word:</span>
                   <span className="font-mono bg-gray-100 px-2 py-1 rounded">
                     X
                   </span>
@@ -787,7 +785,7 @@ const LessonView = () => {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Delete word:</span>
+                  <span>Unmark word:</span>
                   <span className="font-mono bg-gray-100 px-2 py-1 rounded">
                     X
                   </span>
