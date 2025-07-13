@@ -20,6 +20,86 @@ import { ApiManager } from "./api/apiManager";
 function App() {
   const [state, setState] = useState({
     token: localStorage.getItem("token"),
+    selectedLanguage: localStorage.getItem("selectedLanguage") || "Spanish",
+    languageData: {
+      Spanish: {
+        lessons: {
+          "El Principito":
+            "En el desierto, he aprendido a escuchar. Todo lo que necesitaba era una pequeña brisa para escuchar las voces de aquellos que amo.",
+          "Café Matutino":
+            "El aroma de los granos de café recién molidos llenó la pequeña cocina, llevando consigo la promesa de un nuevo día.",
+        },
+        lessonCategories: {
+          "El Principito": ["books"],
+          "Café Matutino": ["food"],
+        },
+        recentlyAccessedLessons: [],
+        recentlyAccessedCategories: [],
+        wordMetadata: {},
+        translationCache: {},
+        deletedWords: [],
+      },
+      Swedish: {
+        lessons: {
+          "Lille Prinsen":
+            "I öknen har jag lärt mig att lyssna. Allt jag behövde var en liten bris för att höra rösterna från dem jag älskar.",
+        },
+        lessonCategories: { "Lille Prinsen": ["books"] },
+        recentlyAccessedLessons: [],
+        recentlyAccessedCategories: [],
+        wordMetadata: {},
+        translationCache: {},
+        deletedWords: [],
+      },
+      Chinese: {
+        lessons: {
+          小王子:
+            "在沙漠中，我学会了倾听。我所需要的只是一阵微风，就能听到我所爱的人的声音。",
+        },
+        lessonCategories: { 小王子: ["books"] },
+        recentlyAccessedLessons: [],
+        recentlyAccessedCategories: [],
+        wordMetadata: {},
+        translationCache: {},
+        deletedWords: [],
+      },
+      English: {
+        lessons: {
+          "The Little Prince":
+            "In the desert, I have learned to listen. All I needed was a little breeze to hear the voices of those I love.",
+        },
+        lessonCategories: { "The Little Prince": ["books"] },
+        recentlyAccessedLessons: [],
+        recentlyAccessedCategories: [],
+        wordMetadata: {},
+        translationCache: {},
+        deletedWords: [],
+      },
+      German: {
+        lessons: {
+          "Der Kleine Prinz":
+            "In der Wüste habe ich gelernt zu hören. Alles was ich brauchte war eine kleine Brise.",
+        },
+        lessonCategories: { "Der Kleine Prinz": ["books"] },
+        recentlyAccessedLessons: [],
+        recentlyAccessedCategories: [],
+        wordMetadata: {},
+        translationCache: {},
+        deletedWords: [],
+      },
+      French: {
+        lessons: {
+          "Le Petit Prince":
+            "Dans le désert, j'ai appris à écouter. Tout ce dont j'avais besoin était une petite brise.",
+        },
+        lessonCategories: { "Le Petit Prince": ["books"] },
+        recentlyAccessedLessons: [],
+        recentlyAccessedCategories: [],
+        wordMetadata: {},
+        translationCache: {},
+        deletedWords: [],
+      },
+    },
     lessons: {
       "The Little Prince":
         "In the desert, I have learned to listen. All I needed was a little breeze to hear the voices of those I love. The stars whisper secrets to those who know how to listen. Each grain of sand holds a story waiting to be told.",
