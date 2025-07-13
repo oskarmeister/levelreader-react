@@ -18,6 +18,36 @@ import AppContext from "./context/AppContext";
 import { ApiManager } from "./api/apiManager";
 
 function App() {
+  // Helper function to get current language data
+  const getCurrentLanguageData = (state) => {
+    return (
+      state.languageData[state.selectedLanguage] || {
+        lessons: {},
+        lessonCategories: {},
+        recentlyAccessedLessons: [],
+        recentlyAccessedCategories: [],
+        wordMetadata: {},
+        translationCache: {},
+        deletedWords: [],
+      }
+    );
+  };
+
+  // Helper function to sync current language data to legacy state properties
+  const syncLanguageData = (state) => {
+    const currentData = getCurrentLanguageData(state);
+    return {
+      ...state,
+      lessons: currentData.lessons,
+      lessonCategories: currentData.lessonCategories,
+      recentlyAccessedLessons: currentData.recentlyAccessedLessons,
+      recentlyAccessedCategories: currentData.recentlyAccessedCategories,
+      wordMetadata: currentData.wordMetadata,
+      translationCache: currentData.translationCache,
+      deletedWords: currentData.deletedWords,
+    };
+  };
+
   const [state, setState] = useState({
     token: localStorage.getItem("token"),
     selectedLanguage: localStorage.getItem("selectedLanguage") || "Spanish",
