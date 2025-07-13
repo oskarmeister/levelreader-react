@@ -14,6 +14,30 @@ const LessonView = () => {
     const text = state.lessons[key];
     if (text) {
       setState((prev) => ({ ...prev, currentText: text }));
+
+      // Track recently accessed lesson
+      const updatedRecentLessons = [
+        key,
+        ...(prev.recentlyAccessedLessons || []).filter(
+          (lesson) => lesson !== key,
+        ),
+      ].slice(0, 10);
+
+      // Track recently accessed categories
+      const lessonCategories = prev.lessonCategories?.[key] || [];
+      const updatedRecentCategories = lessonCategories
+        .reduce((acc, category) => {
+          return [category, ...acc.filter((cat) => cat !== category)];
+        }, prev.recentlyAccessedCategories || [])
+        .slice(0, 5);
+
+      setState((prev) => ({
+        ...prev,
+        currentText: text,
+        recentlyAccessedLessons: updatedRecentLessons,
+        recentlyAccessedCategories: updatedRecentCategories,
+      }));
+
       calculateWordsPerPage();
     }
   }, [key, state.wordMetadata, state.deletedWords]);
