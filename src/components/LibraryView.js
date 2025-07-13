@@ -22,7 +22,7 @@ const LibraryView = () => {
 
   const renderLessonCards = (lessons = null) => {
     const lessonsToRender = lessons || Object.entries(state.lessons);
-    return Object.entries(state.lessons).map(([key, text]) => {
+    return lessonsToRender.map(([key, text]) => {
       // Calculate stats
       const rawWords = text.match(/\p{L}+/gu) || [];
       const words = Array.from(new Set(rawWords));
