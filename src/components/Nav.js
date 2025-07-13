@@ -16,6 +16,27 @@ const Nav = () => {
     { id: "tab-generate", label: "Generate", path: "/generate" },
   ];
 
+  const languages = [
+    { name: "Spanish", flag: "🇪🇸" },
+    { name: "French", flag: "🇫🇷" },
+    { name: "German", flag: "🇩🇪" },
+    { name: "Italian", flag: "🇮🇹" },
+    { name: "Portuguese", flag: "🇵🇹" },
+    { name: "Chinese", flag: "🇨🇳" },
+    { name: "Japanese", flag: "🇯🇵" },
+    { name: "Korean", flag: "🇰🇷" },
+    { name: "Russian", flag: "🇷🇺" },
+    { name: "Arabic", flag: "🇸🇦" },
+  ];
+
+  const currentLanguage =
+    languages.find((lang) => lang.name === selectedLanguage) || languages[0];
+
+  const handleLanguageSelect = (language) => {
+    setSelectedLanguage(language.name);
+    setShowLanguageDropdown(false);
+  };
+
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center"
