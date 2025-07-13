@@ -114,6 +114,27 @@ const Sidebar = () => {
           </div>
         )}
 
+        {autoTranslation && !saved && (
+          <div className="bg-green-50 border border-green-200 p-3 rounded-lg mb-4">
+            <div className="text-sm text-green-600 font-medium mb-1">
+              Auto Translation
+            </div>
+            <div className="text-green-800 mb-2">{autoTranslation}</div>
+            <button
+              onClick={useAutoTranslation}
+              className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
+            >
+              Use This Translation
+            </button>
+          </div>
+        )}
+
+        {translationError && (
+          <div className="bg-red-50 border border-red-200 p-3 rounded-lg mb-4">
+            <div className="text-sm text-red-600">{translationError}</div>
+          </div>
+        )}
+
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Add Translation
