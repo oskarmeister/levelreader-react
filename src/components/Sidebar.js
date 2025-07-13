@@ -57,6 +57,11 @@ const Sidebar = () => {
     }
   }, [word, state.sidebarOpen]);
 
+  // Only show sidebar in lesson view
+  if (!location.pathname.startsWith("/lesson/")) {
+    return null;
+  }
+
   if (!state.sidebarOpen) return null;
 
   const closeSidebar = () =>
