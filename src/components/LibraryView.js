@@ -177,10 +177,33 @@ const LibraryView = () => {
               scrollbarColor: "#D1D5DB #F3F4F6",
             }}
           >
-            {renderLessonCards()}
+            {getRecentlyStudiedLessons().length > 0
+              ? renderLessonCards(
+                  getRecentlyStudiedLessons()
+                    .map((key) => [key, state.lessons[key]])
+                    .filter(([key, text]) => text),
+                )
+              : renderLessonCards(Object.entries(state.lessons).slice(0, 5))}
           </div>
         </div>
       </div>
+
+      {/* Recently accessed categories at the top */}
+      {state.recentlyAccessedCategories?.slice(0, 3).map((category) => {
+        const style = getCategoryStyle(category);
+        return renderCategorySection(category, style.color, style.gradient);
+      })}
+
+      {/* Themed category sections */}
+      {categories
+        .filter(
+          (category) =>
+            !state.recentlyAccessedCategories?.slice(0, 3).includes(category),
+        )
+        .map((category) => {
+          const style = getCategoryStyle(category);
+          return renderCategorySection(category, style.color, style.gradient);
+        })}
 
       {/* History section */}
       <div
@@ -199,7 +222,7 @@ const LibraryView = () => {
             borderLeft: "4px solid #6B7280",
           }}
         >
-          History
+          All Lessons
         </div>
         <div className="p-6">
           <div
