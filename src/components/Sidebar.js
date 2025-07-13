@@ -87,8 +87,15 @@ const Sidebar = () => {
   };
 
   const handleFamiliarityChange = async (famLevel) => {
-    const currentTranslation = state.wordMetadata[word]?.translation || "";
+    // Use auto-translation if available and no existing translation
+    const currentTranslation =
+      state.wordMetadata[word]?.translation || autoTranslation || "";
     await saveWordMetadata(word, currentTranslation, famLevel);
+
+    // Clear auto-translation since it's now saved
+    if (autoTranslation && !state.wordMetadata[word]?.translation) {
+      setAutoTranslation("");
+    }
   };
 
   const useAutoTranslation = async () => {
