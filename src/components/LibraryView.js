@@ -6,6 +6,7 @@ import { StorageManager } from "../storageManager";
 const LibraryView = () => {
   const { state, setState } = useContext(AppContext);
   const navigate = useNavigate();
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   const categories = ["news", "hobbies", "food", "movies", "books", "travel"];
 
