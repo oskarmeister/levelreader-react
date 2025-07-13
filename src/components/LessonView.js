@@ -56,7 +56,7 @@ const LessonView = () => {
     const lineHeight = 29.25; // From CSS: line-height for text-lg (1.625 * 18px)
     const wordsPerLine = 10; // Conservative estimate of words per line
     const linesPerPage = Math.floor(availableHeight / lineHeight);
-    const calculatedWordsPerPage = Math.max(300, linesPerPage * wordsPerLine); // Minimum 300 words
+    const calculatedWordsPerPage = Math.max(120, linesPerPage * wordsPerLine); // Minimum 120 words for compact card
 
     setWordsPerPage(calculatedWordsPerPage);
 
