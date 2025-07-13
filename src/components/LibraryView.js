@@ -118,31 +118,35 @@ const LibraryView = () => {
     });
   };
 
-  const deleteLesson = async (key) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete "${key}"? This action cannot be undone.`,
-      )
-    ) {
-      const newLessons = { ...state.lessons };
-      const newCategories = { ...state.lessonCategories };
-      const newRecentLessons = (state.recentlyAccessedLessons || []).filter(
-        (lesson) => lesson !== key,
-      );
+  const deleteLesson = (key) => {
+    setConfirmDelete({ isOpen: true, lessonKey: key });
+  };
 
-      delete newLessons[key];
-      delete newCategories[key];
+  const handleConfirmDelete = async () => {
+    const key = confirmDelete.lessonKey;
+    const newLessons = { ...state.lessons };
+    const newCategories = { ...state.lessonCategories };
+    const newRecentLessons = (state.recentlyAccessedLessons || []).filter(
+      (lesson) => lesson !== key,
+    );
 
-      const newState = {
-        ...state,
-        lessons: newLessons,
-        lessonCategories: newCategories,
-        recentlyAccessedLessons: newRecentLessons,
-      };
+    delete newLessons[key];
+    delete newCategories[key];
 
-      setState(newState);
-      await StorageManager.save(newState);
-    }
+    const newState = {
+      ...state,
+      lessons: newLessons,
+      lessonCategories: newCategories,
+      recentlyAccessedLessons: newRecentLessons,
+    };
+
+    setState(newState);
+    await StorageManager.save(newState);
+    setConfirmDelete({ isOpen: false, lessonKey: null });
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmDelete({ isOpen: false, lessonKey: null });
   };
 
   const renderCategorySection = (category, color, gradient) => {
