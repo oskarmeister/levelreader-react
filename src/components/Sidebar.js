@@ -7,7 +7,13 @@ import { getLanguageCode } from "../utils/languageUtils";
 
 const Sidebar = () => {
   const { state, setState } = useContext(AppContext);
+  const location = useLocation();
   const word = state.selectedWord;
+
+  // Only show sidebar in lesson view
+  if (!location.pathname.startsWith("/lesson/")) {
+    return null;
+  }
   const [customTranslation, setCustomTranslation] = useState("");
   const [loading, setLoading] = useState(false);
   const [autoTranslation, setAutoTranslation] = useState("");
