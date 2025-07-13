@@ -11,6 +11,44 @@ const Sidebar = () => {
   const [autoTranslation, setAutoTranslation] = useState("");
   const [translationError, setTranslationError] = useState("");
 
+  useEffect(() => {
+    const translateWord = async () => {
+      if (word && !state.wordMetadata[word]?.translation) {
+        // Check if we have a cached translation
+        const cachedTranslation = state.translationCache[word];
+        if (cachedTranslation) {
+          setAutoTranslation(cachedTranslation);
+          return;
+        }
+
+        setLoading(true);
+        setTranslationError("");
+        setAutoTranslation("");
+
+        try {
+          const result = await TranslationService.translateText(word, "en");
+          setAutoTranslation(result.translatedText);
+
+          // Cache the translation
+          const newCache = {
+            ...state.translationCache,
+            [word]: result.translatedText,
+          };
+          setState((prev) => ({ ...prev, translationCache: newCache }));
+        } catch (error) {
+          setTranslationError("Translation failed. Please add manually.");
+          console.error("Translation error:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    if (word && state.sidebarOpen) {
+      translateWord();
+    }
+  }, [word, state.sidebarOpen]);
+
   if (!state.sidebarOpen) return null;
 
   const closeSidebar = () =>
