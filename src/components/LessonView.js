@@ -168,7 +168,7 @@ const LessonView = () => {
           <div
             className="prose prose-lg max-w-none leading-relaxed text-lg"
             style={{
-              height: "calc(100vh - 340px)",
+              height: "300px",
               overflow: "hidden",
             }}
           >
