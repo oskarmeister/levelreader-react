@@ -114,11 +114,29 @@ const LibraryView = () => {
   };
 
   const deleteLesson = async (key) => {
-    if (window.confirm("Delete this lesson?")) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${key}"? This action cannot be undone.`,
+      )
+    ) {
       const newLessons = { ...state.lessons };
+      const newCategories = { ...state.lessonCategories };
+      const newRecentLessons = (state.recentlyAccessedLessons || []).filter(
+        (lesson) => lesson !== key,
+      );
+
       delete newLessons[key];
-      setState((prev) => ({ ...prev, lessons: newLessons }));
-      await StorageManager.save(state);
+      delete newCategories[key];
+
+      const newState = {
+        ...state,
+        lessons: newLessons,
+        lessonCategories: newCategories,
+        recentlyAccessedLessons: newRecentLessons,
+      };
+
+      setState(newState);
+      await StorageManager.save(newState);
     }
   };
 
