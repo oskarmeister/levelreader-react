@@ -134,24 +134,6 @@ const GenerateView = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Left Column - Controls */}
               <div className="space-y-6">
-                {/* Language Selection */}
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Target Language
-                  </label>
-                  <select
-                    value={selectedLanguage}
-                    onChange={(e) => setSelectedLanguage(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  >
-                    {languages.map((lang) => (
-                      <option key={lang} value={lang}>
-                        {lang}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 {/* Topic */}
                 <div>
                   <label className="block text-gray-700 text-sm font-medium mb-2">
