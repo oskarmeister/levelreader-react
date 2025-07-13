@@ -117,7 +117,7 @@ const Nav = () => {
                   <button
                     key={language.name}
                     className={`w-full flex items-center px-4 py-2 text-left hover:bg-gray-50 transition-colors ${
-                      selectedLanguage === language.name
+                      state.selectedLanguage === language.name
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-700"
                     }`}
