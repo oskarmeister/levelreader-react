@@ -9,7 +9,7 @@ const LessonView = () => {
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
 
-  const WORDS_PER_PAGE = 100; // Adjust this to control page size
+  const WORDS_PER_PAGE = 300; // Adjust this to control page size
 
   useEffect(() => {
     const text = state.lessons[key];
