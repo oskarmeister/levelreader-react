@@ -1,9 +1,26 @@
-import { ApiManager } from './api/apiManager';
+import { ApiManager } from "./api/apiManager";
 
 const StorageManager = {
   async save(state) {
-    await ApiManager.saveUserData(state);
-  }
+    // Update the current language data in languageData structure
+    const updatedState = {
+      ...state,
+      languageData: {
+        ...state.languageData,
+        [state.selectedLanguage]: {
+          lessons: state.lessons,
+          lessonCategories: state.lessonCategories,
+          recentlyAccessedLessons: state.recentlyAccessedLessons,
+          recentlyAccessedCategories: state.recentlyAccessedCategories,
+          wordMetadata: state.wordMetadata,
+          translationCache: state.translationCache,
+          deletedWords: state.deletedWords,
+        },
+      },
+    };
+
+    await ApiManager.saveUserData(updatedState);
+  },
 };
 
 export { StorageManager };
