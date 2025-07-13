@@ -1,12 +1,66 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import { StorageManager } from "../storageManager";
+import TranslationService from "../services/translationService";
+import { getLanguageCode } from "../utils/languageUtils";
 
 const Sidebar = () => {
   const { state, setState } = useContext(AppContext);
+  const location = useLocation();
   const word = state.selectedWord;
   const [customTranslation, setCustomTranslation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [autoTranslation, setAutoTranslation] = useState("");
+  const [translationError, setTranslationError] = useState("");
+
+  useEffect(() => {
+    const translateWord = async () => {
+      if (word && !state.wordMetadata[word]?.translation) {
+        // Check if we have a cached translation
+        const cachedTranslation = state.translationCache[word];
+        if (cachedTranslation) {
+          setAutoTranslation(cachedTranslation);
+          return;
+        }
+
+        setLoading(true);
+        setTranslationError("");
+        setAutoTranslation("");
+
+        try {
+          const sourceLang = getLanguageCode(state.selectedLanguage);
+          const result = await TranslationService.translateText(
+            word,
+            "en",
+            sourceLang,
+          );
+          setAutoTranslation(result.translatedText);
+
+          // Cache the translation
+          const newCache = {
+            ...state.translationCache,
+            [word]: result.translatedText,
+          };
+          setState((prev) => ({ ...prev, translationCache: newCache }));
+        } catch (error) {
+          setTranslationError("Translation failed. Please add manually.");
+          console.error("Translation error:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    if (word && state.sidebarOpen) {
+      translateWord();
+    }
+  }, [word, state.sidebarOpen]);
+
+  // Only show sidebar in lesson view
+  if (!location.pathname.startsWith("/lesson/")) {
+    return null;
+  }
 
   if (!state.sidebarOpen) return null;
 
@@ -33,8 +87,39 @@ const Sidebar = () => {
   };
 
   const handleFamiliarityChange = async (famLevel) => {
-    const currentTranslation = state.wordMetadata[word]?.translation || "";
+    // Use auto-translation if available and no existing translation
+    const currentTranslation =
+      state.wordMetadata[word]?.translation || autoTranslation || "";
     await saveWordMetadata(word, currentTranslation, famLevel);
+
+    // Clear auto-translation since it's now saved
+    if (autoTranslation && !state.wordMetadata[word]?.translation) {
+      setAutoTranslation("");
+    }
+  };
+
+  const useAutoTranslation = async () => {
+    if (autoTranslation) {
+      await saveWordMetadata(
+        word,
+        autoTranslation,
+        state.wordMetadata[word]?.fam || "1",
+      );
+      setAutoTranslation(""); // Clear auto translation since it's now saved
+    }
+  };
+
+  const handleUnmarkWord = () => {
+    setState((prev) => {
+      const newWordMetadata = { ...prev.wordMetadata };
+      delete newWordMetadata[word];
+      return {
+        ...prev,
+        wordMetadata: newWordMetadata,
+        selectedWord: "",
+        sidebarOpen: false,
+      };
+    });
   };
 
   const saved = state.wordMetadata[word]?.translation;
@@ -59,6 +144,27 @@ const Sidebar = () => {
               Saved Translation
             </div>
             <div className="text-blue-800">{saved}</div>
+          </div>
+        )}
+
+        {autoTranslation && !saved && (
+          <div className="bg-green-50 border border-green-200 p-3 rounded-lg mb-4">
+            <div className="text-sm text-green-600 font-medium mb-1">
+              Auto Translation
+            </div>
+            <div className="text-green-800 mb-2">{autoTranslation}</div>
+            <button
+              onClick={useAutoTranslation}
+              className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
+            >
+              Use This Translation
+            </button>
+          </div>
+        )}
+
+        {translationError && (
+          <div className="bg-red-50 border border-red-200 p-3 rounded-lg mb-4">
+            <div className="text-sm text-red-600">{translationError}</div>
           </div>
         )}
 
@@ -126,13 +232,36 @@ const Sidebar = () => {
             >
               Known
             </button>
+            <button
+              onClick={handleUnmarkWord}
+              className={`p-2 rounded-lg text-sm font-medium transition-colors ${
+                !currentFamiliarity
+                  ? "bg-red-100 text-red-800 border-2 border-red-300"
+                  : "bg-gray-100 text-gray-700 hover:bg-red-50"
+              } col-span-2 flex items-center justify-center gap-2`}
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              Unmark Word
+            </button>
           </div>
         </div>
       </div>
 
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
-          <div className="text-purple-600">Loading...</div>
+          <div className="text-purple-600">Translating...</div>
         </div>
       )}
     </div>
