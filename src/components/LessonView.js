@@ -384,15 +384,102 @@ const LessonView = () => {
         </div>
 
         <div className="p-8">
-          <div
-            className="prose prose-lg max-w-none leading-relaxed text-lg"
-            style={{
-              height: "300px",
-              overflow: "hidden",
-            }}
-          >
-            {pages[currentPage] || []}
-          </div>
+          {viewMode === "words" ? (
+            <div
+              className="prose prose-lg max-w-none leading-relaxed text-lg"
+              style={{
+                height: "300px",
+                overflow: "hidden",
+              }}
+            >
+              {pages[currentPage] || []}
+            </div>
+          ) : (
+            <div className="min-h-[400px]">
+              <div className="mb-8">
+                <div className="text-2xl leading-relaxed mb-6 p-6 bg-gray-50 rounded-lg">
+                  {sentences[currentSentence] || "No sentence available"}
+                </div>
+
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-sm text-gray-600">
+                    Sentence {currentSentence + 1} of {sentences.length}
+                  </span>
+                  <button
+                    onClick={() =>
+                      translateSentence(sentences[currentSentence])
+                    }
+                    disabled={
+                      translatingsentence || !sentences[currentSentence]
+                    }
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {translatingsentence
+                      ? "Translating..."
+                      : "Translate to English"}
+                  </button>
+                </div>
+
+                {sentenceTranslation && (
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="text-sm text-green-600 font-medium mb-1">
+                      Translation:
+                    </div>
+                    <div className="text-green-800">{sentenceTranslation}</div>
+                  </div>
+                )}
+              </div>
+
+              {sentences.length > 1 && (
+                <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      setCurrentSentence(Math.max(0, currentSentence - 1));
+                      setSentenceTranslation("");
+                    }}
+                    disabled={currentSentence === 0}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  >
+                    ← Previous
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1">
+                      {sentences.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setCurrentSentence(index);
+                            setSentenceTranslation("");
+                          }}
+                          className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
+                            index === currentSentence
+                              ? "bg-purple-600 text-white"
+                              : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setCurrentSentence(
+                        Math.min(sentences.length - 1, currentSentence + 1),
+                      );
+                      setSentenceTranslation("");
+                    }}
+                    disabled={currentSentence === sentences.length - 1}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {pages.length > 1 && (
             <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
