@@ -10,6 +10,7 @@ import AccountView from "./components/AccountView";
 import LibraryView from "./components/LibraryView";
 import WordBankView from "./components/WordBankView";
 import ImportView from "./components/ImportView";
+import GenerateView from "./components/GenerateView";
 import LessonView from "./components/LessonView";
 import EditView from "./components/EditView";
 import Sidebar from "./components/Sidebar";
