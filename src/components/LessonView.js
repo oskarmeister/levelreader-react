@@ -318,6 +318,54 @@ const LessonView = () => {
     // Save would be handled by the storage manager
   };
 
+  const renderSentenceWithClickableWords = (sentence) => {
+    if (!sentence) return null;
+
+    const words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+
+    return words.map((token, index) => {
+      if (/\p{L}+/u.test(token)) {
+        const word = token.toLowerCase();
+        const metadata = state.wordMetadata[word];
+        const isDeleted = state.deletedWords.includes(word);
+
+        if (isDeleted) return null;
+
+        const isSelected = state.selectedWord === word;
+        let className =
+          "cursor-pointer transition-all hover:bg-gray-200 px-1 rounded ";
+
+        // Add selected word styling
+        if (isSelected) {
+          className += "text-3xl font-bold ring-2 ring-blue-500 ring-offset-1 ";
+        }
+
+        if (metadata?.fam === "known") {
+          className += "text-gray-800";
+        } else if (metadata?.fam === "3") {
+          className += "text-green-600 bg-green-50";
+        } else if (metadata?.fam === "2") {
+          className += "text-yellow-600 bg-yellow-50";
+        } else if (metadata?.fam === "1") {
+          className += "text-orange-600 bg-orange-50";
+        } else {
+          className += "text-red-600 bg-red-50 font-medium";
+        }
+
+        return (
+          <span
+            key={index}
+            className={className}
+            onClick={() => handleWordClick(word)}
+          >
+            {token}
+          </span>
+        );
+      }
+      return <span key={index}>{token}</span>;
+    });
+  };
+
   if (!state.lessons[key]) {
     return (
       <div className="container mx-auto p-4">
