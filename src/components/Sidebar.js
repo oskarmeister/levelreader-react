@@ -27,10 +27,11 @@ const Sidebar = () => {
         setAutoTranslation("");
 
         try {
-          const targetLang = getLanguageCode(state.selectedLanguage);
+          const sourceLang = getLanguageCode(state.selectedLanguage);
           const result = await TranslationService.translateText(
             word,
-            targetLang,
+            "en",
+            sourceLang,
           );
           setAutoTranslation(result.translatedText);
 
