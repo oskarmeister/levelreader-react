@@ -40,48 +40,99 @@ const Sidebar = () => {
   const saved = state.wordMetadata[word]?.translation;
   const currentFamiliarity = state.wordMetadata[word]?.fam;
 
-  // Highlight buttons and familiarity logic
-
   return (
-    <div className="fixed top-16 right-0 w-72 max-h-[calc(100vh-8rem)] bg-white rounded-l-lg shadow-lg p-4 overflow-y-auto z-50 transform translate-x-0 transition-transform">
-      <button onClick={closeSidebar} className="absolute top-2 right-2 text-xl">
-        ×
-      </button>
-      <h3 className="text-xl font-bold mb-2">{word}</h3>
-      {saved && <div className="bg-blue-100 p-2 rounded mb-2">{saved}</div>}
-      {translation && !saved && (
-        <div
-          className="bg-green-100 p-2 rounded mb-2 cursor-pointer"
-          onClick={() =>
-            WordManager.saveWordMetadata(
-              word,
-              translation,
-              "1",
-              state,
-              setState,
-            )
-          }
+    <div className="fixed top-16 right-0 w-72 max-h-[calc(100vh-8rem)] bg-white rounded-l-lg shadow-lg overflow-hidden z-50 transform translate-x-0 transition-transform">
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-gray-100 relative">
+        <button
+          onClick={closeSidebar}
+          className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl"
         >
-          {translation}
+          ×
+        </button>
+        <h3 className="text-xl font-bold text-gray-800 pr-8">{word}</h3>
+      </div>
+
+      <div className="p-4">
+        {saved && (
+          <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg mb-4">
+            <div className="text-sm text-blue-600 font-medium mb-1">
+              Saved Translation
+            </div>
+            <div className="text-blue-800">{saved}</div>
+          </div>
+        )}
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Add Translation
+          </label>
+          <input
+            type="text"
+            placeholder="Enter translation..."
+            value={customTranslation}
+            onChange={(e) => setCustomTranslation(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          />
+          <button
+            onClick={handleSaveCustom}
+            className="w-full mt-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-colors"
+          >
+            Save Translation
+          </button>
         </div>
-      )}
-      <input
-        type="text"
-        placeholder="Custom Translation"
-        value={customTranslation}
-        onChange={(e) => setCustomTranslation(e.target.value)}
-        className="w-full p-2 border rounded mb-2"
-      />
-      <button
-        onClick={handleSaveCustom}
-        className="w-full bg-primary text-white py-2 rounded mb-2"
-      >
-        Save Translation
-      </button>
-      <div className="flex justify-between">{/* Familiarity buttons */}</div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Familiarity Level
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => handleFamiliarityChange("1")}
+              className={`p-2 rounded-lg text-sm font-medium transition-colors ${
+                currentFamiliarity === "1"
+                  ? "bg-orange-100 text-orange-800 border-2 border-orange-300"
+                  : "bg-gray-100 text-gray-700 hover:bg-orange-50"
+              }`}
+            >
+              Learning
+            </button>
+            <button
+              onClick={() => handleFamiliarityChange("2")}
+              className={`p-2 rounded-lg text-sm font-medium transition-colors ${
+                currentFamiliarity === "2"
+                  ? "bg-yellow-100 text-yellow-800 border-2 border-yellow-300"
+                  : "bg-gray-100 text-gray-700 hover:bg-yellow-50"
+              }`}
+            >
+              Familiar
+            </button>
+            <button
+              onClick={() => handleFamiliarityChange("3")}
+              className={`p-2 rounded-lg text-sm font-medium transition-colors ${
+                currentFamiliarity === "3"
+                  ? "bg-yellow-100 text-yellow-800 border-2 border-yellow-300"
+                  : "bg-gray-100 text-gray-700 hover:bg-yellow-50"
+              }`}
+            >
+              Well Known
+            </button>
+            <button
+              onClick={() => handleFamiliarityChange("known")}
+              className={`p-2 rounded-lg text-sm font-medium transition-colors ${
+                currentFamiliarity === "known"
+                  ? "bg-green-100 text-green-800 border-2 border-green-300"
+                  : "bg-gray-100 text-gray-700 hover:bg-green-50"
+              }`}
+            >
+              Known
+            </button>
+          </div>
+        </div>
+      </div>
+
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80">
-          Loading...
+        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
+          <div className="text-purple-600">Loading...</div>
         </div>
       )}
     </div>
