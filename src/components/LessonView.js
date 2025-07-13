@@ -124,10 +124,14 @@ const LessonView = () => {
           </div>
           <div className="flex items-center gap-2">
             <span className="w-4 h-4 bg-yellow-50 border border-yellow-200 rounded"></span>
-            <span>Familiar (Level 2-3)</span>
+            <span>Familiar (Level 2)</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-4 h-4 bg-green-50 border border-green-200 rounded"></span>
+            <span>Well Known (Level 3)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></span>
             <span>Known words</span>
           </div>
         </div>
