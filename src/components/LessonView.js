@@ -165,6 +165,12 @@ const LessonView = () => {
           handleFamiliarityChange(state.selectedWord, famLevel);
         }
       }
+
+      // Delete word with 'x' key
+      if (state.selectedWord && (e.key === "x" || e.key === "X")) {
+        e.preventDefault();
+        handleDeleteWord(state.selectedWord);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
