@@ -48,6 +48,7 @@ const LessonView = () => {
       });
 
       calculateWordsPerPage();
+      parseSentences(text);
     }
   }, [key, state.wordMetadata, state.deletedWords, state.selectedWord]);
 
