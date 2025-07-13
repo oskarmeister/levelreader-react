@@ -104,6 +104,7 @@ function App() {
               <Route path="/library" element={<LibraryView />} />
               <Route path="/wordbank" element={<WordBankView />} />
               <Route path="/import" element={<ImportView />} />
+              <Route path="/generate" element={<GenerateView />} />
               <Route path="/lesson/:key" element={<LessonView />} />
               <Route path="/edit/:key" element={<EditView />} />
               <Route
