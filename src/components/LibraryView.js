@@ -80,6 +80,17 @@ const LibraryView = () => {
       >
         {renderLessonCards()}
       </div>
+
+      <div style={{ position: "relative", marginTop: "20px", height: "30px" }}>
+        History
+      </div>
+
+      <div
+        className="flex gap-4 overflow-x-auto pb-4 overflow-visible"
+        style={{ marginBottom: "3px" }}
+      >
+        {renderLessonCards()}
+      </div>
     </div>
   );
 };
