@@ -84,7 +84,62 @@ const LibraryView = () => {
     }
   };
 
-  // Add edit logic similarly
+  const renderCategorySection = (category, color, gradient) => {
+    const categoryLessons = getLessonsForCategory(category);
+
+    if (categoryLessons.length === 0) return null;
+
+    return (
+      <div
+        key={category}
+        className="bg-white rounded-xl shadow-lg mb-8 overflow-hidden"
+        style={{
+          boxShadow:
+            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        }}
+      >
+        <div
+          className={`bg-gradient-to-r ${gradient} px-6 py-3 border-b border-gray-100`}
+          style={{
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#374151",
+            borderLeft: `4px solid ${color}`,
+          }}
+        >
+          {category.charAt(0).toUpperCase() + category.slice(1)}
+        </div>
+        <div className="p-6">
+          <div
+            className="flex gap-4 overflow-x-auto pb-2"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#D1D5DB #F3F4F6",
+            }}
+          >
+            {renderLessonCards(categoryLessons)}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const getCategoryStyle = (category) => {
+    const styles = {
+      news: { color: "#DC2626", gradient: "from-red-50 to-rose-50" },
+      hobbies: { color: "#7C3AED", gradient: "from-purple-50 to-violet-50" },
+      food: { color: "#EA580C", gradient: "from-orange-50 to-amber-50" },
+      movies: { color: "#7C2D12", gradient: "from-amber-50 to-yellow-50" },
+      books: { color: "#059669", gradient: "from-emerald-50 to-teal-50" },
+      travel: { color: "#2563EB", gradient: "from-blue-50 to-cyan-50" },
+    };
+    return (
+      styles[category] || {
+        color: "#6B7280",
+        gradient: "from-gray-50 to-slate-50",
+      }
+    );
+  };
 
   return (
     <div
