@@ -20,17 +20,27 @@ const WordBankView = () => {
         return (
           <li
             key={word}
-            className="flex items-center bg-white border rounded p-2 mb-2"
+            className="flex items-center bg-gray-50 border border-gray-200 rounded-lg p-4 hover:bg-gray-100 transition-all"
           >
-            <span className="font-bold flex-1">{word}</span>
-            <span className="flex-1 text-gray-800">
+            <span className="font-semibold flex-1 text-gray-900 text-lg">
+              {word}
+            </span>
+            <span className="flex-1 text-gray-600 text-sm px-4">
               {m.translation || "No translation"}
             </span>
-            <div className="flex gap-1">
+            <div className="flex gap-2">
               {["0", "1", "2", "3", "known"].map((val) => (
                 <button
                   key={val}
-                  className={`w-9 h-9 rounded-full ${val === "0" && (state.deletedWords.includes(word) ? "bg-red-500 text-white" : "bg-gray-300")} ${val !== "0" && m.fam === val ? "bg-primary text-white" : ""}`}
+                  className={`w-10 h-10 rounded-lg font-medium transition-all transform hover:scale-110 ${
+                    val === "0" && state.deletedWords.includes(word)
+                      ? "bg-red-500 text-white shadow-md"
+                      : val === "0"
+                        ? "bg-gray-300 text-gray-700 hover:bg-red-400 hover:text-white"
+                        : val !== "0" && m.fam === val
+                          ? "bg-blue-600 text-white shadow-md"
+                          : "bg-white border-2 border-gray-300 text-gray-600 hover:border-blue-400 hover:text-blue-600"
+                  }`}
                   onClick={async () => {
                     if (val === "0") {
                       if (!state.deletedWords.includes(word)) {
