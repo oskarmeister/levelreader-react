@@ -42,7 +42,7 @@ const LessonView = () => {
 
       calculateWordsPerPage();
     }
-  }, [key, state.wordMetadata, state.deletedWords]);
+  }, [key, state.wordMetadata, state.deletedWords, state.selectedWord]);
 
   useEffect(() => {
     const handleResize = () => {
