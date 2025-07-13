@@ -58,6 +58,9 @@ const ApiManager = {
       localStorage.setItem(
         "dev_data",
         JSON.stringify({
+          selectedLanguage: state.selectedLanguage,
+          languageData: state.languageData,
+          // Legacy support for current language
           lessons: state.lessons,
           wordMetadata: state.wordMetadata,
           translationCache: state.translationCache,
@@ -74,6 +77,9 @@ const ApiManager = {
       "/user_data",
       "POST",
       {
+        selected_language: state.selectedLanguage,
+        language_data: state.languageData,
+        // Legacy fields for current language
         lessons: state.lessons,
         word_metadata: state.wordMetadata,
         translation_cache: state.translationCache,
