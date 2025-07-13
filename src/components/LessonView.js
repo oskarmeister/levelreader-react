@@ -350,30 +350,58 @@ const LessonView = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <h3 className="text-lg font-semibold mb-3 text-gray-800">
-          Word Legend
-        </h3>
-        <div className="flex flex-wrap gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-4 bg-red-50 border border-red-200 rounded"></span>
-            <span>Unknown words</span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-3 text-gray-800">
+            Word Legend
+          </h3>
+          <div className="flex flex-wrap gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 bg-red-50 border border-red-200 rounded"></span>
+              <span>Unknown words</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 bg-orange-50 border border-orange-200 rounded"></span>
+              <span>Learning (Level 1)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 bg-yellow-50 border border-yellow-200 rounded"></span>
+              <span>Familiar (Level 2)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 bg-green-50 border border-green-200 rounded"></span>
+              <span>Well Known (Level 3)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></span>
+              <span>Known words</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-4 bg-orange-50 border border-orange-200 rounded"></span>
-            <span>Learning (Level 1)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-4 bg-yellow-50 border border-yellow-200 rounded"></span>
-            <span>Familiar (Level 2)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-4 bg-green-50 border border-green-200 rounded"></span>
-            <span>Well Known (Level 3)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></span>
-            <span>Known words</span>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-3 text-gray-800">
+            Keyboard Shortcuts
+          </h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span>Navigate words:</span>
+              <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+                ← →
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Change pages:</span>
+              <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+                Shift + ← →
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Set familiarity:</span>
+              <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+                1, 2, 3, K
+              </span>
+            </div>
           </div>
         </div>
       </div>
