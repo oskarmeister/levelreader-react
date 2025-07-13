@@ -63,16 +63,35 @@ const LessonView = () => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Page navigation with Shift + Arrow keys
-      if (e.shiftKey && e.key === "ArrowRight" && pages.length > 1) {
-        e.preventDefault();
-        setCurrentPage(Math.min(pages.length - 1, currentPage + 1));
-        return;
-      }
-      if (e.shiftKey && e.key === "ArrowLeft" && pages.length > 1) {
-        e.preventDefault();
-        setCurrentPage(Math.max(0, currentPage - 1));
-        return;
+      // Navigation based on view mode
+      if (viewMode === "sentences") {
+        // Sentence navigation with Arrow keys
+        if (e.key === "ArrowRight" && sentences.length > 1) {
+          e.preventDefault();
+          setCurrentSentence(
+            Math.min(sentences.length - 1, currentSentence + 1),
+          );
+          setSentenceTranslation("");
+          return;
+        }
+        if (e.key === "ArrowLeft" && sentences.length > 1) {
+          e.preventDefault();
+          setCurrentSentence(Math.max(0, currentSentence - 1));
+          setSentenceTranslation("");
+          return;
+        }
+      } else {
+        // Page navigation with Shift + Arrow keys
+        if (e.shiftKey && e.key === "ArrowRight" && pages.length > 1) {
+          e.preventDefault();
+          setCurrentPage(Math.min(pages.length - 1, currentPage + 1));
+          return;
+        }
+        if (e.shiftKey && e.key === "ArrowLeft" && pages.length > 1) {
+          e.preventDefault();
+          setCurrentPage(Math.max(0, currentPage - 1));
+          return;
+        }
       }
 
       // Word navigation with Arrow keys (no shift)
