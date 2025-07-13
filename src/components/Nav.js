@@ -125,7 +125,7 @@ const Nav = () => {
                   >
                     <span className="text-lg mr-3">{language.flag}</span>
                     <span className="font-medium">{language.name}</span>
-                    {selectedLanguage === language.name && (
+                    {state.selectedLanguage === language.name && (
                       <span className="ml-auto text-blue-600">✓</span>
                     )}
                   </button>
