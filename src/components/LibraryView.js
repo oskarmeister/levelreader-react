@@ -8,6 +8,14 @@ const LibraryView = () => {
   const navigate = useNavigate();
   const [openDropdown, setOpenDropdown] = useState(null);
 
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdown(null);
+    if (openDropdown) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [openDropdown]);
+
   const categories = ["news", "hobbies", "food", "movies", "books", "travel"];
 
   const getLessonsForCategory = (category) => {
