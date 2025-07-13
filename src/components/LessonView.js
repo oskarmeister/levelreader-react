@@ -231,11 +231,30 @@ const LessonView = () => {
   };
 
   const handleWordClick = (word) => {
+    const wordIndex = allWords.indexOf(word);
+    setSelectedWordIndex(wordIndex);
+    handleWordSelect(word);
+  };
+
+  const handleWordSelect = (word) => {
     setState((prev) => ({
       ...prev,
       sidebarOpen: true,
       selectedWord: word,
     }));
+  };
+
+  const handleFamiliarityChange = async (word, famLevel) => {
+    const currentTranslation =
+      state.wordMetadata[word]?.translation ||
+      state.translationCache[word] ||
+      "";
+    const newMetadata = {
+      ...state.wordMetadata,
+      [word]: { translation: currentTranslation, fam: famLevel },
+    };
+    setState((prev) => ({ ...prev, wordMetadata: newMetadata }));
+    // Save would be handled by the storage manager
   };
 
   if (!state.lessons[key]) {
