@@ -205,6 +205,17 @@ function App() {
     username: localStorage.getItem("username") || "",
   });
 
+  // Sync language data when language changes
+  useEffect(() => {
+    setState((prev) => syncLanguageData(prev));
+    localStorage.setItem("selectedLanguage", state.selectedLanguage);
+  }, [state.selectedLanguage]);
+
+  // Initialize with current language data
+  useEffect(() => {
+    setState((prev) => syncLanguageData(prev));
+  }, []);
+
   useEffect(() => {
     if (state.token) {
       // Check if it's dev mode and load dev data from localStorage
