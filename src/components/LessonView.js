@@ -163,6 +163,18 @@ const LessonView = () => {
     const words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
     const pagesList = [];
 
+    // Extract just the actual words for navigation
+    const wordsList = [];
+    words.forEach((token) => {
+      if (/\p{L}+/u.test(token)) {
+        const word = token.toLowerCase();
+        if (!state.deletedWords.includes(word)) {
+          wordsList.push(word);
+        }
+      }
+    });
+    setAllWords(wordsList);
+
     // Split words into pages
     for (let i = 0; i < words.length; i += customWordsPerPage) {
       const pageWords = words.slice(i, i + customWordsPerPage);
@@ -176,8 +188,15 @@ const LessonView = () => {
 
           if (isDeleted) return null;
 
+          const isSelected = state.selectedWord === word;
           let className =
-            "cursor-pointer transition-colors hover:bg-gray-200 px-1 rounded ";
+            "cursor-pointer transition-all hover:bg-gray-200 px-1 rounded ";
+
+          // Add selected word styling
+          if (isSelected) {
+            className +=
+              "text-xl font-bold ring-2 ring-blue-500 ring-offset-1 ";
+          }
 
           if (metadata?.fam === "known") {
             className += "text-gray-800"; // unmarked, normal text color
