@@ -318,6 +318,15 @@ const LessonView = () => {
     // Save would be handled by the storage manager
   };
 
+  const getSentenceWords = (sentence) => {
+    if (!sentence) return [];
+    const words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+    return words
+      .filter((token) => /\p{L}+/u.test(token))
+      .map((token) => token.toLowerCase())
+      .filter((word) => !state.deletedWords.includes(word));
+  };
+
   const renderSentenceWithClickableWords = (sentence) => {
     if (!sentence) return null;
 
