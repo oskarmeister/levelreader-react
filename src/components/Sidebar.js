@@ -8,6 +8,8 @@ const Sidebar = () => {
   const word = state.selectedWord;
   const [customTranslation, setCustomTranslation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [autoTranslation, setAutoTranslation] = useState("");
+  const [translationError, setTranslationError] = useState("");
 
   if (!state.sidebarOpen) return null;
 
