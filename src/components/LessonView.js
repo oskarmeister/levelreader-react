@@ -481,7 +481,7 @@ const LessonView = () => {
             </div>
           )}
 
-          {pages.length > 1 && (
+          {viewMode === "words" && pages.length > 1 && (
             <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
               <button
                 onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
