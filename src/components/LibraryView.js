@@ -28,22 +28,33 @@ const LibraryView = () => {
       return (
         <div
           key={key}
-          className="lesson-card bg-secondary text-white p-4 rounded-lg cursor-pointer relative opacity-100 transition-all duration-300 hover:scale-105 origin-top-left hover:shadow-md w-64 min-h-32"
+          className="lesson-card bg-white rounded-xl cursor-pointer relative opacity-100 transition-all duration-300 hover:scale-105 origin-top-left w-64 min-h-32 overflow-hidden"
+          style={{
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            borderLeft: "4px solid #8B5CF6",
+          }}
           onClick={() => navigate(`/lesson/${key}`)}
         >
-          <h3 className="text-lg font-bold">{key}</h3>
-          <button className="edit-lesson absolute top-2 right-2 bg-gray-600 px-2 py-1 rounded-full text-white">
-            ⋮
-          </button>
-          {/* Card menu would be added here with state for show/hide */}
-          <span className="unknown-percent absolute bottom-8 right-4 bg-white bg-opacity-20 px-2 py-1 rounded text-sm">
-            {pct}% unknown
-          </span>
-          <div className="progress-bar bg-gray-300 h-2 rounded absolute bottom-4 left-0 right-0 mx-4">
-            <div
-              className="progress bg-primary h-full rounded"
-              style={{ width: `${progress}%` }}
-            ></div>
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-800">{key}</h3>
+            <button
+              className="edit-lesson absolute top-2 right-2 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-gray-600 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              ⋮
+            </button>
+          </div>
+          <div className="p-4">
+            <span className="unknown-percent inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mb-3">
+              {pct}% unknown
+            </span>
+            <div className="progress-bar bg-gray-200 h-2 rounded-full">
+              <div
+                className="progress bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
           </div>
         </div>
       );
