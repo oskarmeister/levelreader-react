@@ -1,58 +1,110 @@
-import React, { useState, useContext } from 'react';
-import AppContext from '../context/AppContext';
-import { ApiManager } from '../api/apiManager';
+import React, { useState, useContext } from "react";
+import AppContext from "../context/AppContext";
+import { ApiManager } from "../api/apiManager";
 
 const AccountView = () => {
   const { state, setState } = useContext(AppContext);
   const [isSignup, setIsSignup] = useState(false);
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    const response = await fetch('http://localhost:5000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+    const response = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
     const data = await response.json();
     if (data.token) {
-      setState(prev => ({ ...prev, token: data.token, username }));
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('username', username);
+      setState((prev) => ({ ...prev, token: data.token, username }));
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("username", username);
       await ApiManager.loadUserData(state, setState);
       // Navigate to library
-      window.location.href = '/library';
+      window.location.href = "/library";
     } else {
-      alert(data.error || 'Login failed');
+      alert(data.error || "Login failed");
     }
   };
 
   const handleSignup = async () => {
-    const response = await fetch('http://localhost:5000/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, username, password })
+    const response = await fetch("http://localhost:5000/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, username, password }),
     });
     const data = await response.json();
     if (data.success) {
-      alert('Signup successful. Please login.');
+      alert("Signup successful. Please login.");
       setIsSignup(false);
     } else {
-      alert(data.error || 'Signup failed');
+      alert(data.error || "Signup failed");
     }
   };
 
   const handleLogout = () => {
-    setState(prev => ({ ...prev, token: null, username: '', lessons: {}, wordMetadata: {}, translationCache: {}, deletedWords: [] }));
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
+    setState((prev) => ({
+      ...prev,
+      token: null,
+      username: "",
+      lessons: {},
+      wordMetadata: {},
+      translationCache: {},
+      deletedWords: [],
+    }));
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+  };
+
+  const handleDevMode = () => {
+    const devToken = "dev_token_" + Date.now();
+    const devUsername = "Developer";
+
+    setState((prev) => ({
+      ...prev,
+      token: devToken,
+      username: devUsername,
+      lessons: {
+        "The Little Prince":
+          "In the desert, I have learned to listen. All I needed was a little breeze to hear the voices of those I love. The stars whisper secrets to those who know how to listen. Each grain of sand holds a story waiting to be told.",
+        "Morning Coffee":
+          "The aroma of freshly ground coffee beans filled the small kitchen, carrying with it the promise of a new day. Steam rose from the ceramic mug like tiny clouds ascending to heaven, curling upward in graceful spirals that danced in the morning light streaming through the window.",
+        "Ocean Waves":
+          "The waves crashed against the rocky shore with rhythmic persistence. Seagulls danced in the salty breeze while children built sandcastles that would soon be claimed by the tide. The ocean holds infinite mysteries beneath its surface.",
+        "City Lights":
+          "Neon signs flickered against the night sky, painting the wet streets in colorful reflections. Taxi cabs honked their way through the bustling traffic while people hurried home from late dinners and evening shows.",
+        "Garden Stories":
+          "Tomatoes ripened slowly in the summer heat while bees collected nectar from the lavender bushes. The old gardener smiled as he watered each plant with care, knowing that patience yields the sweetest harvest.",
+        "Train Journey":
+          "The locomotive whistle echoed through the valley as passengers settled into their seats with books and warm tea. Mountains passed by the window like ancient guardians watching over the winding tracks below.",
+      },
+      lessonCategories: {
+        "The Little Prince": ["books"],
+        "Morning Coffee": ["food"],
+        "Ocean Waves": ["travel"],
+        "City Lights": ["travel"],
+        "Garden Stories": ["hobbies"],
+        "Train Journey": ["travel"],
+      },
+      recentlyAccessedLessons: [],
+      recentlyAccessedCategories: [],
+    }));
+
+    localStorage.setItem("token", devToken);
+    localStorage.setItem("username", devUsername);
+
+    // Navigate to library
+    window.location.href = "/library";
   };
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
       {state.token ? (
-        <button onClick={handleLogout} className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">
+        <button
+          onClick={handleLogout}
+          className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+        >
           Logout
         </button>
       ) : isSignup ? (
@@ -62,28 +114,38 @@ const AccountView = () => {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 mb-4 border rounded"
           />
           <input
             type="text"
             placeholder="Username"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full p-2 mb-4 border rounded"
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 mb-4 border rounded"
           />
-          <button onClick={handleSignup} className="w-full bg-primary text-white py-2 rounded hover:bg-blue-600">
+          <button
+            onClick={handleSignup}
+            className="w-full bg-primary text-white py-2 rounded hover:bg-blue-600"
+          >
             Sign Up
           </button>
           <p className="text-center mt-2">
-            Already have an account? <a href="#" onClick={() => setIsSignup(false)} className="text-primary hover:underline">Login</a>
+            Already have an account?{" "}
+            <a
+              href="#"
+              onClick={() => setIsSignup(false)}
+              className="text-primary hover:underline"
+            >
+              Login
+            </a>
           </p>
         </div>
       ) : (
@@ -93,21 +155,31 @@ const AccountView = () => {
             type="text"
             placeholder="Username"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full p-2 mb-4 border rounded"
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 mb-4 border rounded"
           />
-          <button onClick={handleLogin} className="w-full bg-primary text-white py-2 rounded hover:bg-blue-600">
+          <button
+            onClick={handleLogin}
+            className="w-full bg-primary text-white py-2 rounded hover:bg-blue-600"
+          >
             Login
           </button>
           <p className="text-center mt-2">
-            Don't have an account? <a href="#" onClick={() => setIsSignup(true)} className="text-primary hover:underline">Sign up</a>
+            Don't have an account?{" "}
+            <a
+              href="#"
+              onClick={() => setIsSignup(true)}
+              className="text-primary hover:underline"
+            >
+              Sign up
+            </a>
           </p>
         </div>
       )}
