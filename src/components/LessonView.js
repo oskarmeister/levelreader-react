@@ -65,8 +65,8 @@ const LessonView = () => {
     const handleKeyDown = (e) => {
       // Navigation based on view mode
       if (viewMode === "sentences") {
-        // Sentence navigation with Arrow keys
-        if (e.key === "ArrowRight" && sentences.length > 1) {
+        // Sentence navigation with Shift + Arrow keys
+        if (e.shiftKey && e.key === "ArrowRight" && sentences.length > 1) {
           e.preventDefault();
           setCurrentSentence(
             Math.min(sentences.length - 1, currentSentence + 1),
@@ -74,10 +74,38 @@ const LessonView = () => {
           setSentenceTranslation("");
           return;
         }
-        if (e.key === "ArrowLeft" && sentences.length > 1) {
+        if (e.shiftKey && e.key === "ArrowLeft" && sentences.length > 1) {
           e.preventDefault();
           setCurrentSentence(Math.max(0, currentSentence - 1));
           setSentenceTranslation("");
+          return;
+        }
+
+        // Word navigation within current sentence with Arrow keys (no shift)
+        if (!e.shiftKey && e.key === "ArrowRight") {
+          e.preventDefault();
+          const sentenceWords = getSentenceWords(sentences[currentSentence]);
+          if (sentenceWords.length > 0) {
+            const currentWordIndex = sentenceWords.indexOf(state.selectedWord);
+            const nextIndex =
+              currentWordIndex >= 0
+                ? Math.min(sentenceWords.length - 1, currentWordIndex + 1)
+                : 0;
+            handleWordSelect(sentenceWords[nextIndex]);
+          }
+          return;
+        }
+        if (!e.shiftKey && e.key === "ArrowLeft") {
+          e.preventDefault();
+          const sentenceWords = getSentenceWords(sentences[currentSentence]);
+          if (sentenceWords.length > 0) {
+            const currentWordIndex = sentenceWords.indexOf(state.selectedWord);
+            const prevIndex =
+              currentWordIndex >= 0
+                ? Math.max(0, currentWordIndex - 1)
+                : sentenceWords.length - 1;
+            handleWordSelect(sentenceWords[prevIndex]);
+          }
           return;
         }
       } else {
@@ -92,22 +120,25 @@ const LessonView = () => {
           setCurrentPage(Math.max(0, currentPage - 1));
           return;
         }
-      }
 
-      // Word navigation with Arrow keys (no shift)
-      if (!e.shiftKey && e.key === "ArrowRight" && allWords.length > 0) {
-        e.preventDefault();
-        const nextIndex = Math.min(allWords.length - 1, selectedWordIndex + 1);
-        setSelectedWordIndex(nextIndex);
-        handleWordSelect(allWords[nextIndex]);
-        return;
-      }
-      if (!e.shiftKey && e.key === "ArrowLeft" && allWords.length > 0) {
-        e.preventDefault();
-        const prevIndex = Math.max(0, selectedWordIndex - 1);
-        setSelectedWordIndex(prevIndex);
-        handleWordSelect(allWords[prevIndex]);
-        return;
+        // Word navigation with Arrow keys (no shift) in page mode
+        if (!e.shiftKey && e.key === "ArrowRight" && allWords.length > 0) {
+          e.preventDefault();
+          const nextIndex = Math.min(
+            allWords.length - 1,
+            selectedWordIndex + 1,
+          );
+          setSelectedWordIndex(nextIndex);
+          handleWordSelect(allWords[nextIndex]);
+          return;
+        }
+        if (!e.shiftKey && e.key === "ArrowLeft" && allWords.length > 0) {
+          e.preventDefault();
+          const prevIndex = Math.max(0, selectedWordIndex - 1);
+          setSelectedWordIndex(prevIndex);
+          handleWordSelect(allWords[prevIndex]);
+          return;
+        }
       }
 
       // Familiarity level shortcuts
