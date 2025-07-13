@@ -13,30 +13,30 @@ const LessonView = () => {
   useEffect(() => {
     const text = state.lessons[key];
     if (text) {
-      setState((prev) => ({ ...prev, currentText: text }));
+      setState((prev) => {
+        // Track recently accessed lesson
+        const updatedRecentLessons = [
+          key,
+          ...(prev.recentlyAccessedLessons || []).filter(
+            (lesson) => lesson !== key,
+          ),
+        ].slice(0, 10);
 
-      // Track recently accessed lesson
-      const updatedRecentLessons = [
-        key,
-        ...(prev.recentlyAccessedLessons || []).filter(
-          (lesson) => lesson !== key,
-        ),
-      ].slice(0, 10);
+        // Track recently accessed categories
+        const lessonCategories = prev.lessonCategories?.[key] || [];
+        const updatedRecentCategories = lessonCategories
+          .reduce((acc, category) => {
+            return [category, ...acc.filter((cat) => cat !== category)];
+          }, prev.recentlyAccessedCategories || [])
+          .slice(0, 5);
 
-      // Track recently accessed categories
-      const lessonCategories = prev.lessonCategories?.[key] || [];
-      const updatedRecentCategories = lessonCategories
-        .reduce((acc, category) => {
-          return [category, ...acc.filter((cat) => cat !== category)];
-        }, prev.recentlyAccessedCategories || [])
-        .slice(0, 5);
-
-      setState((prev) => ({
-        ...prev,
-        currentText: text,
-        recentlyAccessedLessons: updatedRecentLessons,
-        recentlyAccessedCategories: updatedRecentCategories,
-      }));
+        return {
+          ...prev,
+          currentText: text,
+          recentlyAccessedLessons: updatedRecentLessons,
+          recentlyAccessedCategories: updatedRecentCategories,
+        };
+      });
 
       calculateWordsPerPage();
     }
