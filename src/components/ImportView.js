@@ -85,7 +85,7 @@ const ImportView = () => {
                 maxLength={60}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className="w-2/3 p-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                 placeholder="Enter lesson title..."
               />
             </div>
