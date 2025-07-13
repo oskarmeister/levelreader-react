@@ -34,6 +34,16 @@ function App() {
       "Train Journey":
         "The locomotive whistle echoed through the valley as passengers settled into their seats with books and warm tea. Mountains passed by the window like ancient guardians watching over the winding tracks below.",
     },
+    lessonCategories: {
+      "The Little Prince": ["books"],
+      "Morning Coffee": ["food"],
+      "Ocean Waves": ["travel"],
+      "City Lights": ["travel"],
+      "Garden Stories": ["hobbies"],
+      "Train Journey": ["travel"],
+    },
+    recentlyAccessedLessons: [],
+    recentlyAccessedCategories: [],
     wordMetadata: {
       desert: { fam: "2" },
       learned: { fam: "known" },
