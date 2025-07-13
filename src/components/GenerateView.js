@@ -4,7 +4,6 @@ import { StorageManager } from "../storageManager";
 
 const GenerateView = () => {
   const { state, setState } = useContext(AppContext);
-  const [selectedLanguage, setSelectedLanguage] = useState("Spanish");
   const [topic, setTopic] = useState("");
   const [contentLength, setContentLength] = useState(300);
   const [knownWordRatio, setKnownWordRatio] = useState(80);
@@ -13,8 +12,6 @@ const GenerateView = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState("");
   const [activeTab, setActiveTab] = useState("generate");
-
-  const languages = ["Spanish", "French", "German", "Italian", "Portuguese"];
   const knownWords = Object.keys(state.wordMetadata).filter(
     (word) => state.wordMetadata[word]?.fam === "known",
   ).length;
