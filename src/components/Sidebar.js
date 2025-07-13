@@ -78,6 +78,17 @@ const Sidebar = () => {
     await saveWordMetadata(word, currentTranslation, famLevel);
   };
 
+  const useAutoTranslation = async () => {
+    if (autoTranslation) {
+      await saveWordMetadata(
+        word,
+        autoTranslation,
+        state.wordMetadata[word]?.fam || "1",
+      );
+      setAutoTranslation(""); // Clear auto translation since it's now saved
+    }
+  };
+
   const saved = state.wordMetadata[word]?.translation;
   const currentFamiliarity = state.wordMetadata[word]?.fam;
 
