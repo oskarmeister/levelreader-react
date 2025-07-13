@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import AppContext from "../context/AppContext";
 import { StorageManager } from "../storageManager";
 import TranslationService from "../services/translationService";
+import { getLanguageCode } from "../utils/languageUtils";
 
 const Sidebar = () => {
   const { state, setState } = useContext(AppContext);
