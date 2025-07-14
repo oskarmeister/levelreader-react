@@ -284,10 +284,14 @@ const LessonView = () => {
           const metadata = state.wordMetadata[word];
           const isIgnored = state.deletedWords.includes(word);
 
-          // If word is ignored, show it without any highlighting
+          // If word is ignored, show it without highlighting but still clickable
           if (isIgnored) {
             return (
-              <span key={globalIndex} className="text-gray-800">
+              <span
+                key={globalIndex}
+                className="text-gray-800 cursor-pointer hover:bg-gray-100 px-1 rounded"
+                onClick={() => handleWordClick(word)}
+              >
                 {token}
               </span>
             );
