@@ -362,31 +362,16 @@ const LessonView = () => {
     // Save would be handled by the storage manager
   };
 
-  const handleUnmarkWord = (word) => {
+  const handleIgnoreWord = (word) => {
     setState((prev) => {
       const newWordMetadata = { ...prev.wordMetadata };
-      // Remove word metadata to unmark it
+      // Remove word metadata and add to ignored words list
       delete newWordMetadata[word];
 
       return {
         ...prev,
         wordMetadata: newWordMetadata,
-        selectedWord: "", // Clear selection
-        sidebarOpen: false, // Close sidebar
-      };
-    });
-  };
-
-  const handleDeleteWord = (word) => {
-    setState((prev) => {
-      const newWordMetadata = { ...prev.wordMetadata };
-      // Remove word from metadata and add to deleted words list
-      delete newWordMetadata[word];
-
-      return {
-        ...prev,
-        wordMetadata: newWordMetadata,
-        deletedWords: [...prev.deletedWords, word],
+        deletedWords: [...prev.deletedWords, word], // Add to ignored list
         selectedWord: "", // Clear selection
         sidebarOpen: false, // Close sidebar
       };
