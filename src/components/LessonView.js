@@ -371,6 +371,22 @@ const LessonView = () => {
     });
   };
 
+  const handleDeleteWord = (word) => {
+    setState((prev) => {
+      const newWordMetadata = { ...prev.wordMetadata };
+      // Remove word from metadata and add to deleted words list
+      delete newWordMetadata[word];
+
+      return {
+        ...prev,
+        wordMetadata: newWordMetadata,
+        deletedWords: [...prev.deletedWords, word],
+        selectedWord: "", // Clear selection
+        sidebarOpen: false, // Close sidebar
+      };
+    });
+  };
+
   const getSentenceWords = (sentence) => {
     if (!sentence) return [];
     const words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
