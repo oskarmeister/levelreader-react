@@ -201,7 +201,7 @@ const Sidebar = () => {
                   : "bg-gray-100 text-gray-700 hover:bg-orange-50"
               }`}
             >
-              Learning
+              New
             </button>
             <button
               onClick={() => handleFamiliarityChange("2")}
