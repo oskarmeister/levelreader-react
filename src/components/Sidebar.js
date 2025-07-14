@@ -122,6 +122,20 @@ const Sidebar = () => {
     });
   };
 
+  const handleDeleteWord = () => {
+    setState((prev) => {
+      const newWordMetadata = { ...prev.wordMetadata };
+      delete newWordMetadata[word];
+      return {
+        ...prev,
+        wordMetadata: newWordMetadata,
+        deletedWords: [...prev.deletedWords, word],
+        selectedWord: "",
+        sidebarOpen: false,
+      };
+    });
+  };
+
   const saved = state.wordMetadata[word]?.translation;
   const currentFamiliarity = state.wordMetadata[word]?.fam;
 
