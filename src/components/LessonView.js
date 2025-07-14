@@ -381,8 +381,7 @@ const LessonView = () => {
         ...prev,
         wordMetadata: newWordMetadata,
         deletedWords: [...prev.deletedWords, word], // Add to ignored list
-        selectedWord: "", // Clear selection
-        sidebarOpen: false, // Close sidebar
+        // Keep sidebar open and word selected
       };
     });
   };
