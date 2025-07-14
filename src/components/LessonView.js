@@ -385,7 +385,7 @@ const LessonView = () => {
     return words
       .filter((token) => /\p{L}+/u.test(token))
       .map((token) => token.toLowerCase())
-      .filter((word) => !state.deletedWords.includes(word));
+      .filter((word) => !state.deletedWords.includes(word)); // Only exclude ignored words from navigation
   };
 
   const renderSentenceWithClickableWords = (sentence) => {
