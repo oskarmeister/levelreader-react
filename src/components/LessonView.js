@@ -166,10 +166,10 @@ const LessonView = () => {
         }
       }
 
-      // Unmark word with 'x' key
+      // Ignore word with 'x' key
       if (state.selectedWord && (e.key === "x" || e.key === "X")) {
         e.preventDefault();
-        handleUnmarkWord(state.selectedWord);
+        handleIgnoreWord(state.selectedWord);
       }
     };
 
@@ -356,6 +356,22 @@ const LessonView = () => {
     };
     setState((prev) => ({ ...prev, wordMetadata: newMetadata }));
     // Save would be handled by the storage manager
+  };
+
+  const handleIgnoreWord = (word) => {
+    setState((prev) => {
+      const currentTranslation = prev.wordMetadata[word]?.translation || "";
+      const newWordMetadata = {
+        ...prev.wordMetadata,
+        [word]: { translation: currentTranslation, fam: "ignored" },
+      };
+
+      return {
+        ...prev,
+        wordMetadata: newWordMetadata,
+        // Don't close sidebar or clear selection - keep it open for ignored words
+      };
+    });
   };
 
   const handleUnmarkWord = (word) => {
