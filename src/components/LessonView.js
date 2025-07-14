@@ -295,16 +295,18 @@ const LessonView = () => {
             className += "ring-2 ring-blue-500 ring-offset-1 ";
           }
 
-          if (metadata?.fam === "known" || !metadata) {
-            className += "text-gray-800"; // unmarked, normal text color
+          if (metadata?.fam === "known") {
+            className += "text-gray-800"; // known words
           } else if (metadata?.fam === "3") {
-            className += "text-green-600 bg-green-50";
+            className += "text-green-600 bg-green-50"; // very familiar
           } else if (metadata?.fam === "2") {
-            className += "text-yellow-600 bg-yellow-50";
+            className += "text-yellow-600 bg-yellow-50"; // familiar
           } else if (metadata?.fam === "1") {
-            className += "text-orange-600 bg-orange-50";
+            className += "text-orange-600 bg-orange-50"; // learning
+          } else if (!metadata) {
+            className += "text-red-600 bg-red-50 font-medium"; // unknown words - never seen before
           } else {
-            className += "text-red-600 bg-red-50 font-medium";
+            className += "text-gray-800"; // fallback for other cases
           }
 
           return (
@@ -400,16 +402,18 @@ const LessonView = () => {
           className += "ring-2 ring-blue-500 ring-offset-1 ";
         }
 
-        if (metadata?.fam === "known" || !metadata) {
-          className += "text-gray-800";
+        if (metadata?.fam === "known") {
+          className += "text-gray-800"; // known words
         } else if (metadata?.fam === "3") {
-          className += "text-green-600 bg-green-50";
+          className += "text-green-600 bg-green-50"; // very familiar
         } else if (metadata?.fam === "2") {
-          className += "text-yellow-600 bg-yellow-50";
+          className += "text-yellow-600 bg-yellow-50"; // familiar
         } else if (metadata?.fam === "1") {
-          className += "text-orange-600 bg-orange-50";
+          className += "text-orange-600 bg-orange-50"; // learning
+        } else if (!metadata) {
+          className += "text-red-600 bg-red-50 font-medium"; // unknown words - never seen before
         } else {
-          className += "text-red-600 bg-red-50 font-medium";
+          className += "text-gray-800"; // fallback for other cases
         }
 
         return (
@@ -723,7 +727,7 @@ const LessonView = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="w-4 h-4 bg-green-50 border border-green-200 rounded"></span>
-              <span>Well Known (Level 3)</span>
+              <span>Very Familiar (Level 3)</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></span>
