@@ -166,10 +166,10 @@ const LessonView = () => {
         }
       }
 
-      // Unmark word with 'x' key
+      // Ignore word with 'x' key
       if (state.selectedWord && (e.key === "x" || e.key === "X")) {
         e.preventDefault();
-        handleUnmarkWord(state.selectedWord);
+        handleIgnoreWord(state.selectedWord);
       }
     };
 
@@ -295,8 +295,12 @@ const LessonView = () => {
             className += "ring-2 ring-blue-500 ring-offset-1 ";
           }
 
-          if (metadata?.fam === "known" || !metadata) {
-            className += "text-gray-800"; // unmarked, normal text color
+          if (metadata?.fam === "known") {
+            className += "text-gray-800"; // known words, normal text color
+          } else if (metadata?.fam === "ignored") {
+            className += "text-gray-600"; // ignored words, muted text color
+          } else if (!metadata) {
+            className += "text-red-600 bg-red-50 font-medium"; // unknown words, red highlighting
           } else if (metadata?.fam === "3") {
             className += "text-green-600 bg-green-50";
           } else if (metadata?.fam === "2") {
@@ -354,6 +358,22 @@ const LessonView = () => {
     // Save would be handled by the storage manager
   };
 
+  const handleIgnoreWord = (word) => {
+    setState((prev) => {
+      const currentTranslation = prev.wordMetadata[word]?.translation || "";
+      const newWordMetadata = {
+        ...prev.wordMetadata,
+        [word]: { translation: currentTranslation, fam: "ignored" },
+      };
+
+      return {
+        ...prev,
+        wordMetadata: newWordMetadata,
+        // Don't close sidebar or clear selection - keep it open for ignored words
+      };
+    });
+  };
+
   const handleUnmarkWord = (word) => {
     setState((prev) => {
       const newWordMetadata = { ...prev.wordMetadata };
@@ -400,8 +420,12 @@ const LessonView = () => {
           className += "ring-2 ring-blue-500 ring-offset-1 ";
         }
 
-        if (metadata?.fam === "known" || !metadata) {
+        if (metadata?.fam === "known") {
           className += "text-gray-800";
+        } else if (metadata?.fam === "ignored") {
+          className += "text-gray-600";
+        } else if (!metadata) {
+          className += "text-red-600 bg-red-50 font-medium";
         } else if (metadata?.fam === "3") {
           className += "text-green-600 bg-green-50";
         } else if (metadata?.fam === "2") {
@@ -758,7 +782,7 @@ const LessonView = () => {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Unmark word:</span>
+                  <span>Ignore word:</span>
                   <span className="font-mono bg-gray-100 px-2 py-1 rounded">
                     X
                   </span>
@@ -785,7 +809,7 @@ const LessonView = () => {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Unmark word:</span>
+                  <span>Ignore word:</span>
                   <span className="font-mono bg-gray-100 px-2 py-1 rounded">
                     X
                   </span>
