@@ -171,6 +171,12 @@ const LessonView = () => {
         e.preventDefault();
         handleUnmarkWord(state.selectedWord);
       }
+
+      // Delete word with 'd' key (adds to hidden deleted list)
+      if (state.selectedWord && (e.key === "d" || e.key === "D")) {
+        e.preventDefault();
+        handleDeleteWord(state.selectedWord);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
