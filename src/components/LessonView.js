@@ -50,7 +50,7 @@ const LessonView = () => {
       calculateWordsPerPage();
       parseSentences(text);
     }
-  }, [key, state.wordMetadata, state.deletedWords, state.selectedWord]);
+  }, [key, state.wordMetadata, state.deletedWords]);
 
   useEffect(() => {
     const handleResize = () => {
