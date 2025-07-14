@@ -261,7 +261,7 @@ const LessonView = () => {
     const words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
     const pagesList = [];
 
-    // Extract just the actual words for navigation
+    // Extract just the actual words for navigation (exclude ignored words from navigation)
     const wordsList = [];
     words.forEach((token) => {
       if (/\p{L}+/u.test(token)) {
