@@ -5,50 +5,89 @@ import { StorageManager } from "../storageManager";
 const WordBankView = () => {
   const { state, setState } = useContext(AppContext);
 
-  const buttons = ["all", "1", "2", "3", "known"];
+  const buttons = ["all", "unknown", "1", "2", "3", "known"];
 
   const handleFilter = (val) => {
     setState((prev) => ({ ...prev, filterValue: val }));
   };
 
   const populateWordBank = () => {
-    return Object.entries(state.wordMetadata)
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([word, m]) => {
-        if (state.filterValue !== "all" && m.fam !== state.filterValue)
-          return null;
-        return (
-          <li
-            key={word}
-            className="flex items-center bg-gray-50 border border-gray-200 rounded-lg p-4 hover:bg-gray-100 transition-all"
+    let entriesToShow = [];
+
+    if (state.filterValue === "unknown") {
+      // Show words that appear in text but have no metadata and are not deleted
+      const allWordsInText = new Set();
+      Object.values(state.lessons).forEach((text) => {
+        const words = text.match(/\p{L}+/gu) || [];
+        words.forEach((word) => {
+          const lowerWord = word.toLowerCase();
+          if (!state.deletedWords.includes(lowerWord)) {
+            allWordsInText.add(lowerWord);
+          }
+        });
+      });
+
+      entriesToShow = Array.from(allWordsInText)
+        .filter((word) => !state.wordMetadata[word])
+        .sort()
+        .map((word) => [word, { translation: "", fam: "unknown" }]);
+    } else {
+      entriesToShow = Object.entries(state.wordMetadata)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .filter(([word, m]) => {
+          if (state.filterValue === "all") return true;
+          return m.fam === state.filterValue;
+        });
+    }
+
+    return entriesToShow.map(([word, m]) => {
+      return (
+        <li
+          key={word}
+          className={`flex items-center border border-gray-200 rounded-lg p-4 hover:bg-gray-100 transition-all ${
+            m.fam === "unknown" ? "bg-red-50" : "bg-gray-50"
+          }`}
+        >
+          <span
+            className={`font-semibold flex-1 text-lg ${
+              m.fam === "unknown" ? "text-red-600" : "text-gray-900"
+            }`}
           >
-            <span className="font-semibold flex-1 text-gray-900 text-lg">
-              {word}
-            </span>
-            <span className="flex-1 text-gray-600 text-sm px-4">
-              {m.translation || "No translation"}
-            </span>
-            <div className="flex gap-2">
-              {["0", "1", "2", "3", "known"].map((val) => (
+            {word}
+          </span>
+          <span className="flex-1 text-gray-600 text-sm px-4">
+            {m.translation ||
+              (m.fam === "unknown" ? "Unknown word" : "No translation")}
+          </span>
+          <div className="flex gap-2">
+            {["delete", "1", "2", "3", "known"].map((val) => {
+              const isDeleted = state.deletedWords.includes(word);
+              const isCurrentLevel = val !== "delete" && m.fam === val;
+
+              return (
                 <button
                   key={val}
                   className={`w-10 h-10 rounded-lg font-medium transition-all transform hover:scale-110 ${
-                    val === "0" && state.deletedWords.includes(word)
+                    val === "delete" && isDeleted
                       ? "bg-red-500 text-white shadow-md"
-                      : val === "0"
+                      : val === "delete"
                         ? "bg-gray-300 text-gray-700 hover:bg-red-400 hover:text-white"
-                        : val !== "0" && m.fam === val
+                        : isCurrentLevel
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-white border-2 border-gray-300 text-gray-600 hover:border-blue-400 hover:text-blue-600"
                   }`}
                   onClick={async () => {
-                    if (val === "0") {
-                      if (!state.deletedWords.includes(word)) {
-                        setState((prev) => ({
-                          ...prev,
-                          deletedWords: [...prev.deletedWords, word],
-                        }));
-                        delete state.wordMetadata[word];
+                    if (val === "delete") {
+                      if (!isDeleted) {
+                        setState((prev) => {
+                          const newWordMetadata = { ...prev.wordMetadata };
+                          delete newWordMetadata[word];
+                          return {
+                            ...prev,
+                            deletedWords: [...prev.deletedWords, word],
+                            wordMetadata: newWordMetadata,
+                          };
+                        });
                       }
                     } else {
                       setState((prev) => ({
@@ -58,20 +97,24 @@ const WordBankView = () => {
                         ),
                         wordMetadata: {
                           ...prev.wordMetadata,
-                          [word]: { translation: m.translation, fam: val },
+                          [word]: {
+                            translation: m.translation || "",
+                            fam: val,
+                          },
                         },
                       }));
                     }
                     await StorageManager.save(state);
                   }}
                 >
-                  {val === "0" ? "🗑️" : val === "known" ? "✓" : val}
+                  {val === "delete" ? "🗑️" : val === "known" ? "✓" : val}
                 </button>
-              ))}
-            </div>
-          </li>
-        );
-      });
+              );
+            })}
+          </div>
+        </li>
+      );
+    });
   };
 
   return (
@@ -117,7 +160,9 @@ const WordBankView = () => {
                   ? "✓ Known"
                   : btn === "all"
                     ? "All Words"
-                    : `Level ${btn}`}
+                    : btn === "unknown"
+                      ? "🔴 Unknown"
+                      : `Level ${btn}`}
               </button>
             ))}
           </div>
@@ -142,12 +187,45 @@ const WordBankView = () => {
           }}
         >
           Words (
-          {
-            Object.entries(state.wordMetadata).filter(
-              ([word, m]) =>
-                state.filterValue === "all" || m.fam === state.filterValue,
-            ).length
-          }
+          {(() => {
+            if (state.filterValue === "unknown") {
+              // Count unknown words that appear in lessons but have no metadata
+              const allWordsInText = new Set();
+              Object.values(state.lessons).forEach((text) => {
+                const words = text.match(/\p{L}+/gu) || [];
+                words.forEach((word) => {
+                  const lowerWord = word.toLowerCase();
+                  if (!state.deletedWords.includes(lowerWord)) {
+                    allWordsInText.add(lowerWord);
+                  }
+                });
+              });
+              return Array.from(allWordsInText).filter(
+                (word) => !state.wordMetadata[word],
+              ).length;
+            } else if (state.filterValue === "all") {
+              // Count all known words plus unknown words
+              const allWordsInText = new Set();
+              Object.values(state.lessons).forEach((text) => {
+                const words = text.match(/\p{L}+/gu) || [];
+                words.forEach((word) => {
+                  const lowerWord = word.toLowerCase();
+                  if (!state.deletedWords.includes(lowerWord)) {
+                    allWordsInText.add(lowerWord);
+                  }
+                });
+              });
+              const unknownCount = Array.from(allWordsInText).filter(
+                (word) => !state.wordMetadata[word],
+              ).length;
+              const knownCount = Object.keys(state.wordMetadata).length;
+              return knownCount + unknownCount;
+            } else {
+              return Object.entries(state.wordMetadata).filter(
+                ([word, m]) => m.fam === state.filterValue,
+              ).length;
+            }
+          })()}
           )
         </div>
         <div className="p-6">
