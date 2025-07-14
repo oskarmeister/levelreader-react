@@ -247,8 +247,8 @@ const Sidebar = () => {
               onClick={handleIgnoreWord}
               className={`p-2 rounded-lg text-sm font-medium transition-colors col-span-2 flex items-center justify-center gap-2 ${
                 state.deletedWords.includes(word)
-                  ? "bg-gray-100 text-gray-800 border-2 border-gray-300"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-red-100 text-red-800 border-2 border-red-300"
+                  : "bg-gray-100 text-gray-700 hover:bg-red-50"
               }`}
             >
               <svg
