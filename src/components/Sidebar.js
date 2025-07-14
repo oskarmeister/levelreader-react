@@ -126,8 +126,7 @@ const Sidebar = () => {
         ...prev,
         wordMetadata: newWordMetadata,
         deletedWords: [...prev.deletedWords, word], // Add to ignored list
-        selectedWord: "",
-        sidebarOpen: false,
+        // Keep sidebar open and word selected
       };
     });
   };
