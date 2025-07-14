@@ -220,7 +220,7 @@ const Sidebar = () => {
                   : "bg-gray-100 text-gray-700 hover:bg-yellow-50"
               }`}
             >
-              Well Known
+              Very Familiar
             </button>
             <button
               onClick={() => handleFamiliarityChange("known")}
