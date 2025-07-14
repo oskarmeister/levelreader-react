@@ -720,7 +720,7 @@ const LessonView = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="w-4 h-4 bg-orange-50 border border-orange-200 rounded"></span>
-              <span>Learning (Level 1)</span>
+              <span>New (Level 1)</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-4 h-4 bg-yellow-50 border border-yellow-200 rounded"></span>
