@@ -60,25 +60,25 @@ const WordBankView = () => {
               (m.fam === "unknown" ? "Unknown word" : "No translation")}
           </span>
           <div className="flex gap-2">
-            {["delete", "1", "2", "3", "known"].map((val) => {
-              const isDeleted = state.deletedWords.includes(word);
-              const isCurrentLevel = val !== "delete" && m.fam === val;
+            {["ignore", "1", "2", "3", "known"].map((val) => {
+              const isIgnored = state.deletedWords.includes(word);
+              const isCurrentLevel = val !== "ignore" && m.fam === val;
 
               return (
                 <button
                   key={val}
                   className={`w-10 h-10 rounded-lg font-medium transition-all transform hover:scale-110 ${
-                    val === "delete" && isDeleted
-                      ? "bg-red-500 text-white shadow-md"
-                      : val === "delete"
-                        ? "bg-gray-300 text-gray-700 hover:bg-red-400 hover:text-white"
+                    val === "ignore" && isIgnored
+                      ? "bg-gray-500 text-white shadow-md"
+                      : val === "ignore"
+                        ? "bg-gray-300 text-gray-700 hover:bg-gray-400 hover:text-white"
                         : isCurrentLevel
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-white border-2 border-gray-300 text-gray-600 hover:border-blue-400 hover:text-blue-600"
                   }`}
                   onClick={async () => {
-                    if (val === "delete") {
-                      if (!isDeleted) {
+                    if (val === "ignore") {
+                      if (!isIgnored) {
                         setState((prev) => {
                           const newWordMetadata = { ...prev.wordMetadata };
                           delete newWordMetadata[word];
@@ -107,7 +107,7 @@ const WordBankView = () => {
                     await StorageManager.save(state);
                   }}
                 >
-                  {val === "delete" ? "🗑️" : val === "known" ? "✓" : val}
+                  {val === "ignore" ? "✕" : val === "known" ? "✓" : val}
                 </button>
               );
             })}
