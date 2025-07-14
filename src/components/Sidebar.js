@@ -109,27 +109,14 @@ const Sidebar = () => {
     }
   };
 
-  const handleUnmarkWord = () => {
+  const handleIgnoreWord = () => {
     setState((prev) => {
       const newWordMetadata = { ...prev.wordMetadata };
       delete newWordMetadata[word];
       return {
         ...prev,
         wordMetadata: newWordMetadata,
-        selectedWord: "",
-        sidebarOpen: false,
-      };
-    });
-  };
-
-  const handleDeleteWord = () => {
-    setState((prev) => {
-      const newWordMetadata = { ...prev.wordMetadata };
-      delete newWordMetadata[word];
-      return {
-        ...prev,
-        wordMetadata: newWordMetadata,
-        deletedWords: [...prev.deletedWords, word],
+        deletedWords: [...prev.deletedWords, word], // Add to ignored list
         selectedWord: "",
         sidebarOpen: false,
       };
