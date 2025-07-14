@@ -91,15 +91,17 @@ const Sidebar = () => {
     const currentTranslation =
       state.wordMetadata[word]?.translation || autoTranslation || "";
 
-    // Remove word from ignored list if it was ignored
-    setState((prev) => ({
-      ...prev,
-      deletedWords: prev.deletedWords.filter((w) => w !== word),
+    // Remove word from ignored list if it was ignored and set familiarity
+    const newState = {
+      ...state,
+      deletedWords: state.deletedWords.filter((w) => w !== word),
       wordMetadata: {
-        ...prev.wordMetadata,
+        ...state.wordMetadata,
         [word]: { translation: currentTranslation, fam: famLevel },
       },
-    }));
+    };
+
+    setState(newState);
 
     // Clear auto-translation since it's now saved
     if (autoTranslation && !state.wordMetadata[word]?.translation) {
