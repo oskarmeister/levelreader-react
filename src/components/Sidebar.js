@@ -90,7 +90,16 @@ const Sidebar = () => {
     // Use auto-translation if available and no existing translation
     const currentTranslation =
       state.wordMetadata[word]?.translation || autoTranslation || "";
-    await saveWordMetadata(word, currentTranslation, famLevel);
+
+    // Remove word from ignored list if it was ignored
+    setState((prev) => ({
+      ...prev,
+      deletedWords: prev.deletedWords.filter((w) => w !== word),
+      wordMetadata: {
+        ...prev.wordMetadata,
+        [word]: { translation: currentTranslation, fam: famLevel },
+      },
+    }));
 
     // Clear auto-translation since it's now saved
     if (autoTranslation && !state.wordMetadata[word]?.translation) {
