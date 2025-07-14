@@ -359,12 +359,16 @@ const LessonView = () => {
       state.wordMetadata[word]?.translation ||
       state.translationCache[word] ||
       "";
-    const newMetadata = {
-      ...state.wordMetadata,
-      [word]: { translation: currentTranslation, fam: famLevel },
-    };
-    setState((prev) => ({ ...prev, wordMetadata: newMetadata }));
-    // Save would be handled by the storage manager
+
+    // Remove word from ignored list if it was ignored and set familiarity
+    setState((prev) => ({
+      ...prev,
+      deletedWords: prev.deletedWords.filter((w) => w !== word),
+      wordMetadata: {
+        ...prev.wordMetadata,
+        [word]: { translation: currentTranslation, fam: famLevel },
+      },
+    }));
   };
 
   const handleIgnoreWord = (word) => {
