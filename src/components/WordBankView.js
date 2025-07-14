@@ -162,7 +162,9 @@ const WordBankView = () => {
                     ? "All Words"
                     : btn === "unknown"
                       ? "🔴 Unknown"
-                      : `Level ${btn}`}
+                      : btn === "1"
+                        ? "🟠 New"
+                        : `Level ${btn}`}
               </button>
             ))}
           </div>
