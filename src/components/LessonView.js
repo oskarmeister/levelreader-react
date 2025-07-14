@@ -302,7 +302,7 @@ const LessonView = () => {
           } else if (metadata?.fam === "2") {
             className += "text-yellow-600 bg-yellow-50"; // familiar
           } else if (metadata?.fam === "1") {
-            className += "text-orange-600 bg-orange-50"; // learning
+            className += "text-orange-600 bg-orange-50"; // new
           } else if (!metadata) {
             className += "text-red-600 bg-red-50 font-medium"; // unknown words - never seen before
           } else {
