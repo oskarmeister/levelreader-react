@@ -230,8 +230,8 @@ const Sidebar = () => {
               onClick={() => handleFamiliarityChange("3")}
               className={`p-2 rounded-lg text-sm font-medium transition-colors ${
                 currentFamiliarity === "3"
-                  ? "bg-yellow-100 text-yellow-800 border-2 border-yellow-300"
-                  : "bg-gray-100 text-gray-700 hover:bg-yellow-50"
+                  ? "bg-green-100 text-green-800 border-2 border-green-300"
+                  : "bg-gray-100 text-gray-700 hover:bg-green-50"
               }`}
             >
               Very Familiar
