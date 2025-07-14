@@ -295,8 +295,10 @@ const LessonView = () => {
             className += "ring-2 ring-blue-500 ring-offset-1 ";
           }
 
-          if (metadata?.fam === "known" || !metadata) {
-            className += "text-gray-800"; // unmarked, normal text color
+          if (metadata?.fam === "known") {
+            className += "text-gray-800"; // known words, normal text color
+          } else if (!metadata) {
+            className += "text-red-600 bg-red-50 font-medium"; // unknown words, red highlighting
           } else if (metadata?.fam === "3") {
             className += "text-green-600 bg-green-50";
           } else if (metadata?.fam === "2") {
@@ -400,8 +402,10 @@ const LessonView = () => {
           className += "ring-2 ring-blue-500 ring-offset-1 ";
         }
 
-        if (metadata?.fam === "known" || !metadata) {
+        if (metadata?.fam === "known") {
           className += "text-gray-800";
+        } else if (!metadata) {
+          className += "text-red-600 bg-red-50 font-medium";
         } else if (metadata?.fam === "3") {
           className += "text-green-600 bg-green-50";
         } else if (metadata?.fam === "2") {
