@@ -166,16 +166,10 @@ const LessonView = () => {
         }
       }
 
-      // Unmark word with 'x' key
+      // Ignore word with 'x' key
       if (state.selectedWord && (e.key === "x" || e.key === "X")) {
         e.preventDefault();
-        handleUnmarkWord(state.selectedWord);
-      }
-
-      // Delete word with 'd' key (adds to hidden deleted list)
-      if (state.selectedWord && (e.key === "d" || e.key === "D")) {
-        e.preventDefault();
-        handleDeleteWord(state.selectedWord);
+        handleIgnoreWord(state.selectedWord);
       }
     };
 
