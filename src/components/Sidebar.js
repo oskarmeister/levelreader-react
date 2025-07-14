@@ -134,7 +134,8 @@ const Sidebar = () => {
   };
 
   const saved = state.wordMetadata[word]?.translation;
-  const currentFamiliarity = state.wordMetadata[word]?.fam;
+  const isIgnored = state.deletedWords.includes(word);
+  const currentFamiliarity = isIgnored ? null : state.wordMetadata[word]?.fam;
 
   return (
     <div className="fixed top-16 right-0 w-72 max-h-[calc(100vh-8rem)] bg-white rounded-l-lg shadow-lg overflow-hidden z-50 transform translate-x-0 transition-transform">
