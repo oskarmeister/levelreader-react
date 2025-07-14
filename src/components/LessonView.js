@@ -297,6 +297,8 @@ const LessonView = () => {
 
           if (metadata?.fam === "known") {
             className += "text-gray-800"; // known words, normal text color
+          } else if (metadata?.fam === "ignored") {
+            className += "text-gray-600"; // ignored words, muted text color
           } else if (!metadata) {
             className += "text-red-600 bg-red-50 font-medium"; // unknown words, red highlighting
           } else if (metadata?.fam === "3") {
@@ -404,6 +406,8 @@ const LessonView = () => {
 
         if (metadata?.fam === "known") {
           className += "text-gray-800";
+        } else if (metadata?.fam === "ignored") {
+          className += "text-gray-600";
         } else if (!metadata) {
           className += "text-red-600 bg-red-50 font-medium";
         } else if (metadata?.fam === "3") {
