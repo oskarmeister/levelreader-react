@@ -282,9 +282,16 @@ const LessonView = () => {
         if (/\p{L}+/u.test(token)) {
           const word = token.toLowerCase();
           const metadata = state.wordMetadata[word];
-          const isDeleted = state.deletedWords.includes(word);
+          const isIgnored = state.deletedWords.includes(word);
 
-          if (isDeleted) return null;
+          // If word is ignored, show it without any highlighting
+          if (isIgnored) {
+            return (
+              <span key={globalIndex} className="text-gray-800">
+                {token}
+              </span>
+            );
+          }
 
           const isSelected = state.selectedWord === word;
           let className =
