@@ -3,6 +3,17 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 class ChineseSegmentationService {
   constructor() {
     const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+    console.log("=== CHINESE SEGMENTATION DEBUG ===");
+    console.log(
+      "Raw API key:",
+      apiKey ? `${apiKey.substring(0, 10)}...` : "null/undefined",
+    );
+    console.log("API key length:", apiKey ? apiKey.length : 0);
+    console.log(
+      "API key is valid:",
+      !(!apiKey || apiKey === "YOUR_API_KEY_HERE"),
+    );
+
     if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
       console.warn(
         "Google API key not set. Chinese segmentation will use fallback method.",
@@ -10,20 +21,22 @@ class ChineseSegmentationService {
       this.genAI = null;
       this.model = null;
     } else {
+      console.log("Initializing GoogleGenerativeAI...");
       this.genAI = new GoogleGenerativeAI(apiKey);
       this.model = this.genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
       });
+      console.log("GoogleGenerativeAI initialized successfully");
     }
 
     // Cache to avoid redundant API calls for the same sentences
     this.segmentationCache = new Map();
 
-    // Clear cache on initialization to ensure fresh segmentation
     console.log(
-      "ChineseSegmentationService initialized with API key:",
-      !!apiKey,
+      "ChineseSegmentationService initialized with model:",
+      !!this.model,
     );
+    console.log("==============================");
   }
 
   async segmentChineseSentence(sentence) {
