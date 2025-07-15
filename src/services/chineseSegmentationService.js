@@ -147,6 +147,21 @@ JSON:`;
       return segmentation;
     } catch (error) {
       console.error("Error in Chinese segmentation:", error);
+
+      // Handle specific error types
+      if (
+        error.message.includes("Failed to fetch") ||
+        error.name === "TypeError"
+      ) {
+        console.log(
+          "Network error detected - API may be unavailable or blocked",
+        );
+      } else if (error.message.includes("JSON")) {
+        console.log("JSON parsing error - malformed API response");
+      } else {
+        console.log("Unknown error type:", error.name, error.message);
+      }
+
       console.log("Falling back to character-by-character segmentation");
       // Fallback to character-by-character segmentation
       return this.fallbackSegmentation(sentence);
