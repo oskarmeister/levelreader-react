@@ -220,7 +220,7 @@ JSON:`;
         console.log("JSON parsing error - malformed API response");
         // Don't count JSON errors as API failures - the API responded
       } else if (error.message.includes("timeout")) {
-        console.log("API request timed out after 1 minute");
+        console.log("API request timed out after 30 seconds");
         this.handleApiFailure();
       } else {
         console.log("Unknown error type:", error.name, error.message);
@@ -310,7 +310,7 @@ JSON:`;
             "需要",
             "想要",
             "希望",
-            "觉���",
+            "觉得",
             "认��",
             "知道",
             "了解",
