@@ -314,8 +314,8 @@ const LessonView = () => {
   };
 
   const calculateWordsPerPage = async () => {
-    // Changed to character-based pagination with maximum 150 characters per page
-    const maxCharsPerPage = 150;
+    // Changed to character-based pagination with maximum 300 characters per page
+    const maxCharsPerPage = 300;
     setWordsPerPage(maxCharsPerPage);
 
     // Re-paginate text with new character count
@@ -712,7 +712,7 @@ const LessonView = () => {
           onClick={() => navigate("/library")}
           className="mb-4 text-primary"
         >
-          ← Back
+          �� Back
         </button>
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Lesson not found</h2>
