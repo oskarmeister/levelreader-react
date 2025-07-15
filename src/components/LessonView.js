@@ -448,6 +448,152 @@ const LessonView = () => {
     setCurrentPage(0); // Reset to first page when text changes
   };
 
+  const updateCurrentPageWords = async (text) => {
+    if (state.selectedLanguage !== "Chinese") {
+      return; // Only applies to Chinese text
+    }
+
+    console.log(
+      `🔄 Updating current page ${currentPage} with improved segmentation`,
+    );
+
+    // Get improved segmentation for current page
+    const cacheKey = `${currentPage}-${currentPage}-${wordsPerPage}`;
+    const improvedSegmentation =
+      ChineseSegmentationService.pageSegmentationCache.get(cacheKey);
+
+    if (!improvedSegmentation) {
+      console.log(`No improved segmentation found for page ${currentPage}`);
+      return;
+    }
+
+    // Calculate text for current page using original regex split
+    const regexWords = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+    const startIndex = currentPage * wordsPerPage;
+    const endIndex = Math.min(
+      (currentPage + 1) * wordsPerPage,
+      regexWords.length,
+    );
+    const pageText = regexWords.slice(startIndex, endIndex).join("");
+
+    // Convert segmentation back to tokens for display
+    const improvedTokens = [];
+    let lastEnd = 0;
+
+    for (const segment of improvedSegmentation) {
+      // Add any skipped characters before this segment
+      if (segment.start > lastEnd) {
+        const skippedText = pageText.substring(lastEnd, segment.start);
+        if (skippedText) {
+          improvedTokens.push(skippedText);
+        }
+      }
+
+      // Add the segmented word
+      improvedTokens.push(segment.word);
+      lastEnd = segment.end;
+    }
+
+    // Add any remaining text after the last segment
+    if (lastEnd < pageText.length) {
+      const remainingText = pageText.substring(lastEnd);
+      if (remainingText) {
+        improvedTokens.push(remainingText);
+      }
+    }
+
+    // Re-render current page with improved tokens
+    const renderedPage = improvedTokens.map((token, index) => {
+      const globalIndex = startIndex + index; // Use global index for unique keys
+
+      if (/\p{L}+/u.test(token)) {
+        const word = token.toLowerCase();
+        const metadata = state.wordMetadata[word];
+        const isDeleted = state.deletedWords.includes(word);
+
+        if (isDeleted) return null;
+
+        const isSelected = state.selectedWord === word;
+        let className =
+          "cursor-pointer transition-all hover:bg-gray-200 px-1 rounded ";
+
+        // Add selected word styling
+        if (isSelected) {
+          className += "ring-2 ring-blue-500 ring-offset-1 ";
+        }
+
+        if (metadata?.fam === "known") {
+          className += "text-gray-800"; // known words, normal text color
+        } else if (metadata?.fam === "ignored") {
+          className += "text-gray-600"; // ignored words, muted text color
+        } else if (!metadata) {
+          className += "text-red-600 bg-red-50 font-medium"; // unknown words, red highlighting
+        } else if (metadata?.fam === "3") {
+          className += "text-green-600 bg-green-50";
+        } else if (metadata?.fam === "2") {
+          className += "text-yellow-600 bg-yellow-50";
+        } else if (metadata?.fam === "1") {
+          className += "text-orange-600 bg-orange-50";
+        } else {
+          className += "text-red-600 bg-red-50 font-medium";
+        }
+
+        return (
+          <span
+            key={`improved-${globalIndex}`}
+            className={className}
+            onClick={() => handleWordClick(word)}
+          >
+            {token}
+          </span>
+        );
+      }
+      return <span key={`improved-${globalIndex}`}>{token}</span>;
+    });
+
+    // Update only the current page in the pages array
+    setPages((prevPages) => {
+      const newPages = [...prevPages];
+      newPages[currentPage] = renderedPage;
+      return newPages;
+    });
+
+    // Update allWords list with improved segmentation
+    const improvedWordsList = [];
+    improvedTokens.forEach((token) => {
+      if (/\p{L}+/u.test(token)) {
+        const word = token.toLowerCase();
+        if (!state.deletedWords.includes(word)) {
+          improvedWordsList.push(word);
+        }
+      }
+    });
+
+    // Update allWords with improved words for current page
+    setAllWords((prevAllWords) => {
+      const wordsPerPageCount = wordsPerPage;
+      const currentPageStartIndex =
+        Math.floor(startIndex / wordsPerPageCount) * wordsPerPageCount;
+      const currentPageEndIndex = Math.min(
+        currentPageStartIndex + wordsPerPageCount,
+        prevAllWords.length,
+      );
+
+      // Replace words for current page
+      const newAllWords = [...prevAllWords];
+      newAllWords.splice(
+        currentPageStartIndex,
+        currentPageEndIndex - currentPageStartIndex,
+        ...improvedWordsList,
+      );
+      return newAllWords;
+    });
+
+    console.log(
+      `✅ Updated page ${currentPage} with ${improvedTokens.length} improved tokens`,
+    );
+  };
+
   const handleWordClick = (word) => {
     const wordIndex = allWords.indexOf(word);
     setSelectedWordIndex(wordIndex);
