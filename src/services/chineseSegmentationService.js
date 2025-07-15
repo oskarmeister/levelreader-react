@@ -515,10 +515,10 @@ JSON:`;
         pageText.substring(0, 100) + "...",
       );
 
-      // Send text in 100-character chunks until we cover current + next page
+      // Send text in chunks - use smaller chunks if we've detected JSON truncation issues
       const allSegments = [];
       let chunkStart = 0;
-      const chunkSize = 100;
+      const chunkSize = this.preferSmallerChunks ? 50 : 100; // Reduce chunk size if we've had truncation issues
 
       console.log(
         `Processing ${pageText.length} characters in ${chunkSize}-character chunks`,
