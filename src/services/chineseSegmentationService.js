@@ -41,6 +41,12 @@ class ChineseSegmentationService {
     // Track which pages are currently being segmented
     this.segmentingPages = new Set();
 
+    // Circuit breaker for API failures
+    this.apiFailureCount = 0;
+    this.maxApiFailures = 3; // Stop trying API after 3 consecutive failures
+    this.apiDisabled = false;
+    this.lastFailureTime = null;
+
     console.log(
       "ChineseSegmentationService initialized with model:",
       !!this.model,
@@ -255,7 +261,7 @@ JSON:`;
             "进入",
             "出来",
             "回去",
-            "过来",
+            "��来",
             "可以",
             "应该",
             "必须",
