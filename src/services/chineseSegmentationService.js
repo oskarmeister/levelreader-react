@@ -154,6 +154,35 @@ JSON:`;
   clearCache() {
     this.segmentationCache.clear();
   }
+
+  // Test function that can be called from browser console
+  async testAPI(testSentence = "如果你好") {
+    console.log("=== TESTING GEMINI API ===");
+    console.log("Test sentence:", testSentence);
+    console.log("Has model:", !!this.model);
+
+    if (!this.model) {
+      console.log("No model available, cannot test API");
+      return null;
+    }
+
+    try {
+      const result = await this.model.generateContent(
+        'Test: Please respond with "API working"',
+      );
+      const response = await result.response;
+      const text = response.text();
+      console.log("API test response:", text);
+
+      // Now test with segmentation
+      const segResult = await this.segmentChineseSentence(testSentence);
+      console.log("Segmentation test result:", segResult);
+      return segResult;
+    } catch (error) {
+      console.error("API test failed:", error);
+      return null;
+    }
+  }
 }
 
 export default new ChineseSegmentationService();
