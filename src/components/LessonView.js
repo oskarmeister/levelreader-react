@@ -57,8 +57,8 @@ const LessonView = () => {
   }, [key, state.wordMetadata, state.deletedWords, state.selectedWord]);
 
   useEffect(() => {
-    const handleResize = () => {
-      calculateWordsPerPage();
+    const handleResize = async () => {
+      await calculateWordsPerPage();
     };
 
     window.addEventListener("resize", handleResize);
