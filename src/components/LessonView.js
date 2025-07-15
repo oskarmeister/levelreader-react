@@ -458,14 +458,17 @@ const LessonView = () => {
     );
 
     // Get improved segmentation for current page
-    const cacheKey = `${currentPage}-${currentPage}-${wordsPerPage}`;
     const improvedSegmentation =
-      ChineseSegmentationService.pageSegmentationCache.get(cacheKey);
+      ChineseSegmentationService.getPageSegmentation(currentPage);
 
     if (!improvedSegmentation) {
       console.log(`No improved segmentation found for page ${currentPage}`);
       return;
     }
+
+    console.log(
+      `Found improved segmentation for page ${currentPage}: ${improvedSegmentation.length} segments`,
+    );
 
     // Calculate text for current page using original regex split
     const regexWords = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
