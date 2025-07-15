@@ -21,35 +21,49 @@ class ChineseSegmentationService {
   }
 
   async segmentChineseSentence(sentence) {
+    console.log("Segmenting Chinese sentence:", sentence);
+
     // Check cache first
     if (this.segmentationCache.has(sentence)) {
+      console.log("Using cached segmentation");
       return this.segmentationCache.get(sentence);
     }
 
     // If no API key or model, use fallback
     if (!this.model) {
+      console.log("No API key/model, using fallback segmentation");
       return this.fallbackSegmentation(sentence);
     }
 
     try {
-      const prompt = `Analyze this Chinese sentence and identify where each word starts and ends. Return ONLY a JSON array of objects with "word" and "start" and "end" properties indicating the character positions (0-indexed).
+      const prompt = `Segment this Chinese text into meaningful words. Return ONLY a JSON array where each object has "word", "start", and "end" properties. Group characters into proper Chinese words, not individual characters.
 
-Sentence: "${sentence}"
+Text: "${sentence}"
 
-Rules:
-1. Include all words, punctuation, and spaces as separate objects
-2. Use character positions, not byte positions
-3. Return valid JSON only, no explanations
-4. Example format: [{"word":"我","start":0,"end":1},{"word":"爱","start":1,"end":2},{"word":"你","start":2,"end":3}]
+IMPORTANT RULES:
+- Combine characters into meaningful Chinese words (e.g., "如果" is ONE word, not "如" + "果")
+- "测试" is ONE word, not "测" + "试"
+- "单词" is ONE word, not "单" + "词"
+- Include punctuation and spaces as separate items
+- Use 0-indexed character positions
+- Return only valid JSON, no explanations
+
+Example for "如果你好":
+[{"word":"如果","start":0,"end":2},{"word":"你好","start":2,"end":4}]
 
 JSON:`;
 
+      console.log("Calling Gemini API for sentence:", sentence);
       const result = await this.model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
 
+      console.log("Gemini API response:", text);
+
       // Parse the JSON response
       const cleanedResponse = text.replace(/```json\n?|\n?```/g, "").trim();
+      console.log("Cleaned response:", cleanedResponse);
+
       const segmentation = JSON.parse(cleanedResponse);
 
       // Validate the segmentation
@@ -57,12 +71,15 @@ JSON:`;
         throw new Error("Invalid segmentation response: not an array");
       }
 
+      console.log("Successful segmentation:", segmentation);
+
       // Cache the result
       this.segmentationCache.set(sentence, segmentation);
 
       return segmentation;
     } catch (error) {
       console.error("Error in Chinese segmentation:", error);
+      console.log("Falling back to character-by-character segmentation");
       // Fallback to character-by-character segmentation
       return this.fallbackSegmentation(sentence);
     }
