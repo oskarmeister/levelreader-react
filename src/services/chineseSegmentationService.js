@@ -2,10 +2,19 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 class ChineseSegmentationService {
   constructor() {
-    this.genAI = new GoogleGenerativeAI(process.env.REACT_APP_GOOGLE_API_KEY);
-    this.model = this.genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
-    });
+    const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+    if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+      console.warn(
+        "Google API key not set. Chinese segmentation will use fallback method.",
+      );
+      this.genAI = null;
+      this.model = null;
+    } else {
+      this.genAI = new GoogleGenerativeAI(apiKey);
+      this.model = this.genAI.getGenerativeModel({
+        model: "gemini-2.0-flash-exp",
+      });
+    }
 
     // Cache to avoid redundant API calls for the same sentences
     this.segmentationCache = new Map();
