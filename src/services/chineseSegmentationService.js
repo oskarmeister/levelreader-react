@@ -300,6 +300,19 @@ JSON:`;
         this.handleApiFailure();
       } else if (error.message.includes("JSON")) {
         console.log("JSON parsing error - malformed API response");
+
+        // If it's a truncation error, suggest reducing chunk size
+        if (
+          error.message.includes("Unterminated string") ||
+          error.message.includes("Expected")
+        ) {
+          console.log(
+            "⚠️ Detected JSON truncation - consider reducing chunk size for future requests",
+          );
+          // Store a flag to use smaller chunks in the future
+          this.preferSmallerChunks = true;
+        }
+
         // Don't count JSON errors as API failures - the API responded
       } else if (error.message.includes("timeout")) {
         console.log("API request timed out after 30 seconds");
