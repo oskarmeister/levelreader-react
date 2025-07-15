@@ -90,6 +90,10 @@ const ApiManager = {
           lessonCategories: state.lessonCategories,
           recentlyAccessedLessons: state.recentlyAccessedLessons,
           recentlyAccessedCategories: state.recentlyAccessedCategories,
+          // Include lessonSegmentations for Chinese
+          ...(state.selectedLanguage === "Chinese" && {
+            lessonSegmentations: state.lessonSegmentations,
+          }),
         }),
       );
       return;
