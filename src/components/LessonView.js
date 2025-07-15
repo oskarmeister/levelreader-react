@@ -420,10 +420,27 @@ const LessonView = () => {
       .filter((word) => !state.deletedWords.includes(word));
   };
 
-  const renderSentenceWithClickableWords = (sentence) => {
+  const renderSentenceWithClickableWords = async (sentence) => {
     if (!sentence) return null;
 
-    const words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+    let words = [];
+
+    // Use Chinese segmentation for Chinese language
+    if (state.selectedLanguage === "Chinese") {
+      try {
+        const segmentation =
+          await ChineseSegmentationService.segmentChineseSentence(sentence);
+        words = segmentation.map((segment) => segment.word);
+      } catch (error) {
+        console.error(
+          "Error in Chinese sentence segmentation, falling back to regex:",
+          error,
+        );
+        words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+      }
+    } else {
+      words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+    }
 
     return words.map((token, index) => {
       if (/\p{L}+/u.test(token)) {
