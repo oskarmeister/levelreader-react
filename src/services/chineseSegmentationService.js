@@ -312,7 +312,7 @@ JSON:`;
             "希望",
             "觉得",
             "认��",
-            "知道",
+            "���道",
             "了解",
             "明白",
             "理解",
@@ -404,15 +404,41 @@ JSON:`;
 
       const pageText = words.slice(startIndex, endIndex).join("");
       console.log(
-        `Segmenting whole page for pages ${startPage}-${endPage}:`,
+        `Segmenting pages ${startPage}-${endPage} in 100-character chunks:`,
         pageText.substring(0, 100) + "...",
       );
 
-      // Send the entire page text to Gemini at once for better context
+      // Send text in 100-character chunks until we cover current + next page
+      const allSegments = [];
+      let chunkStart = 0;
+      const chunkSize = 100;
+
       console.log(
-        `Sending entire page (${pageText.length} characters) to Gemini API`,
+        `Processing ${pageText.length} characters in ${chunkSize}-character chunks`,
       );
-      const allSegments = await this.segmentChineseSentence(pageText);
+
+      while (chunkStart < pageText.length) {
+        const chunkEnd = Math.min(chunkStart + chunkSize, pageText.length);
+        const chunk = pageText.substring(chunkStart, chunkEnd);
+
+        console.log(
+          `Segmenting chunk ${Math.floor(chunkStart / chunkSize) + 1}: "${chunk.substring(0, 30)}..." (${chunk.length} chars)`,
+        );
+
+        const chunkSegmentation = await this.segmentChineseSentence(chunk);
+
+        // Adjust positions to be relative to the entire page text
+        const adjustedSegmentation = chunkSegmentation.map((segment) => ({
+          ...segment,
+          start: segment.start + chunkStart,
+          end: segment.end + chunkStart,
+        }));
+
+        allSegments.push(...adjustedSegmentation);
+        chunkStart = chunkEnd;
+
+        console.log(`Processed ${chunkEnd}/${pageText.length} characters`);
+      }
 
       // Cache the result
       this.pageSegmentationCache.set(cacheKey, allSegments);
