@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import { StorageManager } from "../storageManager";
+import ChineseSegmentationService from "../services/chineseSegmentationService";
 
 const ImportView = () => {
   const { state, setState } = useContext(AppContext);
