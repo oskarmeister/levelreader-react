@@ -485,29 +485,15 @@ const LessonView = () => {
 
     // Convert segmentation back to tokens for display
     const improvedTokens = [];
-    let lastEnd = 0;
 
+    // Use the segmentation data to rebuild tokens
     for (const segment of improvedSegmentation) {
-      // Add any skipped characters before this segment
-      if (segment.start > lastEnd) {
-        const skippedText = pageText.substring(lastEnd, segment.start);
-        if (skippedText) {
-          improvedTokens.push(skippedText);
-        }
-      }
-
-      // Add the segmented word
       improvedTokens.push(segment.word);
-      lastEnd = segment.end;
     }
 
-    // Add any remaining text after the last segment
-    if (lastEnd < pageText.length) {
-      const remainingText = pageText.substring(lastEnd);
-      if (remainingText) {
-        improvedTokens.push(remainingText);
-      }
-    }
+    console.log(
+      `Generated ${improvedTokens.length} improved tokens from segmentation`,
+    );
 
     // Re-render current page with improved tokens
     const renderedPage = improvedTokens.map((token, index) => {
