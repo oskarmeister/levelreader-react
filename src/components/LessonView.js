@@ -660,18 +660,41 @@ const LessonView = () => {
 
     // Use Chinese segmentation for Chinese language
     if (state.selectedLanguage === "Chinese") {
-      try {
-        const segmentation =
-          await ChineseSegmentationService.segmentChineseSentence(sentence);
-        words = segmentation.map((segment) => segment.word);
-      } catch (error) {
-        console.error(
-          "Error in Chinese sentence segmentation, falling back to regex:",
-          error,
+      // Check if we have pre-segmented data for this lesson
+      const hasPreSegmentedData = state.lessonSegmentations?.[key];
+
+      if (hasPreSegmentedData) {
+        // Use pre-segmented data to find words in this sentence
+        console.log("✨ Using pre-segmented data for sentence rendering");
+
+        // Find the sentence position in the full text
+        const fullText = state.lessons[key];
+        const sentenceStartIndex = fullText.indexOf(sentence);
+        const sentenceEndIndex = sentenceStartIndex + sentence.length;
+
+        if (sentenceStartIndex !== -1) {
+          // Extract segments that fall within this sentence
+          const sentenceSegments = hasPreSegmentedData.filter(
+            (segment) =>
+              segment.start >= sentenceStartIndex &&
+              segment.end <= sentenceEndIndex,
+          );
+
+          words = sentenceSegments.map((segment) => segment.word);
+        } else {
+          // Fallback if sentence not found in full text
+          console.warn("Sentence not found in full text, using regex fallback");
+          words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+        }
+      } else {
+        // No pre-segmented data available, use regex fallback
+        console.log(
+          "📝 No pre-segmented data available, using regex for sentence",
         );
         words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
       }
     } else {
+      // Non-Chinese languages use regex
       words = sentence.match(/\p{L}+|\p{P}+|\s+/gu) || [];
     }
 
