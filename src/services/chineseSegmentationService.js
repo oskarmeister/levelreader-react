@@ -177,7 +177,7 @@ JSON:`;
     } catch (error) {
       console.error("Error in Chinese segmentation:", error);
 
-      // Handle specific error types
+      // Handle specific error types and update circuit breaker
       if (
         error.message.includes("Failed to fetch") ||
         error.name === "TypeError"
@@ -185,12 +185,16 @@ JSON:`;
         console.log(
           "Network error detected - API may be unavailable or blocked",
         );
+        this.handleApiFailure();
       } else if (error.message.includes("JSON")) {
         console.log("JSON parsing error - malformed API response");
+        // Don't count JSON errors as API failures - the API responded
       } else if (error.message.includes("timeout")) {
         console.log("API request timed out after 1 minute");
+        this.handleApiFailure();
       } else {
         console.log("Unknown error type:", error.name, error.message);
+        this.handleApiFailure();
       }
 
       console.log("Falling back to improved local segmentation");
