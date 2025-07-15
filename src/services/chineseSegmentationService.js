@@ -78,7 +78,15 @@ For text "如果你好", respond: [{"word":"如果","start":0,"end":2},{"word":"
 JSON:`;
 
       console.log("Calling Gemini API for sentence:", sentence);
-      const result = await this.model.generateContent(prompt);
+
+      // Add timeout to prevent hanging requests
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("API request timeout")), 10000),
+      );
+
+      const apiPromise = this.model.generateContent(prompt);
+
+      const result = await Promise.race([apiPromise, timeoutPromise]);
       const response = await result.response;
       const text = response.text();
 
