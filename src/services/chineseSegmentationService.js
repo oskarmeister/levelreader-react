@@ -61,7 +61,7 @@ class ChineseSegmentationService {
       "ChineseSegmentationService initialized with model:",
       !!this.model,
     );
-    console.log("���� Circuit breaker: maxFailures =", this.maxApiFailures);
+    console.log("🔄 Circuit breaker: maxFailures =", this.maxApiFailures);
     console.log("==============================");
   }
 
@@ -567,7 +567,7 @@ JSON:`;
     // Skip all background work if API is disabled
     if (this.apiDisabled || !this.model) {
       console.log(
-        `��� API disabled/unavailable, marking all pages as completed with fallback`,
+        `🚫 API disabled/unavailable, marking all pages as completed with fallback`,
       );
       // Mark all pages as completed and generate fallback segmentation
       for (let i = 0; i < this.totalPages; i++) {
@@ -705,6 +705,43 @@ JSON:`;
   getPageSegmentation(pageNumber) {
     const cacheKey = `${pageNumber}-${pageNumber}-${this.wordsPerPage}`;
     return this.pageSegmentationCache.get(cacheKey);
+  }
+
+  // Generate fallback segmentation for a specific page
+  generateFallbackSegmentationForPage(pageNumber) {
+    if (!this.currentText) {
+      console.log(
+        `No current text available for fallback segmentation of page ${pageNumber}`,
+      );
+      return;
+    }
+
+    console.log(`🔄 Generating fallback segmentation for page ${pageNumber}`);
+
+    // Calculate page text
+    const words = this.currentText.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+    const startIndex = pageNumber * this.wordsPerPage;
+    const endIndex = Math.min(
+      (pageNumber + 1) * this.wordsPerPage,
+      words.length,
+    );
+
+    if (startIndex >= words.length) {
+      return;
+    }
+
+    const pageText = words.slice(startIndex, endIndex).join("");
+
+    // Use fallback segmentation
+    const segmentation = this.fallbackSegmentation(pageText);
+
+    // Cache the result
+    const cacheKey = `${pageNumber}-${pageNumber}-${this.wordsPerPage}`;
+    this.pageSegmentationCache.set(cacheKey, segmentation);
+
+    console.log(
+      `✅ Generated fallback segmentation for page ${pageNumber}: ${segmentation.length} segments`,
+    );
   }
 
   clearCache() {
