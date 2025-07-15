@@ -311,8 +311,8 @@ JSON:`;
             "想要",
             "希望",
             "觉得",
-            "认��",
-            "���道",
+            "认���",
+            "知道",
             "了解",
             "明白",
             "理解",
@@ -442,7 +442,9 @@ JSON:`;
 
       // Cache the result
       this.pageSegmentationCache.set(cacheKey, allSegments);
-      console.log(`Completed segmentation for pages ${startPage}-${endPage}`);
+      console.log(
+        `Completed chunked segmentation for pages ${startPage}-${endPage}: ${allSegments.length} segments`,
+      );
 
       return allSegments;
     } finally {
