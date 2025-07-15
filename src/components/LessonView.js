@@ -479,6 +479,10 @@ const LessonView = () => {
     );
     const pageText = regexWords.slice(startIndex, endIndex).join("");
 
+    console.log(
+      `Page ${currentPage} text length: ${pageText.length}, segmentation covers: ${improvedSegmentation[improvedSegmentation.length - 1]?.end || 0}`,
+    );
+
     // Convert segmentation back to tokens for display
     const improvedTokens = [];
     let lastEnd = 0;
