@@ -60,20 +60,20 @@ class ChineseSegmentationService {
     }
 
     try {
-      const prompt = `Segment this Chinese text into meaningful words. Return ONLY a JSON array where each object has "word", "start", and "end" properties. Group characters into proper Chinese words, not individual characters.
+      const prompt = `You are a Chinese text segmentation expert. Segment the following Chinese text into meaningful words.
 
-Text: "${sentence}"
+Text to segment: "${sentence}"
 
-IMPORTANT RULES:
-- Combine characters into meaningful Chinese words (e.g., "如果" is ONE word, not "如" + "果")
-- "测试" is ONE word, not "测" + "试"
-- "单词" is ONE word, not "单" + "词"
-- Include punctuation and spaces as separate items
-- Use 0-indexed character positions
-- Return only valid JSON, no explanations
+Rules:
+1. Group characters into proper Chinese words (如果=one word, not 如+果)
+2. Include punctuation and spaces as separate items
+3. Use 0-indexed character positions
+4. Return ONLY valid JSON - no explanations or extra text
 
-Example for "如果你好":
-[{"word":"如果","start":0,"end":2},{"word":"你好","start":2,"end":4}]
+Response format (JSON array only):
+[{"word":"word1","start":0,"end":N},{"word":"word2","start":N,"end":M}]
+
+For text "如果你好", respond: [{"word":"如果","start":0,"end":2},{"word":"你好","start":2,"end":4}]
 
 JSON:`;
 
