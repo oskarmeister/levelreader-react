@@ -87,6 +87,24 @@ const LessonView = () => {
     state.selectedWord,
   ]);
 
+  // Pre-load next page when user navigates (for Chinese text)
+  useEffect(() => {
+    if (
+      state.selectedLanguage === "Chinese" &&
+      state.lessons[key] &&
+      currentPage >= 0
+    ) {
+      console.log(
+        `Page changed to ${currentPage}, pre-loading next page for smooth navigation`,
+      );
+      ChineseSegmentationService.preloadNextPage(
+        state.lessons[key],
+        currentPage,
+        wordsPerPage,
+      );
+    }
+  }, [currentPage, state.selectedLanguage, state.lessons, key, wordsPerPage]);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Navigation based on view mode
