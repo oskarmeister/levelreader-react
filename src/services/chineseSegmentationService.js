@@ -53,14 +53,19 @@ class ChineseSegmentationService {
       return this.segmentationCache.get(sentence);
     }
 
-    // If no API key or model, use fallback
+        // If no API key or model, use fallback
     if (!this.model) {
       console.log("No API key/model, using fallback segmentation");
       return this.fallbackSegmentation(sentence);
     }
 
-    try {
-      const prompt = `You are a Chinese text segmentation expert. Segment the following Chinese text into meaningful words.
+    // Temporarily disable API calls due to network issues - use improved fallback
+    console.log("API temporarily disabled due to network issues, using improved fallback");
+    return this.fallbackSegmentation(sentence);
+
+    // API code disabled for now
+    /* try {
+            const prompt = `You are a Chinese text segmentation expert. Segment the following Chinese text into meaningful words.
 
 Text to segment: "${sentence}"
 
@@ -77,11 +82,11 @@ For text "如果你好", respond: [{"word":"如果","start":0,"end":2},{"word":"
 
 JSON:`;
 
-      console.log("Calling Gemini API for sentence:", sentence);
+                  console.log("Calling Gemini API for sentence:", sentence);
 
       // Add timeout to prevent hanging requests
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("API request timeout")), 10000),
+        setTimeout(() => reject(new Error("API request timeout")), 10000)
       );
 
       const apiPromise = this.model.generateContent(prompt);
@@ -91,10 +96,7 @@ JSON:`;
       const text = response.text();
 
       console.log("Gemini API response length:", text.length);
-      console.log(
-        "Gemini API response preview:",
-        text.substring(0, 500) + "...",
-      );
+      console.log("Gemini API response preview:", text.substring(0, 500) + "...");
 
       // Clean and parse the JSON response with better error handling
       let cleanedResponse = text.replace(/```json\n?|\n?```/g, "").trim();
@@ -109,10 +111,7 @@ JSON:`;
         cleanedResponse = jsonMatch[0];
       }
 
-      console.log(
-        "Cleaned response preview:",
-        cleanedResponse.substring(0, 200) + "...",
-      );
+      console.log("Cleaned response preview:", cleanedResponse.substring(0, 200) + "...");
 
       let segmentation;
       try {
@@ -125,10 +124,7 @@ JSON:`;
         let fixedResponse = cleanedResponse;
 
         // Fix unescaped quotes in values by escaping them
-        fixedResponse = fixedResponse.replace(
-          /"([^"]*)"([^"]*)"([^"]*)"/g,
-          '"$1\\"$2\\"$3"',
-        );
+        fixedResponse = fixedResponse.replace(/"([^"]*)"([^"]*)"([^"]*)"/g, '"$1\\"$2\\"$3"');
 
         // Try parsing the fixed version
         try {
@@ -136,9 +132,7 @@ JSON:`;
           console.log("Successfully parsed with fixes");
         } catch (secondError) {
           console.error("Still failed after fixes:", secondError);
-          throw new Error(
-            `Failed to parse JSON response: ${parseError.message}`,
-          );
+          throw new Error(`Failed to parse JSON response: ${parseError.message}`);
         }
       }
 
@@ -153,17 +147,12 @@ JSON:`;
       this.segmentationCache.set(sentence, segmentation);
 
       return segmentation;
-    } catch (error) {
+        } catch (error) {
       console.error("Error in Chinese segmentation:", error);
 
       // Handle specific error types
-      if (
-        error.message.includes("Failed to fetch") ||
-        error.name === "TypeError"
-      ) {
-        console.log(
-          "Network error detected - API may be unavailable or blocked",
-        );
+      if (error.message.includes("Failed to fetch") || error.name === "TypeError") {
+        console.log("Network error detected - API may be unavailable or blocked");
       } else if (error.message.includes("JSON")) {
         console.log("JSON parsing error - malformed API response");
       } else {
@@ -176,7 +165,7 @@ JSON:`;
     }
   }
 
-  fallbackSegmentation(sentence) {
+    fallbackSegmentation(sentence) {
     console.log("Using improved fallback segmentation");
     const segmentation = [];
 
@@ -208,46 +197,11 @@ JSON:`;
 
           // Common Chinese 2-character words (basic list)
           const commonWords = [
-            "如果",
-            "因为",
-            "所以",
-            "但是",
-            "然后",
-            "现在",
-            "时候",
-            "地方",
-            "今天",
-            "明天",
-            "昨天",
-            "什么",
-            "为什么",
-            "怎么",
-            "哪里",
-            "谁",
-            "我们",
-            "你们",
-            "他们",
-            "自己",
-            "大家",
-            "老师",
-            "学生",
-            "朋友",
-            "工作",
-            "学习",
-            "生活",
-            "时间",
-            "问题",
-            "方法",
-            "结果",
-            "原因",
-            "开始",
-            "结束",
-            "继续",
-            "停止",
-            "进入",
-            "出来",
-            "回去",
-            "过来",
+            "如果", "因为", "所以", "但是", "然后", "现在", "时候", "地方",
+            "今天", "明天", "昨天", "什么", "为什么", "怎么", "哪里", "谁",
+            "我们", "你们", "他们", "自己", "大家", "老师", "学生", "朋友",
+            "工作", "学习", "生活", "时间", "问题", "方法", "结果", "原因",
+            "开始", "结束", "继续", "停止", "进入", "出来", "回去", "过来"
           ];
 
           if (commonWords.includes(twoCharWord)) {
