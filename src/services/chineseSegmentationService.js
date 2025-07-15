@@ -69,6 +69,14 @@ class ChineseSegmentationService {
       return this.fallbackSegmentation(sentence);
     }
 
+    // Circuit breaker: if API has failed multiple times, use fallback
+    if (this.apiDisabled) {
+      console.log(
+        "API disabled due to repeated failures, using fallback segmentation",
+      );
+      return this.fallbackSegmentation(sentence);
+    }
+
     try {
       const prompt = `You are a Chinese text segmentation expert. Segment the following Chinese text into meaningful words.
 
@@ -261,7 +269,7 @@ JSON:`;
             "进入",
             "出来",
             "回去",
-            "��来",
+            "过来",
             "可以",
             "应该",
             "必须",
@@ -269,7 +277,7 @@ JSON:`;
             "想要",
             "希望",
             "觉得",
-            "认为",
+            "认��",
             "知道",
             "了解",
             "明白",
