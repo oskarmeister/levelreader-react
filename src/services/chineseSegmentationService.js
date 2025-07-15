@@ -174,7 +174,7 @@ JSON:`;
       } else if (error.message.includes("JSON")) {
         console.log("JSON parsing error - malformed API response");
       } else if (error.message.includes("timeout")) {
-        console.log("API request timed out after 30 seconds");
+        console.log("API request timed out after 1 minute");
       } else {
         console.log("Unknown error type:", error.name, error.message);
       }
