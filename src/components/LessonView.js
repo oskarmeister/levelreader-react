@@ -314,37 +314,9 @@ const LessonView = () => {
   };
 
   const calculateWordsPerPage = async () => {
-    // Calculate available height for text content more accurately
-    const navHeight = 64; // Navigation bar height (pt-16)
-    const backButtonHeight = 48; // Back button with margin
-    const headerSectionHeight = 100; // Lesson header card section
-    const cardPadding = 64; // Card internal padding (p-8 = 32px top + 32px bottom)
-    const legendHeight = 140; // Word legend section with margin
-    const paginationHeight = 80; // Pagination controls
-    const containerPadding = 32; // Container padding
-    const margin = 48; // Additional safe margin
-
-    const totalFixedHeight =
-      navHeight +
-      backButtonHeight +
-      headerSectionHeight +
-      cardPadding +
-      legendHeight +
-      paginationHeight +
-      containerPadding +
-      margin;
-    const availableHeight = Math.max(
-      300,
-      window.innerHeight - totalFixedHeight,
-    );
-
-    // Estimate words that can fit based on line height and font size
-    const lineHeight = 29.25; // From CSS: line-height for text-lg (1.625 * 18px)
-    const wordsPerLine = 10; // Conservative estimate of words per line
-    const linesPerPage = Math.floor(availableHeight / lineHeight);
-    const calculatedWordsPerPage = Math.max(200, linesPerPage * wordsPerLine); // Minimum 200 words for better space usage
-
-    setWordsPerPage(calculatedWordsPerPage);
+    // Changed to character-based pagination with maximum 150 characters per page
+    const maxCharsPerPage = 150;
+    setWordsPerPage(maxCharsPerPage);
 
     // Re-paginate text with new word count
     const text = state.lessons[key];
