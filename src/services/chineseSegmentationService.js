@@ -73,7 +73,11 @@ class ChineseSegmentationService {
     // Circuit breaker: if API has failed multiple times, use fallback
     if (this.apiDisabled) {
       console.log(
-        "API disabled due to repeated failures, using fallback segmentation",
+        "🚫 API DISABLED: Using fallback segmentation (failures: " +
+          this.apiFailureCount +
+          "/" +
+          this.maxApiFailures +
+          ")",
       );
       return this.fallbackSegmentation(sentence);
     }
