@@ -29,7 +29,9 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
-        lessonSegmentations: {},
+        ...(state.selectedLanguage === "Chinese" && {
+          lessonSegmentations: {},
+        }),
       }
     );
   };
