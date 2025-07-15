@@ -340,7 +340,7 @@ JSON:`;
             "发展",
             "变化",
             "增加",
-            "减少",
+            "减��",
             "提高",
             "降低",
             "改善",
@@ -411,16 +411,19 @@ JSON:`;
     this.segmentingPages.add(cacheKey);
 
     try {
-      // Calculate text range for these pages
-      const words = textToUse.match(/\p{L}+|\p{P}+|\s+/gu) || [];
-      const startIndex = startPage * wordsPerPage;
-      const endIndex = Math.min((endPage + 1) * wordsPerPage, words.length);
+      // Calculate text range for these pages using character-based pagination
+      const maxCharsPerPage = wordsPerPage; // wordsPerPage now represents chars per page
+      const startIndex = startPage * maxCharsPerPage;
+      const endIndex = Math.min(
+        (endPage + 1) * maxCharsPerPage,
+        textToUse.length,
+      );
 
-      if (startIndex >= words.length) {
+      if (startIndex >= textToUse.length) {
         return [];
       }
 
-      const pageText = words.slice(startIndex, endIndex).join("");
+      const pageText = textToUse.substring(startIndex, endIndex);
       console.log(
         `Segmenting pages ${startPage}-${endPage} in 100-character chunks:`,
         pageText.substring(0, 100) + "...",
