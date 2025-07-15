@@ -61,7 +61,7 @@ class ChineseSegmentationService {
       "ChineseSegmentationService initialized with model:",
       !!this.model,
     );
-    console.log("🔄 Circuit breaker: maxFailures =", this.maxApiFailures);
+    console.log("���� Circuit breaker: maxFailures =", this.maxApiFailures);
     console.log("==============================");
   }
 
@@ -567,12 +567,18 @@ JSON:`;
     // Skip all background work if API is disabled
     if (this.apiDisabled || !this.model) {
       console.log(
-        `🚫 API disabled/unavailable, marking all pages as completed with fallback`,
+        `��� API disabled/unavailable, marking all pages as completed with fallback`,
       );
-      // Mark all pages as completed since we won't segment them
+      // Mark all pages as completed and generate fallback segmentation
       for (let i = 0; i < this.totalPages; i++) {
         if (this.pageSegmentationStatus.get(i) === "pending") {
           this.pageSegmentationStatus.set(i, "completed");
+          // Generate fallback segmentation for this page and cache it
+          this.generateFallbackSegmentationForPage(i);
+          // Notify callback for immediate page
+          if (i === this.currentViewedPage) {
+            this.notifyPageSegmentationComplete(i);
+          }
         }
       }
       return;
