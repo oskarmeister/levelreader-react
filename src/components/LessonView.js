@@ -545,23 +545,22 @@ const LessonView = () => {
       }
     });
 
-    // Update allWords with improved words for current page
+    // For character-based pagination, regenerate allWords from all pages
+    // This is simpler and more reliable than trying to update just current page
     setAllWords((prevAllWords) => {
-      const wordsPerPageCount = wordsPerPage;
-      const currentPageStartIndex =
-        Math.floor(startIndex / wordsPerPageCount) * wordsPerPageCount;
-      const currentPageEndIndex = Math.min(
-        currentPageStartIndex + wordsPerPageCount,
-        prevAllWords.length,
-      );
+      // Get all words from all pages by re-tokenizing the full text
+      const allTokens = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+      const newAllWords = [];
 
-      // Replace words for current page
-      const newAllWords = [...prevAllWords];
-      newAllWords.splice(
-        currentPageStartIndex,
-        currentPageEndIndex - currentPageStartIndex,
-        ...improvedWordsList,
-      );
+      allTokens.forEach((token) => {
+        if (/\p{L}+/u.test(token)) {
+          const word = token.toLowerCase();
+          if (!state.deletedWords.includes(word)) {
+            newAllWords.push(word);
+          }
+        }
+      });
+
       return newAllWords;
     });
 
