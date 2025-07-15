@@ -185,4 +185,14 @@ JSON:`;
   }
 }
 
-export default new ChineseSegmentationService();
+const chineseSegmentationService = new ChineseSegmentationService();
+
+// Expose globally for debugging
+if (typeof window !== "undefined") {
+  window.chineseSegmentationService = chineseSegmentationService;
+  console.log(
+    "Chinese segmentation service exposed globally as window.chineseSegmentationService",
+  );
+}
+
+export default chineseSegmentationService;
