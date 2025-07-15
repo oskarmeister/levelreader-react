@@ -136,15 +136,29 @@ const LibraryView = () => {
             </div>
           </div>
           <div className="p-4">
-            <span className="unknown-percent inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mb-3">
-              {pct}% unknown
-            </span>
-            <div className="progress-bar bg-gray-200 h-2 rounded-full">
-              <div
-                className="progress bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
+            {isSegmenting ? (
+              <div className="text-center">
+                <span className="inline-block bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium mb-3">
+                  🔤 Optimizing Text...
+                </span>
+                <div className="text-xs text-gray-500">
+                  This lesson is being processed for better word recognition. It
+                  will be available soon!
+                </div>
+              </div>
+            ) : (
+              <>
+                <span className="unknown-percent inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mb-3">
+                  {pct}% unknown
+                </span>
+                <div className="progress-bar bg-gray-200 h-2 rounded-full">
+                  <div
+                    className="progress bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       );
