@@ -689,6 +689,12 @@ JSON:`;
     this.onSegmentationComplete = callback;
   }
 
+  // Get cached segmentation for a page
+  getPageSegmentation(pageNumber) {
+    const cacheKey = `${pageNumber}-${pageNumber}-${this.wordsPerPage}`;
+    return this.pageSegmentationCache.get(cacheKey);
+  }
+
   clearCache() {
     this.segmentationCache.clear();
     this.pageSegmentationCache.clear();
