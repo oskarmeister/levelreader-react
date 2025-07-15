@@ -26,6 +26,11 @@ class ChineseSegmentationService {
       return this.segmentationCache.get(sentence);
     }
 
+    // If no API key or model, use fallback
+    if (!this.model) {
+      return this.fallbackSegmentation(sentence);
+    }
+
     try {
       const prompt = `Analyze this Chinese sentence and identify where each word starts and ends. Return ONLY a JSON array of objects with "word" and "start" and "end" properties indicating the character positions (0-indexed).
 
