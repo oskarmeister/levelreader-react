@@ -356,33 +356,15 @@ JSON:`;
 
       const pageText = words.slice(startIndex, endIndex).join("");
       console.log(
-        `Segmenting text for pages ${startPage}-${endPage}:`,
+        `Segmenting whole page for pages ${startPage}-${endPage}:`,
         pageText.substring(0, 100) + "...",
       );
 
-      // Split into sentences for better segmentation
-      const sentences = pageText.split(/([。！？；])/);
-      const allSegments = [];
-      let currentPosition = 0;
-
-      for (const sentence of sentences) {
-        if (sentence.trim().length === 0) {
-          currentPosition += sentence.length;
-          continue;
-        }
-
-        const segmentation = await this.segmentChineseSentence(sentence);
-
-        // Adjust positions to be relative to the entire page text
-        const adjustedSegmentation = segmentation.map((segment) => ({
-          ...segment,
-          start: segment.start + currentPosition,
-          end: segment.end + currentPosition,
-        }));
-
-        allSegments.push(...adjustedSegmentation);
-        currentPosition += sentence.length;
-      }
+      // Send the entire page text to Gemini at once for better context
+      console.log(
+        `Sending entire page (${pageText.length} characters) to Gemini API`,
+      );
+      const allSegments = await this.segmentChineseSentence(pageText);
 
       // Cache the result
       this.pageSegmentationCache.set(cacheKey, allSegments);
