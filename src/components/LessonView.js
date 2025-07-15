@@ -92,21 +92,30 @@ const LessonView = () => {
     if (state.selectedLanguage === "Chinese") {
       const handleSegmentationComplete = (pageNumber) => {
         console.log(
-          `🔄 Segmentation completed for page ${pageNumber}, checking if current page needs update`,
+          `🔄 CALLBACK: Segmentation completed for page ${pageNumber}, current page is ${currentPage}`,
         );
 
         // If the completed page is the current page, update the words
         if (pageNumber === currentPage) {
           console.log(
-            `✨ Current page ${currentPage} segmentation completed, updating words automatically`,
+            `✨ CALLBACK: Current page ${currentPage} segmentation completed, updating words automatically`,
           );
 
           // Re-paginate the current text to incorporate new segmentation
           const text = state.lessons[key];
           if (text) {
+            console.log(
+              `📝 CALLBACK: Starting updateCurrentPageWords for text length ${text.length}`,
+            );
             // Update words with the new segmentation
             updateCurrentPageWords(text);
+          } else {
+            console.log(`❌ CALLBACK: No text available for key ${key}`);
           }
+        } else {
+          console.log(
+            `ℹ️ CALLBACK: Page ${pageNumber} completed but current page is ${currentPage}, skipping update`,
+          );
         }
       };
 
