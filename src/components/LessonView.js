@@ -19,6 +19,7 @@ const LessonView = () => {
   const [currentSentence, setCurrentSentence] = useState(0);
   const [sentenceTranslation, setSentenceTranslation] = useState("");
   const [translatingsentence, setTranslatingsentence] = useState(false);
+  const [renderedSentence, setRenderedSentence] = useState(null);
 
   useEffect(() => {
     const text = state.lessons[key];
