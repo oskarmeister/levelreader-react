@@ -318,10 +318,10 @@ const LessonView = () => {
     const maxCharsPerPage = 150;
     setWordsPerPage(maxCharsPerPage);
 
-    // Re-paginate text with new word count
+    // Re-paginate text with new character count
     const text = state.lessons[key];
     if (text) {
-      await paginateText(text, calculatedWordsPerPage);
+      await paginateText(text, maxCharsPerPage);
     }
   };
 
