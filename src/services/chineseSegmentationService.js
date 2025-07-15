@@ -170,6 +170,9 @@ JSON:`;
 
       console.log("Successful segmentation:", segmentation);
 
+      // Reset circuit breaker on successful API call
+      this.handleApiSuccess();
+
       // Cache the result
       this.segmentationCache.set(sentence, segmentation);
 
@@ -302,7 +305,7 @@ JSON:`;
             "变化",
             "增加",
             "减少",
-            "提���",
+            "提高",
             "降低",
             "改善",
             "恶化",
