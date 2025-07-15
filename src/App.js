@@ -107,7 +107,6 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
-        lessonSegmentations: {},
       },
       German: {
         lessons: {
