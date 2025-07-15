@@ -67,13 +67,17 @@ const LibraryView = () => {
       return (
         <div
           key={key}
-          className="lesson-card bg-white rounded-xl cursor-pointer relative opacity-100 transition-all duration-300 hover:scale-105 origin-top-left w-64 min-h-32 overflow-hidden"
+          className={`lesson-card rounded-xl cursor-pointer relative transition-all duration-300 hover:scale-105 origin-top-left w-64 min-h-32 overflow-hidden ${
+            isSegmenting ? "bg-gray-100 opacity-75" : "bg-white opacity-100"
+          }`}
           style={{
             boxShadow:
               "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-            borderLeft: "4px solid #8B5CF6",
+            borderLeft: isSegmenting
+              ? "4px solid #9CA3AF"
+              : "4px solid #8B5CF6",
           }}
-          onClick={() => navigate(`/lesson/${key}`)}
+          onClick={() => !isSegmenting && navigate(`/lesson/${key}`)}
         >
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800">{key}</h3>
