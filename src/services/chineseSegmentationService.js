@@ -51,6 +51,7 @@ class ChineseSegmentationService {
       "ChineseSegmentationService initialized with model:",
       !!this.model,
     );
+    console.log("🔄 Circuit breaker: maxFailures =", this.maxApiFailures);
     console.log("==============================");
   }
 
