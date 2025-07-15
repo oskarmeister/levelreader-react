@@ -245,6 +245,13 @@ function App() {
             recentlyAccessedCategories:
               parsedData.recentlyAccessedCategories ||
               prev.recentlyAccessedCategories,
+            // Add lessonSegmentations for Chinese
+            ...(prev.selectedLanguage === "Chinese" && {
+              lessonSegmentations:
+                parsedData.lessonSegmentations ||
+                prev.lessonSegmentations ||
+                {},
+            }),
           }));
         }
       } else {
