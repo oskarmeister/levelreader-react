@@ -54,7 +54,7 @@ function App() {
     token: localStorage.getItem("token"),
     selectedLanguage: localStorage.getItem("selectedLanguage") || "Spanish",
     languageData: {
-            Spanish: {
+      Spanish: {
         lessons: {
           "El Principito":
             "En el desierto, he aprendido a escuchar. Todo lo que necesitaba era una pequeña brisa para escuchar las voces de aquellos que amo.",
@@ -72,7 +72,7 @@ function App() {
         deletedWords: [],
         lessonSegmentations: {},
       },
-            Swedish: {
+      Swedish: {
         lessons: {
           "Lille Prinsen":
             "I öknen har jag lärt mig att lyssna. Allt jag behövde var en liten bris för att höra rösterna från dem jag älskar.",
@@ -90,7 +90,7 @@ function App() {
           小王子:
             "在沙漠中，我学会了倾听。我所需要的只是一阵微风，就能听到我所爱的人的声音。",
         },
-        lessonCategories: { 小王��: ["books"] },
+        lessonCategories: { 小王子: ["books"] },
         recentlyAccessedLessons: [],
         recentlyAccessedCategories: [],
         wordMetadata: {},
@@ -109,6 +109,7 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonSegmentations: {},
       },
       German: {
         lessons: {
