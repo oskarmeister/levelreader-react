@@ -325,11 +325,11 @@ const LessonView = () => {
     }
   };
 
-  const paginateText = async (text, customWordsPerPage = wordsPerPage) => {
-    let words = [];
-
-    // ALWAYS render immediately with regex for fast display
-    words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+  const paginateText = async (text, maxCharsPerPage = wordsPerPage) => {
+    // Character-based pagination (customWordsPerPage now represents max chars per page)
+    console.log(
+      `🔤 Paginating text using character-based pagination: ${maxCharsPerPage} chars per page`,
+    );
 
     // For Chinese text, set up background segmentation system
     if (state.selectedLanguage === "Chinese") {
@@ -337,13 +337,13 @@ const LessonView = () => {
         "🚀 Setting up Chinese text with immediate rendering + background segmentation",
       );
 
-      // Calculate total pages for tracking
-      const totalPages = Math.ceil(words.length / customWordsPerPage);
+      // Calculate total pages for character-based tracking
+      const totalPages = Math.ceil(text.length / maxCharsPerPage);
 
       // Initialize page tracking system
       ChineseSegmentationService.initializePageTracking(
         totalPages,
-        customWordsPerPage,
+        maxCharsPerPage,
       );
 
       // Store text for background segmentation
@@ -353,28 +353,32 @@ const LessonView = () => {
       ChineseSegmentationService.setCurrentPage(currentPage);
 
       console.log(
-        `📄 Rendered ${words.length} words across ${totalPages} pages immediately`,
+        `📄 Character-based pagination: ${text.length} chars across ${totalPages} pages (${maxCharsPerPage} chars/page)`,
       );
     }
 
     const pagesList = [];
+    const allWordsList = [];
 
-    // Extract just the actual words for navigation
-    const wordsList = [];
-    words.forEach((token) => {
-      if (/\p{L}+/u.test(token)) {
-        const word = token.toLowerCase();
-        if (!state.deletedWords.includes(word)) {
-          wordsList.push(word);
+    // Split text into character-based pages
+    for (let i = 0; i < text.length; i += maxCharsPerPage) {
+      const pageText = text.substring(i, i + maxCharsPerPage);
+
+      // Tokenize the page text for display
+      const tokens = pageText.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+
+      // Collect words from this page for navigation
+      tokens.forEach((token) => {
+        if (/\p{L}+/u.test(token)) {
+          const word = token.toLowerCase();
+          if (!state.deletedWords.includes(word)) {
+            allWordsList.push(word);
+          }
         }
-      }
-    });
-    setAllWords(wordsList);
+      });
 
-    // Split words into pages
-    for (let i = 0; i < words.length; i += customWordsPerPage) {
-      const pageWords = words.slice(i, i + customWordsPerPage);
-      const renderedPage = pageWords.map((token, index) => {
+      // Render the page tokens
+      const renderedPage = tokens.map((token, index) => {
         const globalIndex = i + index; // Use global index for unique keys
 
         if (/\p{L}+/u.test(token)) {
@@ -425,6 +429,7 @@ const LessonView = () => {
       pagesList.push(renderedPage);
     }
 
+    setAllWords(allWordsList);
     setPages(pagesList);
     setCurrentPage(0); // Reset to first page when text changes
   };
