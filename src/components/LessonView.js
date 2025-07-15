@@ -221,7 +221,7 @@ const LessonView = () => {
     }
   };
 
-  const calculateWordsPerPage = () => {
+  const calculateWordsPerPage = async () => {
     // Calculate available height for text content more accurately
     const navHeight = 64; // Navigation bar height (pt-16)
     const backButtonHeight = 48; // Back button with margin
@@ -257,7 +257,7 @@ const LessonView = () => {
     // Re-paginate text with new word count
     const text = state.lessons[key];
     if (text) {
-      paginateText(text, calculatedWordsPerPage);
+      await paginateText(text, calculatedWordsPerPage);
     }
   };
 
