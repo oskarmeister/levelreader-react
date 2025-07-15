@@ -373,6 +373,13 @@ JSON:`;
 
   // Smart pagination-based segmentation
   async segmentPageRange(text, startPage, endPage, wordsPerPage) {
+    // Use stored text if not provided (for background segmentation)
+    const textToUse = text || this.currentText;
+    if (!textToUse) {
+      console.error("No text provided for segmentation");
+      return [];
+    }
+
     const cacheKey = `${startPage}-${endPage}-${wordsPerPage}`;
 
     // Check if already cached
@@ -395,12 +402,14 @@ JSON:`;
       return this.pageSegmentationCache.get(cacheKey);
     }
 
-    console.log(`Starting segmentation for pages ${startPage}-${endPage}`);
+    console.log(
+      `🔄 Starting background segmentation for pages ${startPage}-${endPage}`,
+    );
     this.segmentingPages.add(cacheKey);
 
     try {
       // Calculate text range for these pages
-      const words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+      const words = textToUse.match(/\p{L}+|\p{P}+|\s+/gu) || [];
       const startIndex = startPage * wordsPerPage;
       const endIndex = Math.min((endPage + 1) * wordsPerPage, words.length);
 
