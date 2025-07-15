@@ -272,7 +272,7 @@ JSON:`;
           const commonWords = [
             "如果",
             "因为",
-            "��以",
+            "所以",
             "但是",
             "然后",
             "现在",
@@ -561,6 +561,20 @@ JSON:`;
 
   // Check which pages need segmentation and start background processing
   checkAndSegmentNeededPages() {
+    // Skip all background work if API is disabled
+    if (this.apiDisabled || !this.model) {
+      console.log(
+        `🚫 API disabled/unavailable, marking all pages as completed with fallback`,
+      );
+      // Mark all pages as completed since we won't segment them
+      for (let i = 0; i < this.totalPages; i++) {
+        if (this.pageSegmentationStatus.get(i) === "pending") {
+          this.pageSegmentationStatus.set(i, "completed");
+        }
+      }
+      return;
+    }
+
     const pagesToSegment = [this.currentViewedPage];
 
     // Add next page if it exists
