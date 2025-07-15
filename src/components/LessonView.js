@@ -66,6 +66,27 @@ const LessonView = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Effect to render sentence when it changes
+  useEffect(() => {
+    const renderCurrentSentence = async () => {
+      if (sentences[currentSentence]) {
+        const rendered = await renderSentenceWithClickableWords(
+          sentences[currentSentence],
+        );
+        setRenderedSentence(rendered);
+      }
+    };
+
+    renderCurrentSentence();
+  }, [
+    currentSentence,
+    sentences,
+    state.selectedLanguage,
+    state.wordMetadata,
+    state.deletedWords,
+    state.selectedWord,
+  ]);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Navigation based on view mode
