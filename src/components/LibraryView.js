@@ -34,9 +34,20 @@ const LibraryView = () => {
     return state.recentlyAccessedLessons?.slice(0, 10) || [];
   };
 
+  const isLessonSegmenting = (lessonKey) => {
+    // Check if this is a Chinese lesson that doesn't have segmentation data yet
+    return (
+      state.selectedLanguage === "Chinese" &&
+      !state.lessonSegmentations?.[lessonKey] &&
+      state.lessons[lessonKey]
+    );
+  };
+
   const renderLessonCards = (lessons = null) => {
     const lessonsToRender = lessons || Object.entries(state.lessons);
     return lessonsToRender.map(([key, text]) => {
+      const isSegmenting = isLessonSegmenting(key);
+
       // Calculate stats
       const rawWords = text.match(/\p{L}+/gu) || [];
       const words = Array.from(new Set(rawWords));
