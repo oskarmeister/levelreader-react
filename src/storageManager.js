@@ -15,6 +15,7 @@ const StorageManager = {
           wordMetadata: state.wordMetadata,
           translationCache: state.translationCache,
           deletedWords: state.deletedWords,
+          lessonSegmentations: state.lessonSegmentations,
         },
       },
     };
