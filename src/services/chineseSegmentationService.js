@@ -18,6 +18,12 @@ class ChineseSegmentationService {
 
     // Cache to avoid redundant API calls for the same sentences
     this.segmentationCache = new Map();
+
+    // Clear cache on initialization to ensure fresh segmentation
+    console.log(
+      "ChineseSegmentationService initialized with API key:",
+      !!apiKey,
+    );
   }
 
   async segmentChineseSentence(sentence) {
