@@ -286,12 +286,26 @@ const LessonView = () => {
   const paginateText = async (text, customWordsPerPage = wordsPerPage) => {
     let words = [];
 
-    // Use Chinese segmentation for Chinese language
+    // Use Chinese segmentation for Chinese language with smart pagination
     if (state.selectedLanguage === "Chinese") {
       try {
+        // Segment current page + next page for smooth navigation
         const segmentation =
-          await ChineseSegmentationService.segmentChineseText(text);
+          await ChineseSegmentationService.segmentChineseText(
+            text,
+            currentPage,
+            customWordsPerPage,
+          );
         words = segmentation.map((segment) => segment.word);
+
+        // Pre-load next page in background for smooth navigation
+        if (currentPage >= 0) {
+          ChineseSegmentationService.preloadNextPage(
+            text,
+            currentPage + 1,
+            customWordsPerPage,
+          );
+        }
       } catch (error) {
         console.error(
           "Error in Chinese segmentation, falling back to regex:",
