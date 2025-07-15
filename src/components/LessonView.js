@@ -87,75 +87,7 @@ const LessonView = () => {
     state.selectedWord,
   ]);
 
-  // Set up segmentation completion callback for automatic word updates
-  useEffect(() => {
-    if (state.selectedLanguage === "Chinese") {
-      const handleSegmentationComplete = (pageNumber) => {
-        console.log(
-          `🔄 CALLBACK: Segmentation completed for page ${pageNumber}, current page is ${currentPage}`,
-        );
-
-        // If the completed page is the current page, update the words
-        if (pageNumber === currentPage) {
-          console.log(
-            `✨ CALLBACK: Current page ${currentPage} segmentation completed, updating words automatically`,
-          );
-
-          // Re-paginate the current text to incorporate new segmentation
-          const text = state.lessons[key];
-          if (text) {
-            console.log(
-              `📝 CALLBACK: Starting updateCurrentPageWords for text length ${text.length}`,
-            );
-            // Update words with the new segmentation
-            updateCurrentPageWords(text);
-          } else {
-            console.log(`❌ CALLBACK: No text available for key ${key}`);
-          }
-        } else {
-          console.log(
-            `ℹ️ CALLBACK: Page ${pageNumber} completed but current page is ${currentPage}, skipping update`,
-          );
-        }
-      };
-
-      // Register the callback
-      ChineseSegmentationService.setSegmentationCompleteCallback(
-        handleSegmentationComplete,
-      );
-
-      // Cleanup callback on unmount or language change
-      return () => {
-        ChineseSegmentationService.setSegmentationCompleteCallback(null);
-      };
-    }
-  }, [state.selectedLanguage, currentPage, key, state.lessons]);
-
-  // Handle page changes for Chinese text background segmentation
-  useEffect(() => {
-    if (
-      state.selectedLanguage === "Chinese" &&
-      state.lessons[key] &&
-      currentPage >= 0
-    ) {
-      console.log(
-        `📖 Page changed to ${currentPage}, updating segmentation system`,
-      );
-
-      // Update current page in segmentation service and trigger background work
-      ChineseSegmentationService.setCurrentPage(currentPage);
-
-      // Log current segmentation status
-      const progress = ChineseSegmentationService.getSegmentationProgress();
-      console.log(
-        `🔄 Segmentation progress: ${progress.completed}/${progress.total} pages (${progress.percentage}%)`,
-      );
-
-      const areCurrentPagesReady =
-        ChineseSegmentationService.areCurrentPagesSegmented();
-      console.log(`✨ Current + next pages segmented: ${areCurrentPagesReady}`);
-    }
-  }, [currentPage, state.selectedLanguage, state.lessons, key, wordsPerPage]);
+  // Note: Background segmentation removed - Chinese lessons now use pre-segmented data from import time
 
   useEffect(() => {
     const handleKeyDown = (e) => {
