@@ -29,6 +29,9 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        ...(state.selectedLanguage === "Chinese" && {
+          lessonSegmentations: {},
+        }),
       }
     );
   };
@@ -45,6 +48,9 @@ function App() {
       wordMetadata: currentData.wordMetadata,
       translationCache: currentData.translationCache,
       deletedWords: currentData.deletedWords,
+      ...(state.selectedLanguage === "Chinese" && {
+        lessonSegmentations: currentData.lessonSegmentations || {},
+      }),
     };
   };
 
@@ -92,6 +98,7 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonSegmentations: {}, // Store segmented text for Chinese lessons
       },
       English: {
         lessons: {
@@ -223,22 +230,54 @@ function App() {
         const devData = localStorage.getItem("dev_data");
         if (devData) {
           const parsedData = JSON.parse(devData);
-          setState((prev) => ({
-            ...prev,
-            lessons: parsedData.lessons || prev.lessons,
-            wordMetadata: parsedData.wordMetadata || prev.wordMetadata,
-            translationCache:
-              parsedData.translationCache || prev.translationCache,
-            deletedWords: parsedData.deletedWords || prev.deletedWords,
-            lessonCategories:
-              parsedData.lessonCategories || prev.lessonCategories,
-            recentlyAccessedLessons:
-              parsedData.recentlyAccessedLessons ||
-              prev.recentlyAccessedLessons,
-            recentlyAccessedCategories:
-              parsedData.recentlyAccessedCategories ||
-              prev.recentlyAccessedCategories,
-          }));
+          setState((prev) => {
+            const newState = {
+              ...prev,
+              lessons: parsedData.lessons || prev.lessons,
+              wordMetadata: parsedData.wordMetadata || prev.wordMetadata,
+              translationCache:
+                parsedData.translationCache || prev.translationCache,
+              deletedWords: parsedData.deletedWords || prev.deletedWords,
+              lessonCategories:
+                parsedData.lessonCategories || prev.lessonCategories,
+              recentlyAccessedLessons:
+                parsedData.recentlyAccessedLessons ||
+                prev.recentlyAccessedLessons,
+              recentlyAccessedCategories:
+                parsedData.recentlyAccessedCategories ||
+                prev.recentlyAccessedCategories,
+              // Add lessonSegmentations for Chinese
+              ...(prev.selectedLanguage === "Chinese" && {
+                lessonSegmentations:
+                  parsedData.lessonSegmentations ||
+                  prev.lessonSegmentations ||
+                  {},
+              }),
+            };
+
+            // Update languageData structure with the loaded data
+            const updatedLanguageData = {
+              ...prev.languageData,
+              [prev.selectedLanguage]: {
+                ...prev.languageData[prev.selectedLanguage],
+                lessons: newState.lessons,
+                wordMetadata: newState.wordMetadata,
+                translationCache: newState.translationCache,
+                deletedWords: newState.deletedWords,
+                lessonCategories: newState.lessonCategories,
+                recentlyAccessedLessons: newState.recentlyAccessedLessons,
+                recentlyAccessedCategories: newState.recentlyAccessedCategories,
+                ...(prev.selectedLanguage === "Chinese" && {
+                  lessonSegmentations: newState.lessonSegmentations,
+                }),
+              },
+            };
+
+            return {
+              ...newState,
+              languageData: updatedLanguageData,
+            };
+          });
         }
       } else {
         ApiManager.loadUserData(state, setState);

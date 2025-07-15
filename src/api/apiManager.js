@@ -65,6 +65,10 @@ const ApiManager = {
             currentData.recentlyAccessedCategories ||
             data.recently_accessed_categories ||
             [],
+          // Add lessonSegmentations for Chinese language
+          ...(selectedLanguage === "Chinese" && {
+            lessonSegmentations: currentData.lessonSegmentations || {},
+          }),
         };
       });
     }
@@ -86,6 +90,10 @@ const ApiManager = {
           lessonCategories: state.lessonCategories,
           recentlyAccessedLessons: state.recentlyAccessedLessons,
           recentlyAccessedCategories: state.recentlyAccessedCategories,
+          // Include lessonSegmentations for Chinese
+          ...(state.selectedLanguage === "Chinese" && {
+            lessonSegmentations: state.lessonSegmentations,
+          }),
         }),
       );
       return;

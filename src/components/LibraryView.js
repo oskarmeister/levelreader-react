@@ -34,9 +34,20 @@ const LibraryView = () => {
     return state.recentlyAccessedLessons?.slice(0, 10) || [];
   };
 
+  const isLessonSegmenting = (lessonKey) => {
+    // Check if this is a Chinese lesson that doesn't have segmentation data yet
+    return (
+      state.selectedLanguage === "Chinese" &&
+      !state.lessonSegmentations?.[lessonKey] &&
+      state.lessons[lessonKey]
+    );
+  };
+
   const renderLessonCards = (lessons = null) => {
     const lessonsToRender = lessons || Object.entries(state.lessons);
     return lessonsToRender.map(([key, text]) => {
+      const isSegmenting = isLessonSegmenting(key);
+
       // Calculate stats
       const rawWords = text.match(/\p{L}+/gu) || [];
       const words = Array.from(new Set(rawWords));
@@ -56,16 +67,38 @@ const LibraryView = () => {
       return (
         <div
           key={key}
-          className="lesson-card bg-white rounded-xl cursor-pointer relative opacity-100 transition-all duration-300 hover:scale-105 origin-top-left w-64 min-h-32 overflow-hidden"
+          className={`lesson-card rounded-xl cursor-pointer relative transition-all duration-300 hover:scale-105 origin-top-left w-64 min-h-32 overflow-hidden ${
+            isSegmenting ? "bg-gray-100 opacity-75" : "bg-white opacity-100"
+          }`}
           style={{
             boxShadow:
               "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-            borderLeft: "4px solid #8B5CF6",
+            borderLeft: isSegmenting
+              ? "4px solid #9CA3AF"
+              : "4px solid #8B5CF6",
           }}
-          onClick={() => navigate(`/lesson/${key}`)}
+          onClick={() => !isSegmenting && navigate(`/lesson/${key}`)}
         >
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-800">{key}</h3>
+          <div
+            className={`px-4 py-3 border-b border-gray-100 ${
+              isSegmenting
+                ? "bg-gradient-to-r from-gray-50 to-gray-100"
+                : "bg-gradient-to-r from-purple-50 to-pink-50"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <h3
+                className={`text-lg font-semibold ${isSegmenting ? "text-gray-600" : "text-gray-800"}`}
+              >
+                {key}
+              </h3>
+              {isSegmenting && (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2"></div>
+                  <span className="text-xs text-gray-500">Processing...</span>
+                </div>
+              )}
+            </div>
             <div className="absolute top-2 right-2">
               <button
                 className="edit-lesson bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-gray-600 transition-colors relative"
@@ -103,15 +136,29 @@ const LibraryView = () => {
             </div>
           </div>
           <div className="p-4">
-            <span className="unknown-percent inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mb-3">
-              {pct}% unknown
-            </span>
-            <div className="progress-bar bg-gray-200 h-2 rounded-full">
-              <div
-                className="progress bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
+            {isSegmenting ? (
+              <div className="text-center">
+                <span className="inline-block bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium mb-3">
+                  🔤 Optimizing Text...
+                </span>
+                <div className="text-xs text-gray-500">
+                  This lesson is being processed for better word recognition. It
+                  will be available soon!
+                </div>
+              </div>
+            ) : (
+              <>
+                <span className="unknown-percent inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mb-3">
+                  {pct}% unknown
+                </span>
+                <div className="progress-bar bg-gray-200 h-2 rounded-full">
+                  <div
+                    className="progress bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       );

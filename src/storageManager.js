@@ -15,6 +15,9 @@ const StorageManager = {
           wordMetadata: state.wordMetadata,
           translationCache: state.translationCache,
           deletedWords: state.deletedWords,
+          ...(state.selectedLanguage === "Chinese" && {
+            lessonSegmentations: state.lessonSegmentations || {},
+          }),
         },
       },
     };

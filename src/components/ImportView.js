@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import { StorageManager } from "../storageManager";
+import ChineseSegmentationService from "../services/chineseSegmentationService";
 
 const ImportView = () => {
   const { state, setState } = useContext(AppContext);
@@ -9,6 +10,9 @@ const ImportView = () => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [isSegmenting, setIsSegmenting] = useState(false);
+  const [segmentationProgress, setSegmentationProgress] = useState(0);
+  const [estimatedTimeLeft, setEstimatedTimeLeft] = useState(0);
 
   const categories = ["news", "hobbies", "food", "movies", "books", "travel"];
 
@@ -35,9 +39,105 @@ const ImportView = () => {
     }
   };
 
+  const segmentCompleteLesson = async (lessonText) => {
+    console.log("🚀 Starting complete lesson segmentation for Chinese text");
+    setIsSegmenting(true);
+    setSegmentationProgress(0);
+
+    // Calculate estimated time based on text length
+    const textLength = lessonText.length;
+    const estimatedMinutes = Math.max(1, Math.ceil(textLength / 1000)); // Rough estimate: 1 minute per 1000 characters
+    setEstimatedTimeLeft(estimatedMinutes);
+
+    try {
+      // Process text in large chunks for import-time segmentation
+      const allSegmentedData = [];
+      const chunkSize = 500; // Larger chunks for import-time processing
+      let processedChars = 0;
+
+      console.log(
+        `Processing ${textLength} characters in ${chunkSize}-character chunks`,
+      );
+
+      for (let i = 0; i < lessonText.length; i += chunkSize) {
+        const chunk = lessonText.substring(i, i + chunkSize);
+        console.log(
+          `Segmenting chunk ${Math.floor(i / chunkSize) + 1}: ${chunk.length} chars`,
+        );
+
+        try {
+          const chunkSegmentation =
+            await ChineseSegmentationService.segmentChineseSentence(chunk);
+
+          // Adjust positions to be relative to the entire text
+          const adjustedSegmentation = chunkSegmentation.map((segment) => ({
+            ...segment,
+            start: segment.start + i,
+            end: segment.end + i,
+          }));
+
+          allSegmentedData.push(...adjustedSegmentation);
+
+          processedChars += chunk.length;
+          const progress = Math.round((processedChars / textLength) * 100);
+          setSegmentationProgress(progress);
+
+          // Update estimated time left
+          const remainingChars = textLength - processedChars;
+          const remainingMinutes = Math.max(
+            0,
+            Math.ceil(remainingChars / 1000),
+          );
+          setEstimatedTimeLeft(remainingMinutes);
+
+          console.log(
+            `Progress: ${progress}% - ${processedChars}/${textLength} characters`,
+          );
+
+          // Small delay to prevent overwhelming the API
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        } catch (error) {
+          console.error(`Error segmenting chunk at position ${i}:`, error);
+          // Use fallback segmentation for this chunk
+          const fallbackSegmentation =
+            ChineseSegmentationService.fallbackSegmentation(chunk);
+          const adjustedFallback = fallbackSegmentation.map((segment) => ({
+            ...segment,
+            start: segment.start + i,
+            end: segment.end + i,
+          }));
+          allSegmentedData.push(...adjustedFallback);
+        }
+      }
+
+      console.log(
+        `✅ Lesson segmentation completed: ${allSegmentedData.length} segments`,
+      );
+      setSegmentationProgress(100);
+      setEstimatedTimeLeft(0);
+
+      return allSegmentedData;
+    } catch (error) {
+      console.error("Failed to segment lesson:", error);
+      // Return fallback segmentation for entire text
+      return ChineseSegmentationService.fallbackSegmentation(lessonText);
+    } finally {
+      setIsSegmenting(false);
+    }
+  };
+
   const handleSave = async () => {
     if (title && text) {
       if (state.lessons[title]) return alert("Title already exists.");
+
+      let segmentedData = null;
+
+      // If it's Chinese text, segment it during import
+      if (state.selectedLanguage === "Chinese") {
+        console.log("🔤 Chinese lesson detected - starting segmentation...");
+        segmentedData = await segmentCompleteLesson(text);
+      }
+
       const newState = {
         ...state,
         lessons: { ...state.lessons, [title]: text },
@@ -45,7 +145,15 @@ const ImportView = () => {
           ...state.lessonCategories,
           [title]: selectedCategories,
         },
+        // Add segmented data if available
+        ...(segmentedData && {
+          lessonSegmentations: {
+            ...state.lessonSegmentations,
+            [title]: segmentedData,
+          },
+        }),
       };
+
       setState(newState);
       await StorageManager.save(newState);
       navigate("/library");
@@ -175,18 +283,49 @@ const ImportView = () => {
         </div>
       </div>
 
+      {/* Segmentation Progress section */}
+      {isSegmenting && (
+        <div className="bg-white rounded-xl shadow-lg mb-8 p-6">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mr-3"></div>
+              <h3 className="text-lg font-semibold text-gray-800">
+                🔤 Segmenting Chinese Text...
+              </h3>
+            </div>
+
+            <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
+              <div
+                className="bg-purple-600 h-4 rounded-full transition-all duration-300"
+                style={{ width: `${segmentationProgress}%` }}
+              ></div>
+            </div>
+
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Progress: {segmentationProgress}%</span>
+              <span>
+                {estimatedTimeLeft > 0
+                  ? `Est. ${estimatedTimeLeft} minute${estimatedTimeLeft !== 1 ? "s" : ""} remaining`
+                  : "Almost done..."}
+              </span>
+            </div>
+
+            <p className="text-sm text-gray-500 mt-3">
+              This lesson is being optimized for better word recognition. This
+              only needs to be done once!
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Action section */}
       <div className="flex justify-center">
         <button
           onClick={handleSave}
-          className="px-8 py-4 bg-green-600 text-white text-lg font-medium rounded-xl hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition-all transform hover:scale-105 shadow-lg"
-          disabled={!title || !text}
-          style={{
-            opacity: !title || !text ? 0.6 : 1,
-            cursor: !title || !text ? "not-allowed" : "pointer",
-          }}
+          className="px-8 py-4 bg-green-600 text-white text-lg font-medium rounded-xl hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          disabled={!title || !text || isSegmenting}
         >
-          Save and Generate Lesson
+          {isSegmenting ? "Processing..." : "Save and Generate Lesson"}
         </button>
       </div>
     </div>
