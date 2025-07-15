@@ -304,35 +304,33 @@ const LessonView = () => {
   const paginateText = async (text, customWordsPerPage = wordsPerPage) => {
     let words = [];
 
-    // Use Chinese segmentation for Chinese language with smart pagination
-    if (state.selectedLanguage === "Chinese") {
-      try {
-        // Segment current page + next page for smooth navigation
-        const segmentation =
-          await ChineseSegmentationService.segmentChineseText(
-            text,
-            currentPage,
-            customWordsPerPage,
-          );
-        words = segmentation.map((segment) => segment.word);
+    // ALWAYS render immediately with regex for fast display
+    words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
 
-        // Pre-load next page in background for smooth navigation
-        if (currentPage >= 0) {
-          ChineseSegmentationService.preloadNextPage(
-            text,
-            currentPage + 1,
-            customWordsPerPage,
-          );
-        }
-      } catch (error) {
-        console.error(
-          "Error in Chinese segmentation, falling back to regex:",
-          error,
-        );
-        words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
-      }
-    } else {
-      words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+    // For Chinese text, set up background segmentation system
+    if (state.selectedLanguage === "Chinese") {
+      console.log(
+        "🚀 Setting up Chinese text with immediate rendering + background segmentation",
+      );
+
+      // Calculate total pages for tracking
+      const totalPages = Math.ceil(words.length / customWordsPerPage);
+
+      // Initialize page tracking system
+      ChineseSegmentationService.initializePageTracking(
+        totalPages,
+        customWordsPerPage,
+      );
+
+      // Store text for background segmentation
+      ChineseSegmentationService.currentText = text;
+
+      // Set current page and start background segmentation
+      ChineseSegmentationService.setCurrentPage(currentPage);
+
+      console.log(
+        `📄 Rendered ${words.length} words across ${totalPages} pages immediately`,
+      );
     }
 
     const pagesList = [];
