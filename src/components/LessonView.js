@@ -87,7 +87,7 @@ const LessonView = () => {
     state.selectedWord,
   ]);
 
-  // Pre-load next page when user navigates (for Chinese text)
+  // Handle page changes for Chinese text background segmentation
   useEffect(() => {
     if (
       state.selectedLanguage === "Chinese" &&
@@ -95,13 +95,21 @@ const LessonView = () => {
       currentPage >= 0
     ) {
       console.log(
-        `Page changed to ${currentPage}, pre-loading next page for smooth navigation`,
+        `📖 Page changed to ${currentPage}, updating segmentation system`,
       );
-      ChineseSegmentationService.preloadNextPage(
-        state.lessons[key],
-        currentPage,
-        wordsPerPage,
+
+      // Update current page in segmentation service and trigger background work
+      ChineseSegmentationService.setCurrentPage(currentPage);
+
+      // Log current segmentation status
+      const progress = ChineseSegmentationService.getSegmentationProgress();
+      console.log(
+        `🔄 Segmentation progress: ${progress.completed}/${progress.total} pages (${progress.percentage}%)`,
       );
+
+      const areCurrentPagesReady =
+        ChineseSegmentationService.areCurrentPagesSegmented();
+      console.log(`✨ Current + next pages segmented: ${areCurrentPagesReady}`);
     }
   }, [currentPage, state.selectedLanguage, state.lessons, key, wordsPerPage]);
 
