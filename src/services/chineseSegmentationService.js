@@ -187,12 +187,85 @@ JSON:`;
           '"$1\\"$2\\"$3"',
         );
 
+        // Try to repair truncated JSON
+        if (!fixedResponse.endsWith("]")) {
+          console.log("Detected truncated JSON, attempting repair...");
+
+          // Find the last complete object before truncation
+          let lastCompleteIndex = -1;
+          let braceCount = 0;
+          let inString = false;
+          let escaped = false;
+
+          for (let i = 0; i < fixedResponse.length; i++) {
+            const char = fixedResponse[i];
+
+            if (escaped) {
+              escaped = false;
+              continue;
+            }
+
+            if (char === "\\") {
+              escaped = true;
+              continue;
+            }
+
+            if (char === '"' && !escaped) {
+              inString = !inString;
+              continue;
+            }
+
+            if (!inString) {
+              if (char === "{") {
+                braceCount++;
+              } else if (char === "}") {
+                braceCount--;
+                if (braceCount === 0) {
+                  // Found complete object
+                  lastCompleteIndex = i;
+                }
+              }
+            }
+          }
+
+          if (lastCompleteIndex > 0) {
+            // Truncate to last complete object and close the array
+            fixedResponse =
+              fixedResponse.substring(0, lastCompleteIndex + 1) + "]";
+            console.log(
+              "Repaired truncated JSON, keeping",
+              fixedResponse.split("},{").length,
+              "complete objects",
+            );
+          } else {
+            // Fallback: try to close any open structures
+            if (fixedResponse.includes("[")) {
+              // Count open braces and try to close them
+              const openBraces = (fixedResponse.match(/{/g) || []).length;
+              const closeBraces = (fixedResponse.match(/}/g) || []).length;
+              const bracesToClose = openBraces - closeBraces;
+
+              if (bracesToClose > 0) {
+                fixedResponse += "}".repeat(bracesToClose);
+              }
+
+              if (!fixedResponse.endsWith("]")) {
+                fixedResponse += "]";
+              }
+            }
+          }
+        }
+
         // Try parsing the fixed version
         try {
           segmentation = JSON.parse(fixedResponse);
           console.log("Successfully parsed with fixes");
         } catch (secondError) {
           console.error("Still failed after fixes:", secondError);
+          console.error(
+            "Final attempt response:",
+            fixedResponse.substring(0, 500),
+          );
           throw new Error(
             `Failed to parse JSON response: ${parseError.message}`,
           );
