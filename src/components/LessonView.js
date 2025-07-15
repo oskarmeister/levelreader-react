@@ -87,6 +87,41 @@ const LessonView = () => {
     state.selectedWord,
   ]);
 
+  // Set up segmentation completion callback for automatic word updates
+  useEffect(() => {
+    if (state.selectedLanguage === "Chinese") {
+      const handleSegmentationComplete = (pageNumber) => {
+        console.log(
+          `🔄 Segmentation completed for page ${pageNumber}, checking if current page needs update`,
+        );
+
+        // If the completed page is the current page, update the words
+        if (pageNumber === currentPage) {
+          console.log(
+            `✨ Current page ${currentPage} segmentation completed, updating words automatically`,
+          );
+
+          // Re-paginate the current text to incorporate new segmentation
+          const text = state.lessons[key];
+          if (text) {
+            // Update words with the new segmentation
+            updateCurrentPageWords(text);
+          }
+        }
+      };
+
+      // Register the callback
+      ChineseSegmentationService.setSegmentationCompleteCallback(
+        handleSegmentationComplete,
+      );
+
+      // Cleanup callback on unmount or language change
+      return () => {
+        ChineseSegmentationService.setSegmentationCompleteCallback(null);
+      };
+    }
+  }, [state.selectedLanguage, currentPage, key, state.lessons]);
+
   // Handle page changes for Chinese text background segmentation
   useEffect(() => {
     if (
