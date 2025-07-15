@@ -169,15 +169,103 @@ JSON:`;
   }
 
   fallbackSegmentation(sentence) {
+    console.log("Using improved fallback segmentation");
     const segmentation = [];
-    for (let i = 0; i < sentence.length; i++) {
+
+    // Simple rule-based segmentation for better word boundaries
+    let i = 0;
+    while (i < sentence.length) {
       const char = sentence[i];
-      segmentation.push({
-        word: char,
-        start: i,
-        end: i + 1,
-      });
+
+      // Handle punctuation and spaces as single tokens
+      if (/[\s\p{P}]/u.test(char)) {
+        segmentation.push({
+          word: char,
+          start: i,
+          end: i + 1,
+        });
+        i++;
+        continue;
+      }
+
+      // For Chinese characters, try to group common patterns
+      if (/[\u4e00-\u9fff]/u.test(char)) {
+        let word = char;
+        let wordEnd = i + 1;
+
+        // Look ahead for common 2-character words
+        if (i + 1 < sentence.length) {
+          const nextChar = sentence[i + 1];
+          const twoCharWord = char + nextChar;
+
+          // Common Chinese 2-character words (basic list)
+          const commonWords = [
+            "如果",
+            "因为",
+            "所以",
+            "但是",
+            "然后",
+            "现在",
+            "时候",
+            "地方",
+            "今天",
+            "明天",
+            "昨天",
+            "什么",
+            "为什么",
+            "怎么",
+            "哪里",
+            "谁",
+            "我们",
+            "你们",
+            "他们",
+            "自己",
+            "大家",
+            "老师",
+            "学生",
+            "朋友",
+            "工作",
+            "学习",
+            "生活",
+            "时间",
+            "问题",
+            "方法",
+            "结果",
+            "原因",
+            "开始",
+            "结束",
+            "继续",
+            "停止",
+            "进入",
+            "出来",
+            "回去",
+            "过来",
+          ];
+
+          if (commonWords.includes(twoCharWord)) {
+            word = twoCharWord;
+            wordEnd = i + 2;
+          }
+        }
+
+        segmentation.push({
+          word: word,
+          start: i,
+          end: wordEnd,
+        });
+        i = wordEnd;
+      } else {
+        // For non-Chinese characters, treat individually
+        segmentation.push({
+          word: char,
+          start: i,
+          end: i + 1,
+        });
+        i++;
+      }
     }
+
+    console.log("Fallback segmentation result:", segmentation);
     return segmentation;
   }
 
