@@ -124,11 +124,11 @@ JSON:`;
 
       console.log("Calling Gemini API for text:", sentence);
 
-      // Add 1-minute timeout as requested
+      // Add 30-second timeout as requested
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(
-          () => reject(new Error("API request timeout after 1 minute")),
-          60000,
+          () => reject(new Error("API request timeout after 30 seconds")),
+          30000,
         ),
       );
 
@@ -310,7 +310,7 @@ JSON:`;
             "需要",
             "想要",
             "希望",
-            "觉得",
+            "觉���",
             "认��",
             "知道",
             "了解",
@@ -325,7 +325,7 @@ JSON:`;
             "合作",
             "努力",
             "成功",
-            "���败",
+            "失败",
             "进步",
             "改进",
             "发展",
