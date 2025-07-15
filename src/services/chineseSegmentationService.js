@@ -81,13 +81,13 @@ For text "如果你好", respond: [{"word":"如果","start":0,"end":2},{"word":"
 
 JSON:`;
 
-      console.log("Calling Gemini API for sentence:", sentence);
+      console.log("Calling Gemini API for text:", sentence);
 
-      // Add 30-second timeout as requested
+      // Add 1-minute timeout as requested
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(
-          () => reject(new Error("API request timeout after 30 seconds")),
-          30000,
+          () => reject(new Error("API request timeout after 1 minute")),
+          60000,
         ),
       );
 
