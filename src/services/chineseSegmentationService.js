@@ -71,6 +71,27 @@ class ChineseSegmentationService {
       return this.fallbackSegmentation(sentence);
     }
 
+    // Test API connectivity on first call if not already tested
+    if (!this.apiDisabled && !this.isTestingApi && this.apiFailureCount === 0) {
+      console.log("🔍 Testing API connectivity on first call...");
+      this.isTestingApi = true;
+      try {
+        // Quick test with minimal text
+        const testPromise = this.model.generateContent("Test");
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Quick test timeout")), 5000),
+        );
+        await Promise.race([testPromise, timeoutPromise]);
+        console.log("✅ API test successful");
+        this.isTestingApi = false;
+      } catch (error) {
+        console.log("❌ API test failed, disabling API immediately");
+        this.handleApiFailure();
+        this.isTestingApi = false;
+        return this.fallbackSegmentation(sentence);
+      }
+    }
+
     // Circuit breaker: if API has failed multiple times, use fallback
     if (this.apiDisabled) {
       console.log(
@@ -304,7 +325,7 @@ JSON:`;
             "合作",
             "努力",
             "成功",
-            "失败",
+            "���败",
             "进步",
             "改进",
             "发展",
