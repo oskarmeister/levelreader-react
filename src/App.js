@@ -92,6 +92,7 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonSegmentations: {}, // Store segmented text for Chinese lessons
       },
       English: {
         lessons: {
