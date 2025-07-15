@@ -34,8 +34,12 @@ class ChineseSegmentationService {
       console.log("GoogleGenerativeAI initialized successfully");
     }
 
-    // Cache to avoid redundant API calls for the same sentences
+    // Cache to avoid redundant API calls
     this.segmentationCache = new Map();
+    // Track pagination-based segmentation
+    this.pageSegmentationCache = new Map();
+    // Track which pages are currently being segmented
+    this.segmentingPages = new Set();
 
     console.log(
       "ChineseSegmentationService initialized with model:",
@@ -53,16 +57,131 @@ class ChineseSegmentationService {
       return this.segmentationCache.get(sentence);
     }
 
-    // Use improved fallback segmentation (API temporarily disabled due to network issues)
-    console.log(
-      "Using improved fallback segmentation due to API network issues",
-    );
-    const segmentation = this.fallbackSegmentation(sentence);
+    // If no API key or model, use fallback
+    if (!this.model) {
+      console.log("No API key/model, using fallback segmentation");
+      return this.fallbackSegmentation(sentence);
+    }
 
-    // Cache the result
-    this.segmentationCache.set(sentence, segmentation);
+    try {
+      const prompt = `You are a Chinese text segmentation expert. Segment the following Chinese text into meaningful words.
 
-    return segmentation;
+Text to segment: "${sentence}"
+
+Rules:
+1. Group characters into proper Chinese words (如果=one word, not 如+果)
+2. Include punctuation and spaces as separate items
+3. Use 0-indexed character positions
+4. Return ONLY valid JSON - no explanations or extra text
+
+Response format (JSON array only):
+[{"word":"word1","start":0,"end":N},{"word":"word2","start":N,"end":M}]
+
+For text "如果你好", respond: [{"word":"如果","start":0,"end":2},{"word":"你好","start":2,"end":4}]
+
+JSON:`;
+
+      console.log("Calling Gemini API for sentence:", sentence);
+
+      // Add 30-second timeout as requested
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("API request timeout after 30 seconds")),
+          30000,
+        ),
+      );
+
+      const apiPromise = this.model.generateContent(prompt);
+
+      const result = await Promise.race([apiPromise, timeoutPromise]);
+      const response = await result.response;
+      const text = response.text();
+
+      console.log("Gemini API response length:", text.length);
+      console.log(
+        "Gemini API response preview:",
+        text.substring(0, 500) + "...",
+      );
+
+      // Clean and parse the JSON response with better error handling
+      let cleanedResponse = text.replace(/```json\n?|\n?```/g, "").trim();
+
+      // Additional cleaning for common issues
+      cleanedResponse = cleanedResponse.replace(/\n/g, " "); // Remove newlines
+      cleanedResponse = cleanedResponse.replace(/\s+/g, " "); // Normalize spaces
+
+      // Try to extract JSON array if it's embedded in other text
+      const jsonMatch = cleanedResponse.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        cleanedResponse = jsonMatch[0];
+      }
+
+      console.log(
+        "Cleaned response preview:",
+        cleanedResponse.substring(0, 200) + "...",
+      );
+
+      let segmentation;
+      try {
+        segmentation = JSON.parse(cleanedResponse);
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        console.error("Failed to parse:", cleanedResponse.substring(0, 1000));
+
+        // Try to fix common JSON issues
+        let fixedResponse = cleanedResponse;
+
+        // Fix unescaped quotes in values by escaping them
+        fixedResponse = fixedResponse.replace(
+          /"([^"]*)"([^"]*)"([^"]*)"/g,
+          '"$1\\"$2\\"$3"',
+        );
+
+        // Try parsing the fixed version
+        try {
+          segmentation = JSON.parse(fixedResponse);
+          console.log("Successfully parsed with fixes");
+        } catch (secondError) {
+          console.error("Still failed after fixes:", secondError);
+          throw new Error(
+            `Failed to parse JSON response: ${parseError.message}`,
+          );
+        }
+      }
+
+      // Validate the segmentation
+      if (!Array.isArray(segmentation)) {
+        throw new Error("Invalid segmentation response: not an array");
+      }
+
+      console.log("Successful segmentation:", segmentation);
+
+      // Cache the result
+      this.segmentationCache.set(sentence, segmentation);
+
+      return segmentation;
+    } catch (error) {
+      console.error("Error in Chinese segmentation:", error);
+
+      // Handle specific error types
+      if (
+        error.message.includes("Failed to fetch") ||
+        error.name === "TypeError"
+      ) {
+        console.log(
+          "Network error detected - API may be unavailable or blocked",
+        );
+      } else if (error.message.includes("JSON")) {
+        console.log("JSON parsing error - malformed API response");
+      } else if (error.message.includes("timeout")) {
+        console.log("API request timed out after 30 seconds");
+      } else {
+        console.log("Unknown error type:", error.name, error.message);
+      }
+
+      console.log("Falling back to improved local segmentation");
+      return this.fallbackSegmentation(sentence);
+    }
   }
 
   fallbackSegmentation(sentence) {
@@ -95,7 +214,7 @@ class ChineseSegmentationService {
           const nextChar = sentence[i + 1];
           const twoCharWord = char + nextChar;
 
-          // Common Chinese 2-character words (basic list)
+          // Common Chinese 2-character words (expanded list)
           const commonWords = [
             "如果",
             "因为",
@@ -110,7 +229,7 @@ class ChineseSegmentationService {
             "昨天",
             "什么",
             "为什么",
-            "怎么",
+            "��么",
             "哪里",
             "谁",
             "我们",
@@ -198,32 +317,110 @@ class ChineseSegmentationService {
     return segmentation;
   }
 
-  async segmentChineseText(text) {
-    // Split text into sentences for more accurate segmentation
-    const sentences = text.split(/([。！？；])/);
-    const allSegments = [];
-    let currentPosition = 0;
+  // Smart pagination-based segmentation
+  async segmentPageRange(text, startPage, endPage, wordsPerPage) {
+    const cacheKey = `${startPage}-${endPage}-${wordsPerPage}`;
 
-    for (const sentence of sentences) {
-      if (sentence.trim().length === 0) {
-        currentPosition += sentence.length;
-        continue;
-      }
-
-      const segmentation = await this.segmentChineseSentence(sentence);
-
-      // Adjust positions to be relative to the entire text
-      const adjustedSegmentation = segmentation.map((segment) => ({
-        ...segment,
-        start: segment.start + currentPosition,
-        end: segment.end + currentPosition,
-      }));
-
-      allSegments.push(...adjustedSegmentation);
-      currentPosition += sentence.length;
+    // Check if already cached
+    if (this.pageSegmentationCache.has(cacheKey)) {
+      console.log(
+        `Using cached segmentation for pages ${startPage}-${endPage}`,
+      );
+      return this.pageSegmentationCache.get(cacheKey);
     }
 
-    return allSegments;
+    // Check if already being segmented
+    if (this.segmentingPages.has(cacheKey)) {
+      console.log(
+        `Pages ${startPage}-${endPage} already being segmented, waiting...`,
+      );
+      // Wait for it to complete
+      while (this.segmentingPages.has(cacheKey)) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      return this.pageSegmentationCache.get(cacheKey);
+    }
+
+    console.log(`Starting segmentation for pages ${startPage}-${endPage}`);
+    this.segmentingPages.add(cacheKey);
+
+    try {
+      // Calculate text range for these pages
+      const words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+      const startIndex = startPage * wordsPerPage;
+      const endIndex = Math.min((endPage + 1) * wordsPerPage, words.length);
+
+      if (startIndex >= words.length) {
+        return [];
+      }
+
+      const pageText = words.slice(startIndex, endIndex).join("");
+      console.log(
+        `Segmenting text for pages ${startPage}-${endPage}:`,
+        pageText.substring(0, 100) + "...",
+      );
+
+      // Split into sentences for better segmentation
+      const sentences = pageText.split(/([。！？；])/);
+      const allSegments = [];
+      let currentPosition = 0;
+
+      for (const sentence of sentences) {
+        if (sentence.trim().length === 0) {
+          currentPosition += sentence.length;
+          continue;
+        }
+
+        const segmentation = await this.segmentChineseSentence(sentence);
+
+        // Adjust positions to be relative to the entire page text
+        const adjustedSegmentation = segmentation.map((segment) => ({
+          ...segment,
+          start: segment.start + currentPosition,
+          end: segment.end + currentPosition,
+        }));
+
+        allSegments.push(...adjustedSegmentation);
+        currentPosition += sentence.length;
+      }
+
+      // Cache the result
+      this.pageSegmentationCache.set(cacheKey, allSegments);
+      console.log(`Completed segmentation for pages ${startPage}-${endPage}`);
+
+      return allSegments;
+    } finally {
+      this.segmentingPages.delete(cacheKey);
+    }
+  }
+
+  // Main method called by LessonView - implements smart pagination
+  async segmentChineseText(text, currentPage = 0, wordsPerPage = 300) {
+    console.log(
+      `Segmenting Chinese text for page ${currentPage} (${wordsPerPage} words per page)`,
+    );
+
+    // Segment current page + next page for smooth navigation
+    const endPage = currentPage + 1;
+    return await this.segmentPageRange(
+      text,
+      currentPage,
+      endPage,
+      wordsPerPage,
+    );
+  }
+
+  // Pre-load next page when user navigates
+  async preloadNextPage(text, currentPage, wordsPerPage) {
+    const nextPage = currentPage + 1;
+    console.log(`Pre-loading page ${nextPage} for smooth navigation`);
+
+    // Don't await this - let it load in background
+    this.segmentPageRange(text, nextPage, nextPage, wordsPerPage).catch(
+      (error) => {
+        console.log(`Pre-loading page ${nextPage} failed:`, error.message);
+      },
+    );
   }
 
   extractWordsFromSegmentation(segmentation) {
@@ -234,16 +431,37 @@ class ChineseSegmentationService {
 
   clearCache() {
     this.segmentationCache.clear();
+    this.pageSegmentationCache.clear();
+    this.segmentingPages.clear();
   }
 
   // Test function that can be called from browser console
   async testAPI(testSentence = "如果你好") {
-    console.log("=== TESTING SEGMENTATION (FALLBACK) ===");
+    console.log("=== TESTING GEMINI API ===");
     console.log("Test sentence:", testSentence);
+    console.log("Has model:", !!this.model);
 
-    const segResult = await this.segmentChineseSentence(testSentence);
-    console.log("Segmentation test result:", segResult);
-    return segResult;
+    if (!this.model) {
+      console.log("No model available, cannot test API");
+      return null;
+    }
+
+    try {
+      const result = await this.model.generateContent(
+        'Test: Please respond with "API working"',
+      );
+      const response = await result.response;
+      const text = response.text();
+      console.log("API test response:", text);
+
+      // Now test with segmentation
+      const segResult = await this.segmentChineseSentence(testSentence);
+      console.log("Segmentation test result:", segResult);
+      return segResult;
+    } catch (error) {
+      console.error("API test failed:", error);
+      return null;
+    }
   }
 }
 
