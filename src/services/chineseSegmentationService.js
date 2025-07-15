@@ -41,6 +41,12 @@ class ChineseSegmentationService {
     // Track which pages are currently being segmented
     this.segmentingPages = new Set();
 
+    // NEW: Page segmentation tracking system
+    this.pageSegmentationStatus = new Map(); // page -> 'pending' | 'segmenting' | 'completed' | 'failed'
+    this.totalPages = 0;
+    this.currentViewedPage = 0;
+    this.wordsPerPage = 300; // Track current words per page setting
+
     // Circuit breaker for API failures
     this.apiFailureCount = 0;
     this.maxApiFailures = 1; // Stop trying API after 1 failure (since API is clearly not working)
@@ -311,7 +317,7 @@ JSON:`;
             "想要",
             "希望",
             "觉得",
-            "认���",
+            "认��",
             "知道",
             "了解",
             "明白",
