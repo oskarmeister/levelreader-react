@@ -79,8 +79,26 @@ const LibraryView = () => {
           }}
           onClick={() => !isSegmenting && navigate(`/lesson/${key}`)}
         >
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-800">{key}</h3>
+          <div
+            className={`px-4 py-3 border-b border-gray-100 ${
+              isSegmenting
+                ? "bg-gradient-to-r from-gray-50 to-gray-100"
+                : "bg-gradient-to-r from-purple-50 to-pink-50"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <h3
+                className={`text-lg font-semibold ${isSegmenting ? "text-gray-600" : "text-gray-800"}`}
+              >
+                {key}
+              </h3>
+              {isSegmenting && (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2"></div>
+                  <span className="text-xs text-gray-500">Processing...</span>
+                </div>
+              )}
+            </div>
             <div className="absolute top-2 right-2">
               <button
                 className="edit-lesson bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-gray-600 transition-colors relative"
