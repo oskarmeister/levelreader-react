@@ -119,7 +119,6 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
-        lessonSegmentations: {},
       },
       French: {
         lessons: {
