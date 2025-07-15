@@ -48,7 +48,9 @@ function App() {
       wordMetadata: currentData.wordMetadata,
       translationCache: currentData.translationCache,
       deletedWords: currentData.deletedWords,
-      lessonSegmentations: currentData.lessonSegmentations,
+      ...(state.selectedLanguage === "Chinese" && {
+        lessonSegmentations: currentData.lessonSegmentations || {},
+      }),
     };
   };
 
