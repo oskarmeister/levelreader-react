@@ -39,9 +39,105 @@ const ImportView = () => {
     }
   };
 
+  const segmentCompleteLesson = async (lessonText) => {
+    console.log("🚀 Starting complete lesson segmentation for Chinese text");
+    setIsSegmenting(true);
+    setSegmentationProgress(0);
+
+    // Calculate estimated time based on text length
+    const textLength = lessonText.length;
+    const estimatedMinutes = Math.max(1, Math.ceil(textLength / 1000)); // Rough estimate: 1 minute per 1000 characters
+    setEstimatedTimeLeft(estimatedMinutes);
+
+    try {
+      // Process text in large chunks for import-time segmentation
+      const allSegmentedData = [];
+      const chunkSize = 500; // Larger chunks for import-time processing
+      let processedChars = 0;
+
+      console.log(
+        `Processing ${textLength} characters in ${chunkSize}-character chunks`,
+      );
+
+      for (let i = 0; i < lessonText.length; i += chunkSize) {
+        const chunk = lessonText.substring(i, i + chunkSize);
+        console.log(
+          `Segmenting chunk ${Math.floor(i / chunkSize) + 1}: ${chunk.length} chars`,
+        );
+
+        try {
+          const chunkSegmentation =
+            await ChineseSegmentationService.segmentChineseSentence(chunk);
+
+          // Adjust positions to be relative to the entire text
+          const adjustedSegmentation = chunkSegmentation.map((segment) => ({
+            ...segment,
+            start: segment.start + i,
+            end: segment.end + i,
+          }));
+
+          allSegmentedData.push(...adjustedSegmentation);
+
+          processedChars += chunk.length;
+          const progress = Math.round((processedChars / textLength) * 100);
+          setSegmentationProgress(progress);
+
+          // Update estimated time left
+          const remainingChars = textLength - processedChars;
+          const remainingMinutes = Math.max(
+            0,
+            Math.ceil(remainingChars / 1000),
+          );
+          setEstimatedTimeLeft(remainingMinutes);
+
+          console.log(
+            `Progress: ${progress}% - ${processedChars}/${textLength} characters`,
+          );
+
+          // Small delay to prevent overwhelming the API
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        } catch (error) {
+          console.error(`Error segmenting chunk at position ${i}:`, error);
+          // Use fallback segmentation for this chunk
+          const fallbackSegmentation =
+            ChineseSegmentationService.fallbackSegmentation(chunk);
+          const adjustedFallback = fallbackSegmentation.map((segment) => ({
+            ...segment,
+            start: segment.start + i,
+            end: segment.end + i,
+          }));
+          allSegmentedData.push(...adjustedFallback);
+        }
+      }
+
+      console.log(
+        `✅ Lesson segmentation completed: ${allSegmentedData.length} segments`,
+      );
+      setSegmentationProgress(100);
+      setEstimatedTimeLeft(0);
+
+      return allSegmentedData;
+    } catch (error) {
+      console.error("Failed to segment lesson:", error);
+      // Return fallback segmentation for entire text
+      return ChineseSegmentationService.fallbackSegmentation(lessonText);
+    } finally {
+      setIsSegmenting(false);
+    }
+  };
+
   const handleSave = async () => {
     if (title && text) {
       if (state.lessons[title]) return alert("Title already exists.");
+
+      let segmentedData = null;
+
+      // If it's Chinese text, segment it during import
+      if (state.selectedLanguage === "Chinese") {
+        console.log("🔤 Chinese lesson detected - starting segmentation...");
+        segmentedData = await segmentCompleteLesson(text);
+      }
+
       const newState = {
         ...state,
         lessons: { ...state.lessons, [title]: text },
@@ -49,7 +145,15 @@ const ImportView = () => {
           ...state.lessonCategories,
           [title]: selectedCategories,
         },
+        // Add segmented data if available
+        ...(segmentedData && {
+          lessonSegmentations: {
+            ...state.lessonSegmentations,
+            [title]: segmentedData,
+          },
+        }),
       };
+
       setState(newState);
       await StorageManager.save(newState);
       navigate("/library");
