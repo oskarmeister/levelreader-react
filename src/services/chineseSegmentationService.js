@@ -459,6 +459,22 @@ JSON:`;
         chunkStart = chunkEnd;
 
         console.log(`Processed ${chunkEnd}/${pageText.length} characters`);
+
+        // Cache intermediate results after each chunk and notify UI
+        const intermediateResult = [...allSegments];
+        const cacheKey = `${startPage}-${endPage}-${wordsPerPage}`;
+        this.pageSegmentationCache.set(cacheKey, intermediateResult);
+
+        // Notify UI about the partial update if this is the current page
+        if (
+          startPage === this.currentViewedPage &&
+          this.onSegmentationComplete
+        ) {
+          console.log(
+            `🔄 Chunk completed, notifying UI for page ${startPage} (partial update)`,
+          );
+          this.onSegmentationComplete(startPage);
+        }
       }
 
       // Cache the result
