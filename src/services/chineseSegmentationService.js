@@ -507,6 +507,9 @@ if (typeof window !== "undefined") {
   console.log(
     "Chinese segmentation service exposed globally as window.chineseSegmentationService",
   );
+  console.log(
+    "Use window.chineseSegmentationService.resetApiCircuitBreaker() to re-enable API if needed",
+  );
 }
 
 export default chineseSegmentationService;
