@@ -591,9 +591,7 @@ const LessonView = () => {
             <div className="min-h-[400px]">
               <div className="mb-8">
                 <div className="text-2xl leading-relaxed mb-6 p-6 bg-gray-50 rounded-lg">
-                  {renderSentenceWithClickableWords(
-                    sentences[currentSentence],
-                  ) || "No sentence available"}
+                  {renderedSentence || "No sentence available"}
                 </div>
 
                 <div className="flex justify-between items-center mb-4">
