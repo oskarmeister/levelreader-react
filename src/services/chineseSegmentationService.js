@@ -46,6 +46,7 @@ class ChineseSegmentationService {
     this.maxApiFailures = 1; // Stop trying API after 1 failure (since API is clearly not working)
     this.apiDisabled = false;
     this.lastFailureTime = null;
+    this.isTestingApi = false; // Prevent concurrent API tests
 
     console.log(
       "ChineseSegmentationService initialized with model:",
