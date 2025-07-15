@@ -449,7 +449,9 @@ const LessonView = () => {
     setCurrentPage(0);
   };
 
-  const updateCurrentPageWords = async (text) => {
+  // updateCurrentPageWords function removed - using pre-segmented data from import time
+
+  const removedUpdateCurrentPageWords = async (text) => {
     if (state.selectedLanguage !== "Chinese") {
       return; // Only applies to Chinese text
     }
