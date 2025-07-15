@@ -326,41 +326,124 @@ const LessonView = () => {
   };
 
   const paginateText = async (text, maxCharsPerPage = wordsPerPage) => {
-    // Character-based pagination (customWordsPerPage now represents max chars per page)
     console.log(
       `🔤 Paginating text using character-based pagination: ${maxCharsPerPage} chars per page`,
     );
 
-    // For Chinese text, set up background segmentation system
-    if (state.selectedLanguage === "Chinese") {
+    // Check if we have pre-segmented data for Chinese lessons
+    const hasPreSegmentedData =
+      state.selectedLanguage === "Chinese" && state.lessonSegmentations?.[key];
+
+    if (hasPreSegmentedData) {
       console.log(
-        "🚀 Setting up Chinese text with immediate rendering + background segmentation",
+        "✨ Using pre-segmented Chinese data for optimal word boundaries",
       );
-
-      // Calculate total pages for character-based tracking
-      const totalPages = Math.ceil(text.length / maxCharsPerPage);
-
-      // Initialize page tracking system
-      ChineseSegmentationService.initializePageTracking(
-        totalPages,
+      return paginateWithSegmentedData(
+        text,
         maxCharsPerPage,
+        state.lessonSegmentations[key],
       );
-
-      // Store text for background segmentation
-      ChineseSegmentationService.currentText = text;
-
-      // Set current page and start background segmentation
-      ChineseSegmentationService.setCurrentPage(currentPage);
-
-      console.log(
-        `📄 Character-based pagination: ${text.length} chars across ${totalPages} pages (${maxCharsPerPage} chars/page)`,
-      );
+    } else {
+      console.log("📝 Using standard tokenization for text pagination");
+      return paginateWithRegexTokens(text, maxCharsPerPage);
     }
+  };
 
+  const paginateWithSegmentedData = (
+    text,
+    maxCharsPerPage,
+    segmentationData,
+  ) => {
     const pagesList = [];
     const allWordsList = [];
 
     // Split text into character-based pages
+    for (let i = 0; i < text.length; i += maxCharsPerPage) {
+      const pageStartIndex = i;
+      const pageEndIndex = Math.min(i + maxCharsPerPage, text.length);
+
+      // Find all segments that fall within this page
+      const pageSegments = segmentationData.filter(
+        (segment) =>
+          segment.start >= pageStartIndex && segment.end <= pageEndIndex,
+      );
+
+      console.log(
+        `Page ${Math.floor(i / maxCharsPerPage)}: found ${pageSegments.length} segments`,
+      );
+
+      // Collect words from this page for navigation
+      pageSegments.forEach((segment) => {
+        if (/\p{L}+/u.test(segment.word)) {
+          const word = segment.word.toLowerCase();
+          if (!state.deletedWords.includes(word)) {
+            allWordsList.push(word);
+          }
+        }
+      });
+
+      // Render the page using segmented data
+      const renderedPage = pageSegments.map((segment, index) => {
+        const globalIndex = pageStartIndex + index;
+
+        if (/\p{L}+/u.test(segment.word)) {
+          const word = segment.word.toLowerCase();
+          const metadata = state.wordMetadata[word];
+          const isDeleted = state.deletedWords.includes(word);
+
+          if (isDeleted) return null;
+
+          const isSelected = state.selectedWord === word;
+          let className =
+            "cursor-pointer transition-all hover:bg-gray-200 px-1 rounded ";
+
+          // Add selected word styling
+          if (isSelected) {
+            className += "ring-2 ring-blue-500 ring-offset-1 ";
+          }
+
+          if (metadata?.fam === "known") {
+            className += "text-gray-800";
+          } else if (metadata?.fam === "ignored") {
+            className += "text-gray-600";
+          } else if (!metadata) {
+            className += "text-red-600 bg-red-50 font-medium";
+          } else if (metadata?.fam === "3") {
+            className += "text-green-600 bg-green-50";
+          } else if (metadata?.fam === "2") {
+            className += "text-yellow-600 bg-yellow-50";
+          } else if (metadata?.fam === "1") {
+            className += "text-orange-600 bg-orange-50";
+          } else {
+            className += "text-red-600 bg-red-50 font-medium";
+          }
+
+          return (
+            <span
+              key={globalIndex}
+              className={className}
+              onClick={() => handleWordClick(word)}
+            >
+              {segment.word}
+            </span>
+          );
+        }
+        return <span key={globalIndex}>{segment.word}</span>;
+      });
+
+      pagesList.push(renderedPage);
+    }
+
+    setAllWords(allWordsList);
+    setPages(pagesList);
+    setCurrentPage(0);
+  };
+
+  const paginateWithRegexTokens = (text, maxCharsPerPage) => {
+    const pagesList = [];
+    const allWordsList = [];
+
+    // Split text into character-based pages using regex tokenization
     for (let i = 0; i < text.length; i += maxCharsPerPage) {
       const pageText = text.substring(i, i + maxCharsPerPage);
 
@@ -379,7 +462,7 @@ const LessonView = () => {
 
       // Render the page tokens
       const renderedPage = tokens.map((token, index) => {
-        const globalIndex = i + index; // Use global index for unique keys
+        const globalIndex = i + index;
 
         if (/\p{L}+/u.test(token)) {
           const word = token.toLowerCase();
@@ -398,11 +481,11 @@ const LessonView = () => {
           }
 
           if (metadata?.fam === "known") {
-            className += "text-gray-800"; // known words, normal text color
+            className += "text-gray-800";
           } else if (metadata?.fam === "ignored") {
-            className += "text-gray-600"; // ignored words, muted text color
+            className += "text-gray-600";
           } else if (!metadata) {
-            className += "text-red-600 bg-red-50 font-medium"; // unknown words, red highlighting
+            className += "text-red-600 bg-red-50 font-medium";
           } else if (metadata?.fam === "3") {
             className += "text-green-600 bg-green-50";
           } else if (metadata?.fam === "2") {
@@ -431,7 +514,7 @@ const LessonView = () => {
 
     setAllWords(allWordsList);
     setPages(pagesList);
-    setCurrentPage(0); // Reset to first page when text changes
+    setCurrentPage(0);
   };
 
   const updateCurrentPageWords = async (text) => {
