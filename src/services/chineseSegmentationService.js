@@ -302,7 +302,7 @@ JSON:`;
             "变化",
             "增加",
             "减少",
-            "提高",
+            "提���",
             "降低",
             "改善",
             "恶化",
@@ -427,6 +427,37 @@ JSON:`;
     return segmentation
       .filter((segment) => /\p{L}/u.test(segment.word)) // Only include segments with letters (words)
       .map((segment) => segment.word.toLowerCase());
+  }
+
+  handleApiFailure() {
+    this.apiFailureCount++;
+    this.lastFailureTime = Date.now();
+
+    console.log(`API failure ${this.apiFailureCount}/${this.maxApiFailures}`);
+
+    if (this.apiFailureCount >= this.maxApiFailures) {
+      this.apiDisabled = true;
+      console.log(
+        `🚫 API disabled after ${this.maxApiFailures} consecutive failures. Using local segmentation only.`,
+      );
+    }
+  }
+
+  handleApiSuccess() {
+    // Reset failure count on successful API call
+    if (this.apiFailureCount > 0) {
+      console.log("✅ API call successful, resetting failure count");
+      this.apiFailureCount = 0;
+      this.apiDisabled = false;
+    }
+  }
+
+  // Allow manual re-enabling of API (can be called from console)
+  resetApiCircuitBreaker() {
+    this.apiFailureCount = 0;
+    this.apiDisabled = false;
+    this.lastFailureTime = null;
+    console.log("🔄 API circuit breaker reset, API re-enabled");
   }
 
   clearCache() {
