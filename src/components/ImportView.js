@@ -283,18 +283,49 @@ const ImportView = () => {
         </div>
       </div>
 
+      {/* Segmentation Progress section */}
+      {isSegmenting && (
+        <div className="bg-white rounded-xl shadow-lg mb-8 p-6">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mr-3"></div>
+              <h3 className="text-lg font-semibold text-gray-800">
+                🔤 Segmenting Chinese Text...
+              </h3>
+            </div>
+
+            <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
+              <div
+                className="bg-purple-600 h-4 rounded-full transition-all duration-300"
+                style={{ width: `${segmentationProgress}%` }}
+              ></div>
+            </div>
+
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Progress: {segmentationProgress}%</span>
+              <span>
+                {estimatedTimeLeft > 0
+                  ? `Est. ${estimatedTimeLeft} minute${estimatedTimeLeft !== 1 ? "s" : ""} remaining`
+                  : "Almost done..."}
+              </span>
+            </div>
+
+            <p className="text-sm text-gray-500 mt-3">
+              This lesson is being optimized for better word recognition. This
+              only needs to be done once!
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Action section */}
       <div className="flex justify-center">
         <button
           onClick={handleSave}
-          className="px-8 py-4 bg-green-600 text-white text-lg font-medium rounded-xl hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition-all transform hover:scale-105 shadow-lg"
-          disabled={!title || !text}
-          style={{
-            opacity: !title || !text ? 0.6 : 1,
-            cursor: !title || !text ? "not-allowed" : "pointer",
-          }}
+          className="px-8 py-4 bg-green-600 text-white text-lg font-medium rounded-xl hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          disabled={!title || !text || isSegmenting}
         >
-          Save and Generate Lesson
+          {isSegmenting ? "Processing..." : "Save and Generate Lesson"}
         </button>
       </div>
     </div>
