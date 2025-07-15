@@ -5,6 +5,11 @@ class ChineseSegmentationService {
     const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
     console.log("=== CHINESE SEGMENTATION DEBUG ===");
     console.log(
+      "All REACT_APP env vars:",
+      Object.keys(process.env).filter((key) => key.startsWith("REACT_APP_")),
+    );
+    console.log("REACT_APP_GOOGLE_API_KEY value:", apiKey);
+    console.log(
       "Raw API key:",
       apiKey ? `${apiKey.substring(0, 10)}...` : "null/undefined",
     );
