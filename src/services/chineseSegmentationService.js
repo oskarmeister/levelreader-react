@@ -43,7 +43,7 @@ class ChineseSegmentationService {
 
     // Circuit breaker for API failures
     this.apiFailureCount = 0;
-    this.maxApiFailures = 3; // Stop trying API after 3 consecutive failures
+    this.maxApiFailures = 1; // Stop trying API after 1 failure (since API is clearly not working)
     this.apiDisabled = false;
     this.lastFailureTime = null;
 
