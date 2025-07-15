@@ -10,6 +10,9 @@ const ImportView = () => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [isSegmenting, setIsSegmenting] = useState(false);
+  const [segmentationProgress, setSegmentationProgress] = useState(0);
+  const [estimatedTimeLeft, setEstimatedTimeLeft] = useState(0);
 
   const categories = ["news", "hobbies", "food", "movies", "books", "travel"];
 
