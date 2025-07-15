@@ -18,7 +18,7 @@ npm install @google/generative-ai
 2. Update the `.env` file in the project root:
 
 ```env
-REACT_APP_GOOGLE_API_KEY=your_actual_api_key_here
+REACT_APP_GOOGLE_API_KEY=AIzaSyAyMJKwv27hThFGQjHOHqmuwlJYVrEveis
 ```
 
 ### 3. Optional: Vertex AI Configuration
