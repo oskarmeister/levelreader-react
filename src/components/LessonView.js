@@ -456,14 +456,11 @@ const LessonView = () => {
       `Found improved segmentation for page ${currentPage}: ${improvedSegmentation.length} segments`,
     );
 
-    // Calculate text for current page using original regex split
-    const regexWords = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
-    const startIndex = currentPage * wordsPerPage;
-    const endIndex = Math.min(
-      (currentPage + 1) * wordsPerPage,
-      regexWords.length,
-    );
-    const pageText = regexWords.slice(startIndex, endIndex).join("");
+    // Calculate text for current page using character-based pagination
+    const maxCharsPerPage = wordsPerPage; // wordsPerPage now represents chars per page
+    const startIndex = currentPage * maxCharsPerPage;
+    const endIndex = Math.min((currentPage + 1) * maxCharsPerPage, text.length);
+    const pageText = text.substring(startIndex, endIndex);
 
     console.log(
       `Page ${currentPage} text length: ${pageText.length}, segmentation covers: ${improvedSegmentation[improvedSegmentation.length - 1]?.end || 0}`,
