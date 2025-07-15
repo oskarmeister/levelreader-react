@@ -286,7 +286,7 @@ JSON:`;
             "昨天",
             "什么",
             "为什么",
-            "��么",
+            "����",
             "哪里",
             "谁",
             "我们",
@@ -718,19 +718,19 @@ JSON:`;
 
     console.log(`🔄 Generating fallback segmentation for page ${pageNumber}`);
 
-    // Calculate page text
-    const words = this.currentText.match(/\p{L}+|\p{P}+|\s+/gu) || [];
-    const startIndex = pageNumber * this.wordsPerPage;
+    // Calculate page text using character-based pagination
+    const maxCharsPerPage = this.wordsPerPage; // wordsPerPage now represents chars per page
+    const startIndex = pageNumber * maxCharsPerPage;
     const endIndex = Math.min(
-      (pageNumber + 1) * this.wordsPerPage,
-      words.length,
+      (pageNumber + 1) * maxCharsPerPage,
+      this.currentText.length,
     );
 
-    if (startIndex >= words.length) {
+    if (startIndex >= this.currentText.length) {
       return;
     }
 
-    const pageText = words.slice(startIndex, endIndex).join("");
+    const pageText = this.currentText.substring(startIndex, endIndex);
 
     // Use fallback segmentation
     const segmentation = this.fallbackSegmentation(pageText);
