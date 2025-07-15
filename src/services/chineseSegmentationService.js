@@ -47,6 +47,9 @@ class ChineseSegmentationService {
     this.currentViewedPage = 0;
     this.wordsPerPage = 300; // Track current words per page setting
 
+    // Callback for UI updates when segmentation completes
+    this.onSegmentationComplete = null;
+
     // Circuit breaker for API failures
     this.apiFailureCount = 0;
     this.maxApiFailures = 1; // Stop trying API after 1 failure (since API is clearly not working)
@@ -313,7 +316,7 @@ JSON:`;
             "可以",
             "应该",
             "必须",
-            "需要",
+            "需��",
             "想要",
             "希望",
             "觉得",
@@ -671,10 +674,19 @@ JSON:`;
     return currentStatus === "completed" && nextStatus === "completed";
   }
 
-  // Placeholder for UI notification (can be extended)
+  // Notify UI when segmentation completes
   notifyPageSegmentationComplete(pageNumber) {
     console.log(`🔔 Page ${pageNumber} ready for enhanced display`);
-    // Could trigger UI update here
+
+    // Call registered callback if available
+    if (this.onSegmentationComplete) {
+      this.onSegmentationComplete(pageNumber);
+    }
+  }
+
+  // Set callback for segmentation completion notifications
+  setSegmentationCompleteCallback(callback) {
+    this.onSegmentationComplete = callback;
   }
 
   clearCache() {
