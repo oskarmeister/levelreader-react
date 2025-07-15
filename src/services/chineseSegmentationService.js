@@ -524,10 +524,128 @@ JSON:`;
     console.log("🔄 API circuit breaker reset, API re-enabled");
   }
 
+  // Initialize page tracking system
+  initializePageTracking(totalPages, wordsPerPage) {
+    console.log(
+      `📊 Initializing page tracking: ${totalPages} pages, ${wordsPerPage} words per page`,
+    );
+    this.totalPages = totalPages;
+    this.wordsPerPage = wordsPerPage;
+    this.pageSegmentationStatus.clear();
+
+    // Initialize all pages as pending
+    for (let i = 0; i < totalPages; i++) {
+      this.pageSegmentationStatus.set(i, "pending");
+    }
+  }
+
+  // Set current viewed page and trigger background segmentation
+  setCurrentPage(pageNumber) {
+    this.currentViewedPage = pageNumber;
+    console.log(
+      `👁️ Viewing page ${pageNumber}, checking segmentation needs...`,
+    );
+
+    // Check if current page and next page need segmentation
+    this.checkAndSegmentNeededPages();
+  }
+
+  // Check which pages need segmentation and start background processing
+  checkAndSegmentNeededPages() {
+    const pagesToSegment = [this.currentViewedPage];
+
+    // Add next page if it exists
+    if (this.currentViewedPage + 1 < this.totalPages) {
+      pagesToSegment.push(this.currentViewedPage + 1);
+    }
+
+    for (const pageNum of pagesToSegment) {
+      const status = this.pageSegmentationStatus.get(pageNum);
+      if (status === "pending") {
+        console.log(`🔄 Starting background segmentation for page ${pageNum}`);
+        this.segmentPageInBackground(pageNum);
+      } else if (status === "completed") {
+        console.log(`✅ Page ${pageNum} already segmented`);
+      } else if (status === "segmenting") {
+        console.log(`⏳ Page ${pageNum} currently being segmented`);
+      }
+    }
+  }
+
+  // Background segmentation of a specific page
+  async segmentPageInBackground(pageNumber) {
+    if (this.apiDisabled) {
+      console.log(
+        `🚫 API disabled, marking page ${pageNumber} as completed with fallback`,
+      );
+      this.pageSegmentationStatus.set(pageNumber, "completed");
+      return;
+    }
+
+    this.pageSegmentationStatus.set(pageNumber, "segmenting");
+
+    try {
+      // This will use the existing segmentPageRange logic with 100-char chunks
+      await this.segmentPageRange(
+        null,
+        pageNumber,
+        pageNumber,
+        this.wordsPerPage,
+      );
+
+      this.pageSegmentationStatus.set(pageNumber, "completed");
+      console.log(`✅ Page ${pageNumber} segmentation completed`);
+
+      // Notify UI that page is ready for re-render (could add callback here)
+      this.notifyPageSegmentationComplete(pageNumber);
+    } catch (error) {
+      console.error(`❌ Page ${pageNumber} segmentation failed:`, error);
+      this.pageSegmentationStatus.set(pageNumber, "failed");
+    }
+  }
+
+  // Get segmentation status for a page
+  getPageStatus(pageNumber) {
+    return this.pageSegmentationStatus.get(pageNumber) || "pending";
+  }
+
+  // Get overall segmentation progress
+  getSegmentationProgress() {
+    const completed = Array.from(this.pageSegmentationStatus.values()).filter(
+      (status) => status === "completed",
+    ).length;
+    return {
+      completed,
+      total: this.totalPages,
+      percentage:
+        this.totalPages > 0
+          ? Math.round((completed / this.totalPages) * 100)
+          : 0,
+    };
+  }
+
+  // Check if current + next page are both segmented
+  areCurrentPagesSegmented() {
+    const currentStatus = this.getPageStatus(this.currentViewedPage);
+    const nextStatus =
+      this.currentViewedPage + 1 < this.totalPages
+        ? this.getPageStatus(this.currentViewedPage + 1)
+        : "completed";
+
+    return currentStatus === "completed" && nextStatus === "completed";
+  }
+
+  // Placeholder for UI notification (can be extended)
+  notifyPageSegmentationComplete(pageNumber) {
+    console.log(`🔔 Page ${pageNumber} ready for enhanced display`);
+    // Could trigger UI update here
+  }
+
   clearCache() {
     this.segmentationCache.clear();
     this.pageSegmentationCache.clear();
     this.segmentingPages.clear();
+    this.pageSegmentationStatus.clear();
   }
 
   // Test function that can be called from browser console
