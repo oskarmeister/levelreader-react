@@ -70,7 +70,6 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
-        lessonSegmentations: {},
       },
       Swedish: {
         lessons: {
