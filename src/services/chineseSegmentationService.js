@@ -53,120 +53,19 @@ class ChineseSegmentationService {
       return this.segmentationCache.get(sentence);
     }
 
-        // If no API key or model, use fallback
-    if (!this.model) {
-      console.log("No API key/model, using fallback segmentation");
-      return this.fallbackSegmentation(sentence);
-    }
+    // Use improved fallback segmentation (API temporarily disabled due to network issues)
+    console.log(
+      "Using improved fallback segmentation due to API network issues",
+    );
+    const segmentation = this.fallbackSegmentation(sentence);
 
-    // Temporarily disable API calls due to network issues - use improved fallback
-    console.log("API temporarily disabled due to network issues, using improved fallback");
-    return this.fallbackSegmentation(sentence);
+    // Cache the result
+    this.segmentationCache.set(sentence, segmentation);
 
-        // API code disabled for now
-    /*
-    try {
-            const prompt = `You are a Chinese text segmentation expert. Segment the following Chinese text into meaningful words.
-
-Text to segment: "${sentence}"
-
-Rules:
-1. Group characters into proper Chinese words (如果=one word, not 如+果)
-2. Include punctuation and spaces as separate items
-3. Use 0-indexed character positions
-4. Return ONLY valid JSON - no explanations or extra text
-
-Response format (JSON array only):
-[{"word":"word1","start":0,"end":N},{"word":"word2","start":N,"end":M}]
-
-For text "如果你好", respond: [{"word":"如果","start":0,"end":2},{"word":"你好","start":2,"end":4}]
-
-JSON:`;
-
-                  console.log("Calling Gemini API for sentence:", sentence);
-
-      // Add timeout to prevent hanging requests
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("API request timeout")), 10000)
-      );
-
-      const apiPromise = this.model.generateContent(prompt);
-
-      const result = await Promise.race([apiPromise, timeoutPromise]);
-      const response = await result.response;
-      const text = response.text();
-
-      console.log("Gemini API response length:", text.length);
-      console.log("Gemini API response preview:", text.substring(0, 500) + "...");
-
-      // Clean and parse the JSON response with better error handling
-      let cleanedResponse = text.replace(/```json\n?|\n?```/g, "").trim();
-
-      // Additional cleaning for common issues
-      cleanedResponse = cleanedResponse.replace(/\n/g, " "); // Remove newlines
-      cleanedResponse = cleanedResponse.replace(/\s+/g, " "); // Normalize spaces
-
-      // Try to extract JSON array if it's embedded in other text
-      const jsonMatch = cleanedResponse.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        cleanedResponse = jsonMatch[0];
-      }
-
-      console.log("Cleaned response preview:", cleanedResponse.substring(0, 200) + "...");
-
-      let segmentation;
-      try {
-        segmentation = JSON.parse(cleanedResponse);
-      } catch (parseError) {
-        console.error("JSON parse error:", parseError);
-        console.error("Failed to parse:", cleanedResponse.substring(0, 1000));
-
-        // Try to fix common JSON issues
-        let fixedResponse = cleanedResponse;
-
-        // Fix unescaped quotes in values by escaping them
-        fixedResponse = fixedResponse.replace(/"([^"]*)"([^"]*)"([^"]*)"/g, '"$1\\"$2\\"$3"');
-
-        // Try parsing the fixed version
-        try {
-          segmentation = JSON.parse(fixedResponse);
-          console.log("Successfully parsed with fixes");
-        } catch (secondError) {
-          console.error("Still failed after fixes:", secondError);
-          throw new Error(`Failed to parse JSON response: ${parseError.message}`);
-        }
-      }
-
-      // Validate the segmentation
-      if (!Array.isArray(segmentation)) {
-        throw new Error("Invalid segmentation response: not an array");
-      }
-
-      console.log("Successful segmentation:", segmentation);
-
-      // Cache the result
-      this.segmentationCache.set(sentence, segmentation);
-
-      return segmentation;
-        } catch (error) {
-      console.error("Error in Chinese segmentation:", error);
-
-      // Handle specific error types
-      if (error.message.includes("Failed to fetch") || error.name === "TypeError") {
-        console.log("Network error detected - API may be unavailable or blocked");
-      } else if (error.message.includes("JSON")) {
-        console.log("JSON parsing error - malformed API response");
-      } else {
-        console.log("Unknown error type:", error.name, error.message);
-      }
-
-      console.log("Falling back to character-by-character segmentation");
-      // Fallback to character-by-character segmentation
-      return this.fallbackSegmentation(sentence);
-    }
+    return segmentation;
   }
 
-    fallbackSegmentation(sentence) {
+  fallbackSegmentation(sentence) {
     console.log("Using improved fallback segmentation");
     const segmentation = [];
 
@@ -198,11 +97,78 @@ JSON:`;
 
           // Common Chinese 2-character words (basic list)
           const commonWords = [
-            "如果", "因为", "所以", "但是", "然后", "现在", "时候", "地方",
-            "今天", "明天", "昨天", "什么", "为什么", "怎么", "哪里", "谁",
-            "我们", "你们", "他们", "自己", "大家", "老师", "学生", "朋友",
-            "工作", "学习", "生活", "时间", "问题", "方法", "结果", "原因",
-            "开始", "结束", "继续", "停止", "进入", "出来", "回去", "过来"
+            "如果",
+            "因为",
+            "所以",
+            "但是",
+            "然后",
+            "现在",
+            "时候",
+            "地方",
+            "今天",
+            "明天",
+            "昨天",
+            "什么",
+            "为什么",
+            "怎么",
+            "哪里",
+            "谁",
+            "我们",
+            "你们",
+            "他们",
+            "自己",
+            "大家",
+            "老师",
+            "学生",
+            "朋友",
+            "工作",
+            "学习",
+            "生活",
+            "时间",
+            "问题",
+            "方法",
+            "结果",
+            "原因",
+            "开始",
+            "结束",
+            "继续",
+            "停止",
+            "进入",
+            "出来",
+            "回去",
+            "过来",
+            "可以",
+            "应该",
+            "必须",
+            "需要",
+            "想要",
+            "希望",
+            "觉得",
+            "认为",
+            "知道",
+            "了解",
+            "明白",
+            "理解",
+            "记得",
+            "忘记",
+            "学会",
+            "教学",
+            "帮助",
+            "支持",
+            "合作",
+            "努力",
+            "成功",
+            "失败",
+            "进步",
+            "改进",
+            "发展",
+            "变化",
+            "增加",
+            "减少",
+            "提高",
+            "降低",
+            "改善",
+            "恶化",
           ];
 
           if (commonWords.includes(twoCharWord)) {
@@ -272,31 +238,12 @@ JSON:`;
 
   // Test function that can be called from browser console
   async testAPI(testSentence = "如果你好") {
-    console.log("=== TESTING GEMINI API ===");
+    console.log("=== TESTING SEGMENTATION (FALLBACK) ===");
     console.log("Test sentence:", testSentence);
-    console.log("Has model:", !!this.model);
 
-    if (!this.model) {
-      console.log("No model available, cannot test API");
-      return null;
-    }
-
-    try {
-      const result = await this.model.generateContent(
-        'Test: Please respond with "API working"',
-      );
-      const response = await result.response;
-      const text = response.text();
-      console.log("API test response:", text);
-
-      // Now test with segmentation
-      const segResult = await this.segmentChineseSentence(testSentence);
-      console.log("Segmentation test result:", segResult);
-      return segResult;
-    } catch (error) {
-      console.error("API test failed:", error);
-      return null;
-    }
+    const segResult = await this.segmentChineseSentence(testSentence);
+    console.log("Segmentation test result:", segResult);
+    return segResult;
   }
 }
 
