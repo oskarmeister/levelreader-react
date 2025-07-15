@@ -50,6 +50,9 @@ class ChineseSegmentationService {
     // Callback for UI updates when segmentation completes
     this.onSegmentationComplete = null;
 
+    // Flag to use smaller chunks if we detect JSON truncation issues
+    this.preferSmallerChunks = false;
+
     // Circuit breaker for API failures
     this.apiFailureCount = 0;
     this.maxApiFailures = 1; // Stop trying API after 1 failure (since API is clearly not working)
@@ -385,7 +388,7 @@ JSON:`;
             "朋友",
             "工作",
             "学习",
-            "生活",
+            "���活",
             "时间",
             "问题",
             "方法",
