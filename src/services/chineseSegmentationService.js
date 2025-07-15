@@ -82,13 +82,57 @@ JSON:`;
       const response = await result.response;
       const text = response.text();
 
-      console.log("Gemini API response:", text);
+      console.log("Gemini API response length:", text.length);
+      console.log(
+        "Gemini API response preview:",
+        text.substring(0, 500) + "...",
+      );
 
-      // Parse the JSON response
-      const cleanedResponse = text.replace(/```json\n?|\n?```/g, "").trim();
-      console.log("Cleaned response:", cleanedResponse);
+      // Clean and parse the JSON response with better error handling
+      let cleanedResponse = text.replace(/```json\n?|\n?```/g, "").trim();
 
-      const segmentation = JSON.parse(cleanedResponse);
+      // Additional cleaning for common issues
+      cleanedResponse = cleanedResponse.replace(/\n/g, " "); // Remove newlines
+      cleanedResponse = cleanedResponse.replace(/\s+/g, " "); // Normalize spaces
+
+      // Try to extract JSON array if it's embedded in other text
+      const jsonMatch = cleanedResponse.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        cleanedResponse = jsonMatch[0];
+      }
+
+      console.log(
+        "Cleaned response preview:",
+        cleanedResponse.substring(0, 200) + "...",
+      );
+
+      let segmentation;
+      try {
+        segmentation = JSON.parse(cleanedResponse);
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        console.error("Failed to parse:", cleanedResponse.substring(0, 1000));
+
+        // Try to fix common JSON issues
+        let fixedResponse = cleanedResponse;
+
+        // Fix unescaped quotes in values by escaping them
+        fixedResponse = fixedResponse.replace(
+          /"([^"]*)"([^"]*)"([^"]*)"/g,
+          '"$1\\"$2\\"$3"',
+        );
+
+        // Try parsing the fixed version
+        try {
+          segmentation = JSON.parse(fixedResponse);
+          console.log("Successfully parsed with fixes");
+        } catch (secondError) {
+          console.error("Still failed after fixes:", secondError);
+          throw new Error(
+            `Failed to parse JSON response: ${parseError.message}`,
+          );
+        }
+      }
 
       // Validate the segmentation
       if (!Array.isArray(segmentation)) {
