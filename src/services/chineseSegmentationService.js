@@ -63,8 +63,9 @@ class ChineseSegmentationService {
     console.log("API temporarily disabled due to network issues, using improved fallback");
     return this.fallbackSegmentation(sentence);
 
-    // API code disabled for now
-    /* try {
+        // API code disabled for now
+    /*
+    try {
             const prompt = `You are a Chinese text segmentation expert. Segment the following Chinese text into meaningful words.
 
 Text to segment: "${sentence}"
