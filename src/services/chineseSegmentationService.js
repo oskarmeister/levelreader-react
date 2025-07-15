@@ -272,7 +272,7 @@ JSON:`;
           const commonWords = [
             "如果",
             "因为",
-            "所以",
+            "��以",
             "但是",
             "然后",
             "现在",
@@ -583,9 +583,10 @@ JSON:`;
 
   // Background segmentation of a specific page
   async segmentPageInBackground(pageNumber) {
-    if (this.apiDisabled) {
+    // Always check circuit breaker first
+    if (this.apiDisabled || !this.model) {
       console.log(
-        `🚫 API disabled, marking page ${pageNumber} as completed with fallback`,
+        `🚫 API disabled/unavailable, marking page ${pageNumber} as completed with fallback`,
       );
       this.pageSegmentationStatus.set(pageNumber, "completed");
       return;
@@ -609,6 +610,18 @@ JSON:`;
       this.notifyPageSegmentationComplete(pageNumber);
     } catch (error) {
       console.error(`❌ Page ${pageNumber} segmentation failed:`, error);
+
+      // If this is a network error, trigger circuit breaker
+      if (
+        error.message.includes("Failed to fetch") ||
+        error.name === "TypeError"
+      ) {
+        console.log(
+          `🚫 Network error in background segmentation, disabling API`,
+        );
+        this.handleApiFailure();
+      }
+
       this.pageSegmentationStatus.set(pageNumber, "failed");
     }
   }
