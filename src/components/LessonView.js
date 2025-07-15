@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import TranslationService from "../services/translationService";
+import ChineseSegmentationService from "../services/chineseSegmentationService";
 import { getLanguageCode } from "../utils/languageUtils";
 
 const LessonView = () => {
@@ -47,8 +48,11 @@ const LessonView = () => {
         };
       });
 
-      calculateWordsPerPage();
-      parseSentences(text);
+      const initializeText = async () => {
+        await calculateWordsPerPage();
+        parseSentences(text);
+      };
+      initializeText();
     }
   }, [key, state.wordMetadata, state.deletedWords, state.selectedWord]);
 
@@ -257,8 +261,26 @@ const LessonView = () => {
     }
   };
 
-  const paginateText = (text, customWordsPerPage = wordsPerPage) => {
-    const words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+  const paginateText = async (text, customWordsPerPage = wordsPerPage) => {
+    let words = [];
+
+    // Use Chinese segmentation for Chinese language
+    if (state.selectedLanguage === "Chinese") {
+      try {
+        const segmentation =
+          await ChineseSegmentationService.segmentChineseText(text);
+        words = segmentation.map((segment) => segment.word);
+      } catch (error) {
+        console.error(
+          "Error in Chinese segmentation, falling back to regex:",
+          error,
+        );
+        words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+      }
+    } else {
+      words = text.match(/\p{L}+|\p{P}+|\s+/gu) || [];
+    }
+
     const pagesList = [];
 
     // Extract just the actual words for navigation
