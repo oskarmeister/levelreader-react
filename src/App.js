@@ -82,7 +82,6 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
-        lessonSegmentations: {},
       },
       Chinese: {
         lessons: {
