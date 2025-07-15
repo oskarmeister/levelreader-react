@@ -677,10 +677,16 @@ JSON:`;
   // Notify UI when segmentation completes
   notifyPageSegmentationComplete(pageNumber) {
     console.log(`🔔 Page ${pageNumber} ready for enhanced display`);
+    console.log(`🔔 Callback registered: ${!!this.onSegmentationComplete}`);
 
     // Call registered callback if available
     if (this.onSegmentationComplete) {
+      console.log(`🔔 Calling callback for page ${pageNumber}`);
       this.onSegmentationComplete(pageNumber);
+    } else {
+      console.log(
+        `❌ No callback registered to notify about page ${pageNumber} completion`,
+      );
     }
   }
 
