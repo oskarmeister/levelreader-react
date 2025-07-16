@@ -752,6 +752,35 @@ const LessonView = () => {
     });
   };
 
+  const handlePlayButtonClick = () => {
+    setShowAudioPlayer(true);
+  };
+
+  const handleCloseAudioPlayer = () => {
+    setShowAudioPlayer(false);
+  };
+
+  const handleTrackChange = (direction) => {
+    // Get all lessons for current language that have audio
+    const allLessons = Object.keys(state.lessons).filter(
+      (lessonKey) => state.lessonAudio?.[lessonKey],
+    );
+
+    const currentIndex = allLessons.indexOf(key);
+    let newIndex;
+
+    if (direction === "next") {
+      newIndex = (currentIndex + 1) % allLessons.length;
+    } else {
+      newIndex = currentIndex > 0 ? currentIndex - 1 : allLessons.length - 1;
+    }
+
+    const newLessonKey = allLessons[newIndex];
+    if (newLessonKey) {
+      navigate(`/lesson/${newLessonKey}`);
+    }
+  };
+
   if (!state.lessons[key]) {
     return (
       <div className="container mx-auto p-4">
@@ -1102,6 +1131,21 @@ const LessonView = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Play Button */}
+      <FloatingPlayButton
+        isVisible={currentAudioSrc && !showAudioPlayer}
+        onClick={handlePlayButtonClick}
+      />
+
+      {/* Floating Audio Player */}
+      <FloatingAudioPlayer
+        audioSrc={currentAudioSrc}
+        isVisible={showAudioPlayer}
+        onClose={handleCloseAudioPlayer}
+        lessonTitle={key}
+        onTrackChange={handleTrackChange}
+      />
     </div>
   );
 };
