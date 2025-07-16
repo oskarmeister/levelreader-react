@@ -8,6 +8,7 @@ import {
 import Nav from "./components/Nav";
 import AccountView from "./components/AccountView";
 import LibraryView from "./components/LibraryView";
+import PlaylistView from "./components/PlaylistView";
 import WordBankView from "./components/WordBankView";
 import ImportView from "./components/ImportView";
 import GenerateView from "./components/GenerateView";
@@ -296,6 +297,7 @@ function App() {
             <Routes>
               <Route path="/account" element={<AccountView />} />
               <Route path="/library" element={<LibraryView />} />
+              <Route path="/playlist" element={<PlaylistView />} />
               <Route path="/wordbank" element={<WordBankView />} />
               <Route path="/import" element={<ImportView />} />
               <Route path="/generate" element={<GenerateView />} />
