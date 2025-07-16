@@ -76,6 +76,10 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonAudio: {
+          "El Principito": "/audio/el-principito.mp3",
+          "Café Matutino": "/audio/cafe-matutino.mp3",
+        },
       },
       Swedish: {
         lessons: {
@@ -88,6 +92,9 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonAudio: {
+          "Lille Prinsen": "/audio/lille-prinsen.mp3",
+        },
       },
       Chinese: {
         lessons: {
@@ -101,6 +108,9 @@ function App() {
         translationCache: {},
         deletedWords: [],
         lessonSegmentations: {}, // Store segmented text for Chinese lessons
+        lessonAudio: {
+          小王子: "/audio/xiao-wang-zi.mp3",
+        },
       },
       English: {
         lessons: {
@@ -113,6 +123,9 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonAudio: {
+          "The Little Prince": "/audio/the-little-prince.mp3",
+        },
       },
       German: {
         lessons: {
@@ -125,6 +138,9 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonAudio: {
+          "Der Kleine Prinz": "/audio/der-kleine-prinz.mp3",
+        },
       },
       French: {
         lessons: {
@@ -137,7 +153,19 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonAudio: {
+          "Le Petit Prince": "/audio/le-petit-prince.mp3",
+        },
       },
+    },
+    // Global lesson audio mappings (for backward compatibility)
+    lessonAudio: {
+      "The Little Prince": "/audio/the-little-prince.mp3",
+      "Morning Coffee": "/audio/morning-coffee.mp3",
+      "Ocean Waves": "/audio/ocean-waves.mp3",
+      "City Lights": "/audio/city-lights.mp3",
+      "Garden Stories": "/audio/garden-stories.mp3",
+      "Train Journey": "/audio/train-journey.mp3",
     },
     lessons: {
       "The Little Prince":
