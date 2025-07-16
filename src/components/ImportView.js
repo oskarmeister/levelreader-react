@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import { StorageManager } from "../storageManager";
 import ChineseSegmentationService from "../services/chineseSegmentationService";
+import { getBackendUrls } from "../config/backendConfig";
 
 const ImportView = () => {
   const { state, setState } = useContext(AppContext);
