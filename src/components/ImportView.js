@@ -23,6 +23,8 @@ const ImportView = () => {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [showAudioModal, setShowAudioModal] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [showColorDropdown, setShowColorDropdown] = useState(false);
+  const [showDifficultyDropdown, setShowDifficultyDropdown] = useState(false);
 
   const audioInputRef = useRef(null);
 
