@@ -21,6 +21,11 @@ const FloatingAudioPlayer = ({
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
     const handleEnded = () => setIsPlaying(false);
+    const handleError = () => {
+      setAudioError(true);
+      setIsPlaying(false);
+    };
+    const handleLoadStart = () => setAudioError(false);
 
     audio.addEventListener("timeupdate", updateTime);
     audio.addEventListener("loadedmetadata", updateDuration);
