@@ -140,7 +140,7 @@ const FloatingAudioPlayer = ({
         </div>
 
         {/* Timeline */}
-        <div className="mb-4">
+        <div className="mb-3">
           <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
