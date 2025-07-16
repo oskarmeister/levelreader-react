@@ -44,23 +44,58 @@ const ImportView = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      fetch("http://localhost:5000/upload", {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.text) setText(data.text);
-          else alert(data.error || "Failed to extract text");
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+
+      // Check if it's a PDF or other format that requires backend processing
+      if (
+        ["pdf", "epub", "docx", "mobi", "srt", "ass", "vtt", "ttml"].includes(
+          fileExtension,
+        )
+      ) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("http://localhost:5000/upload", {
+          method: "POST",
+          body: formData,
         })
-        .catch((err) => {
-          console.error(err);
-          const reader = new FileReader();
-          reader.onload = (ev) => setText(ev.target.result);
-          reader.readAsText(file);
-        });
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error("Backend server not available");
+            }
+            return res.json();
+          })
+          .then((data) => {
+            if (data.text) {
+              setText(data.text);
+              alert(
+                `✅ Successfully extracted text from ${fileExtension.toUpperCase()} file!`,
+              );
+            } else {
+              alert(data.error || "Failed to extract text");
+            }
+          })
+          .catch((err) => {
+            console.error("Backend error:", err);
+            if (fileExtension === "pdf") {
+              alert(
+                `❌ PDF import requires the backend server to be running.\n\nTo enable PDF import:\n1. Open a terminal\n2. Run: npm run backend\n\nFor now, please convert your PDF to a text file and try again.`,
+              );
+            } else {
+              alert(
+                `❌ ${fileExtension.toUpperCase()} files require the backend server to be running.\n\nTo enable file processing:\n1. Open a terminal\n2. Run: npm run backend\n\nFor now, please try uploading a plain text file instead.`,
+              );
+            }
+          });
+      } else {
+        // For text files, read directly
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          setText(ev.target.result);
+          alert(`✅ Successfully loaded text file!`);
+        };
+        reader.readAsText(file);
+      }
     }
   };
 
