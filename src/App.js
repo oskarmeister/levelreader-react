@@ -31,6 +31,7 @@ function App() {
         wordMetadata: {},
         translationCache: {},
         deletedWords: [],
+        lessonAudio: {},
         ...(state.selectedLanguage === "Chinese" && {
           lessonSegmentations: {},
         }),
@@ -50,6 +51,7 @@ function App() {
       wordMetadata: currentData.wordMetadata,
       translationCache: currentData.translationCache,
       deletedWords: currentData.deletedWords,
+      lessonAudio: currentData.lessonAudio,
       ...(state.selectedLanguage === "Chinese" && {
         lessonSegmentations: currentData.lessonSegmentations || {},
       }),
