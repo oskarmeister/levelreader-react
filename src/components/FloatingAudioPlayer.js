@@ -105,8 +105,8 @@ const FloatingAudioPlayer = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 bg-white shadow-lg border-t border-gray-200 p-4 z-50 transition-all duration-300 ease-in-out">
-      <div className="max-w-4xl mx-auto">
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-1/3 min-w-96 bg-white shadow-xl rounded-lg border border-gray-200 p-4 z-50 transition-all duration-300 ease-in-out">
+      <div>
         {/* Close button */}
         <button
           onClick={onClose}
