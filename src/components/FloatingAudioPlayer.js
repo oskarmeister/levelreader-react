@@ -110,7 +110,7 @@ const FloatingAudioPlayer = ({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
         >
           <svg
             className="w-5 h-5"
