@@ -409,7 +409,7 @@ const LibraryView = () => {
         {/* Main Import Button */}
         <button
           onClick={() => setShowImportOptions(!showImportOptions)}
-          className={`bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl hover:shadow-2xl transform transition-all duration-300 ${
+          className={`bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-xl hover:shadow-2xl transform transition-all duration-300 ${
             showImportOptions ? "rotate-45 scale-110" : "hover:scale-110"
           }`}
           title="Import Content"
