@@ -6,7 +6,7 @@ const FloatingPlayButton = ({ onClick, isVisible }) => {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-6 left-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg hover:bg-primary-dark transition-all duration-300 ease-in-out transform hover:scale-110 z-40 flex items-center justify-center"
+      className="fixed bottom-20 left-6 w-16 h-16 bg-primary text-white rounded-full shadow-lg hover:bg-primary-dark transition-all duration-300 ease-in-out transform hover:scale-110 z-40 flex items-center justify-center"
       title="Play audio for this lesson"
     >
       <svg
