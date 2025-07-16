@@ -180,7 +180,7 @@ const PlaylistView = () => {
       className="container mx-auto overflow-visible"
       style={{ margin: "0 auto 200px", padding: "16px 16px 0" }}
     >
-      <h2 className="text-2xl font-bold mb-6">🎵 Playlists</h2>
+      <h2 className="text-2xl font-bold mb-6">🎵 Audio</h2>
 
       <div className="flex h-[calc(100vh-200px)]">
         {/* Playlist List - Full width when no selection, 1/3 when selected */}
