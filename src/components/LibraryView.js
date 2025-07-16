@@ -12,6 +12,7 @@ const LibraryView = () => {
     isOpen: false,
     lessonKey: null,
   });
+  const [showImportOptions, setShowImportOptions] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = () => setOpenDropdown(null);
@@ -196,6 +197,35 @@ const LibraryView = () => {
     setConfirmDelete({ isOpen: false, lessonKey: null });
   };
 
+  const handleImportOption = (type) => {
+    setShowImportOptions(false);
+    switch (type) {
+      case "text":
+        navigate("/import");
+        break;
+      case "audio":
+        navigate("/import-audio");
+        break;
+      case "video":
+        // Handle video import
+        console.log("Video import selected");
+        break;
+      case "url":
+        // Handle URL import
+        console.log("URL import selected");
+        break;
+      default:
+        break;
+    }
+  };
+
+  const importOptions = [
+    { id: "text", label: "Text", icon: "📝", color: "bg-blue-500" },
+    { id: "audio", label: "Audio", icon: "🎵", color: "bg-green-500" },
+    { id: "video", label: "Video", icon: "🎬", color: "bg-red-500" },
+    { id: "url", label: "URL", icon: "🔗", color: "bg-purple-500" },
+  ];
+
   const renderCategorySection = (category, color, gradient) => {
     const categoryLessons = getLessonsForCategory(category);
 
@@ -347,6 +377,53 @@ const LibraryView = () => {
             {renderLessonCards()}
           </div>
         </div>
+      </div>
+
+      {/* Floating Import Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {/* Import Options - Animated dropdown going upward */}
+        <div
+          className={`transition-all duration-300 ease-in-out mb-3 ${
+            showImportOptions
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-4 pointer-events-none"
+          }`}
+        >
+          <div className="flex flex-col space-y-2">
+            {importOptions.map((option, index) => (
+              <button
+                key={option.id}
+                onClick={() => handleImportOption(option.id)}
+                className={`${option.color} text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200`}
+                style={{
+                  animationDelay: showImportOptions ? `${index * 50}ms` : "0ms",
+                }}
+                title={`Import ${option.label}`}
+              >
+                <span className="text-lg">{option.icon}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Import Button */}
+        <button
+          onClick={() => setShowImportOptions(!showImportOptions)}
+          className={`bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl hover:shadow-2xl transform transition-all duration-300 ${
+            showImportOptions ? "rotate-45 scale-110" : "hover:scale-110"
+          }`}
+          title="Import Content"
+        >
+          <span className="text-2xl font-bold">+</span>
+        </button>
+
+        {/* Backdrop for closing dropdown */}
+        {showImportOptions && (
+          <div
+            className="fixed inset-0 -z-10"
+            onClick={() => setShowImportOptions(false)}
+          />
+        )}
       </div>
 
       <ConfirmationModal

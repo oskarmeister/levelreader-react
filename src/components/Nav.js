@@ -10,8 +10,8 @@ const Nav = () => {
 
   const tabs = [
     { id: "tab-library", label: "Library", path: "/library" },
+    { id: "tab-audio", label: "Audio", path: "/playlist" },
     { id: "tab-wordbank", label: "Word Bank", path: "/wordbank" },
-    { id: "tab-import", label: "Import", path: "/import" },
     { id: "tab-generate", label: "Generate", path: "/generate" },
   ];
 

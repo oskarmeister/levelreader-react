@@ -8,8 +8,10 @@ import {
 import Nav from "./components/Nav";
 import AccountView from "./components/AccountView";
 import LibraryView from "./components/LibraryView";
+import PlaylistView from "./components/PlaylistView";
 import WordBankView from "./components/WordBankView";
 import ImportView from "./components/ImportView";
+import ImportAudioView from "./components/ImportAudioView";
 import GenerateView from "./components/GenerateView";
 import LessonView from "./components/LessonView";
 import EditView from "./components/EditView";
@@ -296,8 +298,10 @@ function App() {
             <Routes>
               <Route path="/account" element={<AccountView />} />
               <Route path="/library" element={<LibraryView />} />
+              <Route path="/playlist" element={<PlaylistView />} />
               <Route path="/wordbank" element={<WordBankView />} />
               <Route path="/import" element={<ImportView />} />
+              <Route path="/import-audio" element={<ImportAudioView />} />
               <Route path="/generate" element={<GenerateView />} />
               <Route path="/lesson/:key" element={<LessonView />} />
               <Route path="/edit/:key" element={<EditView />} />
