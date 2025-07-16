@@ -204,8 +204,7 @@ const LibraryView = () => {
         navigate("/import");
         break;
       case "audio":
-        // Handle audio import
-        console.log("Audio import selected");
+        navigate("/import-audio");
         break;
       case "video":
         // Handle video import
