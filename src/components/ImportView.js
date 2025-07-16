@@ -376,9 +376,6 @@ const ImportView = () => {
 
           {/* Audio File */}
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Audio Track
-            </label>
             {audioFile ? (
               <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                 <div className="flex items-center space-x-3">
