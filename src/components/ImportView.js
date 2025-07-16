@@ -610,13 +610,18 @@ const ImportView = () => {
               <div className="flex flex-col items-center space-y-4">
                 <div className="w-full max-w-md">
                   <label className="block text-gray-700 text-sm font-medium mb-2 text-center">
-                    Upload a text file to extract content automatically
+                    Upload a file to extract content automatically
                   </label>
+                  <div className="text-xs text-gray-500 mb-3 text-center">
+                    📄 Text files: .txt (direct) <br />
+                    📑 Documents: .pdf, .docx, .epub (requires backend) <br />
+                    🎬 Subtitles: .srt, .vtt, .ass, .ttml (requires backend)
+                  </div>
                   <input
                     type="file"
                     onChange={handleFileChange}
                     className="w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer cursor-pointer"
-                    accept=".txt,.pdf,.doc,.docx"
+                    accept=".txt,.pdf,.doc,.docx,.epub,.mobi,.srt,.ass,.vtt,.ttml"
                   />
                 </div>
               </div>
