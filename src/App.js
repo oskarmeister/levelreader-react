@@ -11,6 +11,7 @@ import LibraryView from "./components/LibraryView";
 import PlaylistView from "./components/PlaylistView";
 import WordBankView from "./components/WordBankView";
 import ImportView from "./components/ImportView";
+import ImportAudioView from "./components/ImportAudioView";
 import GenerateView from "./components/GenerateView";
 import LessonView from "./components/LessonView";
 import EditView from "./components/EditView";
