@@ -17,7 +17,7 @@ const ImportView = () => {
   // New sidebar states
   const [thumbnail, setThumbnail] = useState(null);
   const [accentColor, setAccentColor] = useState("#8B5CF6");
-  const [difficulty, setDifficulty] = useState("A1");
+  const [difficulty, setDifficulty] = useState("Difficulty level");
   const [audioFile, setAudioFile] = useState(null);
   const [urlInput, setUrlInput] = useState("");
   const [showUrlInput, setShowUrlInput] = useState(false);
