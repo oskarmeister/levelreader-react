@@ -249,7 +249,7 @@ const ImportView = () => {
           📝 Lesson Settings
         </div>
 
-        <div className="p-4 space-y-6">
+        <div className="p-4 space-y-6 flex-1 overflow-y-auto">
           {/* Thumbnail */}
           <div>
             <div
