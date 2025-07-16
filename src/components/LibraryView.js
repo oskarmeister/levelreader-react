@@ -414,7 +414,7 @@ const LibraryView = () => {
           }`}
           title="Import Content"
         >
-          <span className="text-2xl font-bold">+</span>
+          <span className="text-2xl font-bold leading-none">+</span>
         </button>
 
         {/* Backdrop for closing dropdown */}
