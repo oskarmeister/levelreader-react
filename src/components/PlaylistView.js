@@ -6,6 +6,12 @@ const PlaylistView = () => {
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [playlists, setPlaylists] = useState([
     {
+      id: "all-audio",
+      name: "All Audio",
+      tracks: [],
+      isSpecial: true,
+    },
+    {
       id: "recent-audio",
       name: "Recent Audio",
       tracks: [],
