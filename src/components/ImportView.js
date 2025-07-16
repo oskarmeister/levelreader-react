@@ -286,19 +286,48 @@ const ImportView = () => {
             <label className="block text-gray-700 text-sm font-medium mb-2">
               Accent Color
             </label>
-            <div className="grid grid-cols-4 gap-2">
-              {accentColors.map((color) => (
-                <button
-                  key={color}
-                  className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                    accentColor === color
-                      ? "border-gray-800 scale-110"
-                      : "border-gray-200 hover:border-gray-400"
-                  }`}
-                  style={{ backgroundColor: color }}
-                  onClick={() => setAccentColor(color)}
-                />
-              ))}
+            <div className="relative">
+              <button
+                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg bg-white hover:border-gray-400 transition-colors"
+                onClick={() => setShowColorDropdown(!showColorDropdown)}
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className="w-6 h-6 rounded-full border border-gray-300"
+                    style={{ backgroundColor: accentColor }}
+                  />
+                  <span className="text-sm font-medium">{accentColor}</span>
+                </div>
+                <span className="text-gray-400">▼</span>
+              </button>
+
+              {showColorDropdown && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowColorDropdown(false)}
+                  />
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
+                    <div className="grid grid-cols-4 gap-2">
+                      {accentColors.map((color) => (
+                        <button
+                          key={color}
+                          className={`w-10 h-10 rounded-lg border-2 transition-all ${
+                            accentColor === color
+                              ? "border-gray-800 scale-110"
+                              : "border-gray-200 hover:border-gray-400"
+                          }`}
+                          style={{ backgroundColor: color }}
+                          onClick={() => {
+                            setAccentColor(color);
+                            setShowColorDropdown(false);
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
