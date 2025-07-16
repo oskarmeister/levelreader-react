@@ -301,6 +301,7 @@ function App() {
               <Route path="/playlist" element={<PlaylistView />} />
               <Route path="/wordbank" element={<WordBankView />} />
               <Route path="/import" element={<ImportView />} />
+              <Route path="/import-audio" element={<ImportAudioView />} />
               <Route path="/generate" element={<GenerateView />} />
               <Route path="/lesson/:key" element={<LessonView />} />
               <Route path="/edit/:key" element={<EditView />} />
