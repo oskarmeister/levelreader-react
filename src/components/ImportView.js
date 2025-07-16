@@ -252,9 +252,6 @@ const ImportView = () => {
         <div className="p-4 space-y-6">
           {/* Thumbnail */}
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Thumbnail
-            </label>
             <div
               className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors relative overflow-hidden"
               onClick={() => document.getElementById("thumbnail-input").click()}
