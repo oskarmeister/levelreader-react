@@ -613,9 +613,9 @@ const ImportView = () => {
                     Upload a file to extract content automatically
                   </label>
                   <div className="text-xs text-gray-500 mb-3 text-center">
-                    📄 Text files: .txt (direct) <br />
-                    📑 Documents: .pdf, .docx, .epub (requires backend) <br />
-                    🎬 Subtitles: .srt, .vtt, .ass, .ttml (requires backend)
+                    ✅ Text files: .txt (supported) <br />
+                    ⚠️ Documents: .pdf, .docx, .epub (backend required) <br />
+                    ⚠️ Subtitles: .srt, .vtt, .ass, .ttml (backend required)
                   </div>
                   <input
                     type="file"
