@@ -128,8 +128,8 @@ const FloatingAudioPlayer = ({
         </button>
 
         {/* Lesson title */}
-        <div className="text-center mb-3">
-          <h3 className="text-sm font-medium text-gray-800 truncate">
+        <div className="text-center mb-2">
+          <h3 className="text-sm font-medium text-gray-800 truncate pr-8">
             {lessonTitle}
           </h3>
           {audioError && (
