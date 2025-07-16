@@ -4,6 +4,8 @@ import AppContext from "../context/AppContext";
 import TranslationService from "../services/translationService";
 import ChineseSegmentationService from "../services/chineseSegmentationService";
 import { getLanguageCode } from "../utils/languageUtils";
+import FloatingAudioPlayer from "./FloatingAudioPlayer";
+import FloatingPlayButton from "./FloatingPlayButton";
 
 const LessonView = () => {
   const { state, setState } = useContext(AppContext);
@@ -20,10 +22,15 @@ const LessonView = () => {
   const [sentenceTranslation, setSentenceTranslation] = useState("");
   const [translatingsentence, setTranslatingsentence] = useState(false);
   const [renderedSentence, setRenderedSentence] = useState(null);
+  const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const [currentAudioSrc, setCurrentAudioSrc] = useState(null);
 
   useEffect(() => {
     const text = state.lessons[key];
     if (text) {
+      // Check if lesson has audio
+      const audioSrc = state.lessonAudio?.[key];
+      setCurrentAudioSrc(audioSrc || null);
       setState((prev) => {
         // Track recently accessed lesson
         const updatedRecentLessons = [
