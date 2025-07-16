@@ -55,7 +55,7 @@ const ImportView = () => {
         const formData = new FormData();
         formData.append("file", file);
 
-        fetch("http://localhost:5000/upload", {
+        fetch("/api/upload", {
           method: "POST",
           body: formData,
         })
