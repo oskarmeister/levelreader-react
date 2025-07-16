@@ -79,11 +79,11 @@ const ImportView = () => {
             console.error("Backend error:", err);
             if (fileExtension === "pdf") {
               alert(
-                `❌ PDF import requires the backend server to be running.\n\nTo enable PDF import:\n1. Open a terminal\n2. Run: npm run backend\n\nFor now, please convert your PDF to a text file and try again.`,
+                `❌ PDF import is not available in this environment.\n\nPDF processing requires a backend server. For now, please:\n1. Convert your PDF to a text file, or\n2. Copy and paste the text content directly into the text area below.`,
               );
             } else {
               alert(
-                `❌ ${fileExtension.toUpperCase()} files require the backend server to be running.\n\nTo enable file processing:\n1. Open a terminal\n2. Run: npm run backend\n\nFor now, please try uploading a plain text file instead.`,
+                `❌ ${fileExtension.toUpperCase()} file processing is not available in this environment.\n\nFor now, please:\n1. Convert your file to plain text (.txt), or\n2. Copy and paste the content directly into the text area below.`,
               );
             }
           });
