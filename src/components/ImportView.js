@@ -411,9 +411,6 @@ const ImportView = () => {
 
           {/* URL */}
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              URL Source
-            </label>
             {showUrlInput ? (
               <div className="space-y-2">
                 <input
