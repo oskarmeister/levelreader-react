@@ -285,6 +285,8 @@ function App() {
                   prev.lessonSegmentations ||
                   {},
               }),
+              // Add lessonAudio
+              lessonAudio: parsedData.lessonAudio || prev.lessonAudio || {},
             };
 
             // Update languageData structure with the loaded data
@@ -299,6 +301,7 @@ function App() {
                 lessonCategories: newState.lessonCategories,
                 recentlyAccessedLessons: newState.recentlyAccessedLessons,
                 recentlyAccessedCategories: newState.recentlyAccessedCategories,
+                lessonAudio: newState.lessonAudio,
                 ...(prev.selectedLanguage === "Chinese" && {
                   lessonSegmentations: newState.lessonSegmentations,
                 }),
