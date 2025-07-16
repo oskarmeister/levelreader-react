@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import { StorageManager } from "../storageManager";
 import ChineseSegmentationService from "../services/chineseSegmentationService";
+import { getBackendUrls } from "../config/backendConfig";
 
 const ImportView = () => {
   const { state, setState } = useContext(AppContext);
@@ -41,26 +42,78 @@ const ImportView = () => {
     "#84CC16",
   ];
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      fetch("http://localhost:5000/upload", {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.text) setText(data.text);
-          else alert(data.error || "Failed to extract text");
-        })
-        .catch((err) => {
-          console.error(err);
-          const reader = new FileReader();
-          reader.onload = (ev) => setText(ev.target.result);
-          reader.readAsText(file);
-        });
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+
+      // Check if it's a PDF or other format that requires backend processing
+      if (
+        ["pdf", "epub", "docx", "mobi", "srt", "ass", "vtt", "ttml"].includes(
+          fileExtension,
+        )
+      ) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // Get backend URLs from configuration
+        const backendUrls = getBackendUrls();
+
+        let success = false;
+        let lastError;
+
+        for (const url of backendUrls) {
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: formData,
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              if (data.text) {
+                setText(data.text);
+                alert(
+                  `✅ Successfully extracted text from ${fileExtension.toUpperCase()} file!\n\nFile: ${data.filename || file.name}\nExtracted ${data.text.length} characters.`,
+                );
+                success = true;
+                break;
+              } else {
+                alert(data.error || "Failed to extract text");
+                return;
+              }
+            } else {
+              lastError = new Error(
+                `HTTP ${response.status}: ${response.statusText}`,
+              );
+            }
+          } catch (error) {
+            lastError = error;
+            continue;
+          }
+        }
+
+        if (!success) {
+          console.error("Backend error:", lastError);
+          if (fileExtension === "pdf") {
+            alert(
+              `❌ PDF import is not available in this environment.\n\nPDF processing requires a backend server. For now, please:\n1. Convert your PDF to a text file, or\n2. Copy and paste the text content directly into the text area below.\n\nError: ${lastError?.message || "Backend not available"}`,
+            );
+          } else {
+            alert(
+              `❌ ${fileExtension.toUpperCase()} file processing is not available in this environment.\n\nFor now, please:\n1. Convert your file to plain text (.txt), or\n2. Copy and paste the content directly into the text area below.\n\nError: ${lastError?.message || "Backend not available"}`,
+            );
+          }
+        }
+      } else {
+        // For text files, read directly
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          setText(ev.target.result);
+          alert(`✅ Successfully loaded text file!`);
+        };
+        reader.readAsText(file);
+      }
     }
   };
 
@@ -575,13 +628,18 @@ const ImportView = () => {
               <div className="flex flex-col items-center space-y-4">
                 <div className="w-full max-w-md">
                   <label className="block text-gray-700 text-sm font-medium mb-2 text-center">
-                    Upload a text file to extract content automatically
+                    Upload a file to extract content automatically
                   </label>
+                  <div className="text-xs text-gray-500 mb-3 text-center">
+                    ✅ Text files: .txt (supported) <br />
+                    ⚠️ Documents: .pdf, .docx, .epub (backend required) <br />
+                    ⚠️ Subtitles: .srt, .vtt, .ass, .ttml (backend required)
+                  </div>
                   <input
                     type="file"
                     onChange={handleFileChange}
                     className="w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer cursor-pointer"
-                    accept=".txt,.pdf,.doc,.docx"
+                    accept=".txt,.pdf,.doc,.docx,.epub,.mobi,.srt,.ass,.vtt,.ttml"
                   />
                 </div>
               </div>
