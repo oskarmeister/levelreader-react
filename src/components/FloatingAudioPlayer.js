@@ -132,6 +132,11 @@ const FloatingAudioPlayer = ({
           <h3 className="text-sm font-medium text-gray-800 truncate">
             {lessonTitle}
           </h3>
+          {audioError && (
+            <p className="text-xs text-red-500 mt-1">
+              Audio file not available
+            </p>
+          )}
         </div>
 
         {/* Timeline */}
