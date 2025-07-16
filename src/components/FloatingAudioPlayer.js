@@ -205,7 +205,7 @@ const FloatingAudioPlayer = ({
           {/* Play/Pause button */}
           <button
             onClick={togglePlayPause}
-            className="p-3 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg"
+            className="p-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg"
           >
             {isPlaying ? (
               <svg
