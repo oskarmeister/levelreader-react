@@ -12,6 +12,7 @@ const LibraryView = () => {
     isOpen: false,
     lessonKey: null,
   });
+  const [showImportOptions, setShowImportOptions] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = () => setOpenDropdown(null);
