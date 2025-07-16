@@ -236,7 +236,7 @@ const ImportView = () => {
   return (
     <div className="flex h-[calc(100vh-80px)]" style={{ padding: "16px" }}>
       {/* Left Sidebar */}
-      <div className="w-80 bg-white rounded-xl shadow-lg mr-6 overflow-hidden">
+      <div className="w-80 bg-white rounded-xl shadow-lg mr-6 flex flex-col h-full">
         <div
           className="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-gray-100"
           style={{
