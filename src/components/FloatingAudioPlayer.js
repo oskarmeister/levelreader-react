@@ -11,6 +11,7 @@ const FloatingAudioPlayer = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
+  const [audioError, setAudioError] = useState(false);
   const audioRef = useRef(null);
 
   useEffect(() => {
