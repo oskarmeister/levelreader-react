@@ -280,9 +280,6 @@ const ImportView = () => {
 
           {/* Accent Color */}
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Accent Color
-            </label>
             <div className="relative">
               <button
                 className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg bg-white hover:border-gray-400 transition-colors"
