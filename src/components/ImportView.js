@@ -41,50 +41,60 @@ const ImportView = () => {
     "#84CC16",
   ];
 
-  const handleFileChange = (e) => {
+    const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const fileExtension = file.name.split(".").pop().toLowerCase();
+      const fileExtension = file.name.split('.').pop().toLowerCase();
 
       // Check if it's a PDF or other format that requires backend processing
-      if (
-        ["pdf", "epub", "docx", "mobi", "srt", "ass", "vtt", "ttml"].includes(
-          fileExtension,
-        )
-      ) {
+      if (['pdf', 'epub', 'docx', 'mobi', 'srt', 'ass', 'vtt', 'ttml'].includes(fileExtension)) {
         const formData = new FormData();
         formData.append("file", file);
 
-        fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        })
+                        // Try multiple backend endpoints for compatibility
+        const backendUrls = [
+          "/api/upload",
+          "http://localhost:5000/upload",
+          "http://localhost:5000/api/upload"
+        ];
+
+        let lastError;
+        for (const url of backendUrls) {
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: formData,
+            });
+            if (response.ok) {
+              return response;
+            }
+            lastError = new Error(`HTTP ${response.status}`);
+          } catch (error) {
+            lastError = error;
+            continue;
+          }
+        }
+        throw lastError;
           .then((res) => {
             if (!res.ok) {
-              throw new Error("Backend server not available");
+              throw new Error('Backend server not available');
             }
             return res.json();
           })
           .then((data) => {
             if (data.text) {
               setText(data.text);
-              alert(
-                `✅ Successfully extracted text from ${fileExtension.toUpperCase()} file!`,
-              );
+              alert(`✅ Successfully extracted text from ${fileExtension.toUpperCase()} file!`);
             } else {
               alert(data.error || "Failed to extract text");
             }
           })
-          .catch((err) => {
-            console.error("Backend error:", err);
-            if (fileExtension === "pdf") {
-              alert(
-                `❌ PDF import is not available in this environment.\n\nPDF processing requires a backend server. For now, please:\n1. Convert your PDF to a text file, or\n2. Copy and paste the text content directly into the text area below.`,
-              );
+                    .catch((err) => {
+            console.error('Backend error:', err);
+            if (fileExtension === 'pdf') {
+              alert(`❌ PDF import is not available in this environment.\n\nPDF processing requires a backend server. For now, please:\n1. Convert your PDF to a text file, or\n2. Copy and paste the text content directly into the text area below.`);
             } else {
-              alert(
-                `❌ ${fileExtension.toUpperCase()} file processing is not available in this environment.\n\nFor now, please:\n1. Convert your file to plain text (.txt), or\n2. Copy and paste the content directly into the text area below.`,
-              );
+              alert(`❌ ${fileExtension.toUpperCase()} file processing is not available in this environment.\n\nFor now, please:\n1. Convert your file to plain text (.txt), or\n2. Copy and paste the content directly into the text area below.`);
             }
           });
       } else {
@@ -608,13 +618,13 @@ const ImportView = () => {
             </div>
             <div className="p-6">
               <div className="flex flex-col items-center space-y-4">
-                <div className="w-full max-w-md">
+                                <div className="w-full max-w-md">
                   <label className="block text-gray-700 text-sm font-medium mb-2 text-center">
                     Upload a file to extract content automatically
                   </label>
-                  <div className="text-xs text-gray-500 mb-3 text-center">
-                    ✅ Text files: .txt (supported) <br />
-                    ⚠️ Documents: .pdf, .docx, .epub (backend required) <br />
+                                    <div className="text-xs text-gray-500 mb-3 text-center">
+                    ✅ Text files: .txt (supported) <br/>
+                    ⚠️ Documents: .pdf, .docx, .epub (backend required) <br/>
                     ⚠️ Subtitles: .srt, .vtt, .ass, .ttml (backend required)
                   </div>
                   <input
