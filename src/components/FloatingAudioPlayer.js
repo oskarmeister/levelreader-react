@@ -159,7 +159,7 @@ const FloatingAudioPlayer = ({
         </div>
 
         {/* Controls */}
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex items-center justify-center space-x-3">
           {/* Previous button */}
           <button
             onClick={handlePrevious}
