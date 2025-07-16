@@ -336,23 +336,46 @@ const ImportView = () => {
             <label className="block text-gray-700 text-sm font-medium mb-2">
               Difficulty Level
             </label>
-            <div className="grid grid-cols-3 gap-2">
-              {difficultyLevels.map((level) => (
-                <button
-                  key={level}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                    difficulty === level
-                      ? "text-white shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  style={
-                    difficulty === level ? { backgroundColor: accentColor } : {}
-                  }
-                  onClick={() => setDifficulty(level)}
-                >
-                  {level}
-                </button>
-              ))}
+            <div className="relative">
+              <button
+                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg bg-white hover:border-gray-400 transition-colors"
+                onClick={() =>
+                  setShowDifficultyDropdown(!showDifficultyDropdown)
+                }
+              >
+                <span className="text-sm font-medium">{difficulty}</span>
+                <span className="text-gray-400">▼</span>
+              </button>
+
+              {showDifficultyDropdown && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowDifficultyDropdown(false)}
+                  />
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1">
+                    {difficultyLevels.map((level) => (
+                      <button
+                        key={level}
+                        className={`w-full px-3 py-2 text-left text-sm font-medium transition-colors hover:bg-gray-50 ${
+                          difficulty === level ? "text-white" : "text-gray-700"
+                        }`}
+                        style={
+                          difficulty === level
+                            ? { backgroundColor: accentColor }
+                            : {}
+                        }
+                        onClick={() => {
+                          setDifficulty(level);
+                          setShowDifficultyDropdown(false);
+                        }}
+                      >
+                        {level}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
