@@ -12,7 +12,6 @@ const Nav = () => {
     { id: "tab-library", label: "Library", path: "/library" },
     { id: "tab-playlist", label: "Playlist", path: "/playlist" },
     { id: "tab-wordbank", label: "Word Bank", path: "/wordbank" },
-    { id: "tab-import", label: "Import", path: "/import" },
     { id: "tab-generate", label: "Generate", path: "/generate" },
   ];
 
