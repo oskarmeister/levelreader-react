@@ -58,8 +58,9 @@ const ImportView = () => {
         // Try multiple backend endpoints for compatibility
         const backendUrls = [
           "/api/upload",
+          "http://localhost:5001/upload",
           "http://localhost:5000/upload",
-          "http://localhost:5000/api/upload",
+          "http://localhost:5001/api/upload",
         ];
 
         let success = false;
