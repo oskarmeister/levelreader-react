@@ -197,6 +197,36 @@ const LibraryView = () => {
     setConfirmDelete({ isOpen: false, lessonKey: null });
   };
 
+  const handleImportOption = (type) => {
+    setShowImportOptions(false);
+    switch (type) {
+      case "text":
+        navigate("/import");
+        break;
+      case "audio":
+        // Handle audio import
+        console.log("Audio import selected");
+        break;
+      case "video":
+        // Handle video import
+        console.log("Video import selected");
+        break;
+      case "url":
+        // Handle URL import
+        console.log("URL import selected");
+        break;
+      default:
+        break;
+    }
+  };
+
+  const importOptions = [
+    { id: "text", label: "Text", icon: "📝", color: "bg-blue-500" },
+    { id: "audio", label: "Audio", icon: "🎵", color: "bg-green-500" },
+    { id: "video", label: "Video", icon: "🎬", color: "bg-red-500" },
+    { id: "url", label: "URL", icon: "🔗", color: "bg-purple-500" },
+  ];
+
   const renderCategorySection = (category, color, gradient) => {
     const categoryLessons = getLessonsForCategory(category);
 
